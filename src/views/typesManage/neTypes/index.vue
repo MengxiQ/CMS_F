@@ -49,7 +49,7 @@
     </el-table>
     <!--    添加弹出框-->
     <el-dialog
-      title="添加模板类型"
+      title="添加设备类型"
       :visible.sync="flags.addDialogVisible"
       width="50%"
       :before-close="beforeClose">
@@ -71,9 +71,10 @@
 
 <script>
 import { addNeType, deleteNeType, getNeTypesList, updateNeType } from '@/api/typesManage'
-
+import { typeMixin } from '@/views/typesManage/mixin/typeMixin'
 export default {
-  name: 'templateTypes',
+  name: 'NeTypes',
+  mixins: [typeMixin],
   data() {
     return {
       list: [],
@@ -131,16 +132,17 @@ export default {
       })
     },
     getList() {
-      getNeTypesList().then(res => {
-        // enableEdit
-        this.list = res.map(item => {
-          item.enableEdit = false
-          return item
-        })
-      }).catch(erro => {
-        console.log(erro)
-        this.$message({ type: 'error', message: '获取列表失败！' })
-      })
+      this.updateType('neTypes')
+      // getNeTypesList().then(res => {
+      //   // enableEdit
+      //   this.list = res.map(item => {
+      //     item.enableEdit = false
+      //     return item
+      //   })
+      // }).catch(erro => {
+      //   console.log(erro)
+      //   this.$message({ type: 'error', message: '获取列表失败！' })
+      // })
     }
   },
   mounted() {

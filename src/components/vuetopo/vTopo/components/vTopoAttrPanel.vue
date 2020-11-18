@@ -5,7 +5,7 @@
  * @LastEditTime: 2018-11-23 14:43:14
  -->
 <template>
-  <div id="topoAttrWrap" :class="{active:isTopoAttrShow}">
+  <div id="topoAttrWrap" :class="{active:isShowPanel}">
     <h3 id="topoAttrHeader">属性设置框</h3>
     <div v-if="JSON.stringify(nodeData)=='{}'" class="noAttrTip">
       未选择任何节点属性
@@ -17,7 +17,7 @@
           <div v-if="vSelectNodeData.type == 'Line'">
             <h1 style="text-align: left;font-size: larger;box-shadow: -4px 0px #b3d8ff;padding: 3px 5px">样式设置：</h1>
             <el-form-item label="颜色选择">
-              <el-color-picker v-model="vSelectNodeData.color"/>
+              <el-color-picker v-model="vSelectNodeData.color" />
             </el-form-item>
             <el-form-item label="粗细选择">
               <el-slider
@@ -56,19 +56,22 @@
           <div v-else>
             <el-form label-position="left" label-width="40px">
               <el-form-item label="名称">
-                <el-input v-model="vSelectNodeData['name']"/>
+                <el-input v-model="vSelectNodeData['name']" />
               </el-form-item>
               <el-form-item label="图标">
-                <el-input v-model="vSelectNodeData['icon']"/>
+                <el-input v-model="vSelectNodeData['icon']" />
               </el-form-item>
               <el-form-item label="类型">
-                <el-input v-model="vSelectNodeData['type']"/>
+                <el-select v-model="vSelectNodeData['classType']">
+                  <el-option label="T1 (容器)" value="T1"></el-option>
+                  <el-option label="T2 (节点)" value="T2"></el-option>
+                </el-select>
               </el-form-item>
               <el-form-item label="高">
-                <el-input v-model="vSelectNodeData['height']"/>
+                <el-input v-model="vSelectNodeData['height']" />
               </el-form-item>
               <el-form-item label="宽">
-                <el-input v-model="vSelectNodeData['width']"/>
+                <el-input v-model="vSelectNodeData['width']" />
               </el-form-item>
             </el-form>
           </div>
@@ -83,10 +86,10 @@
     </div>
     <i
       class="topoAttrArrow"
-      :class="{'pushIcon':!isTopoAttrShow,'pullIcon':isTopoAttrShow}"
-      @click="isTopoAttrShow =!isTopoAttrShow"
+      :class="{'pushIcon':!isShowPanel,'pullIcon':isShowPanel}"
+      @click="$emit('changeshow', !isShowPanel)"
     >
-      <img v-if="!isTopoAttrShow" src="@/assets/topo/push.svg">
+      <img v-if="!isShowPanel" src="@/assets/topo/push.svg">
       <img v-else src="@/assets/topo/pull.svg">
     </i>
   </div>
@@ -98,6 +101,9 @@ export default {
   filters: {},
   components: {},
   props: {
+    isShowPanel: {
+      type: Boolean
+    },
     topoData: {
       type: Object,
       default: function() {
@@ -152,7 +158,6 @@ export default {
     }
   },
   mounted() {
-
   },
   created() {
   },

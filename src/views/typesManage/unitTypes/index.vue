@@ -17,10 +17,17 @@
           <el-input v-else v-model="scope.row.remark" type="textarea" size="mini"></el-input>
         </template>
       </el-table-column>
-       <el-table-column label="厂商" prop="vendor">
+      <el-table-column label="厂商" prop="vendor">
         <template slot-scope="scope">
           <span v-if="!scope.row.enableEdit">{{ scope.row.vendor }}</span>
-          <el-input v-else v-model="scope.row.vendor" type="" size="mini"></el-input>
+          <el-select v-else v-model="scope.row.vendor" size="mini" >
+            <el-option
+              v-for="(item, key) in $store.getters.vendorTypes"
+              :key="key"
+              :label="item.name"
+              :value="item.name"
+            ></el-option>
+          </el-select>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="250">
@@ -28,14 +35,14 @@
           <el-button size="mini" type="primary" @click="handleSave(scope.row)" v-if="scope.row.enableEdit">保存
           </el-button>
           <el-button
-            size="mini"
             v-if="!scope.row.enableEdit"
+            size="mini"
             style="margin-right: 5px"
             @click="scope.row.enableEdit = !scope.row.enableEdit">编辑
           </el-button>
           <el-button
-            size="mini"
             v-else
+            size="mini"
             @click="scope.row.enableEdit = !scope.row.enableEdit">取消
           </el-button>
           <el-popconfirm
@@ -43,11 +50,11 @@
             @onConfirm="handleDelete(scope.row.id)"
           >
             <el-button
-            size="mini"
-            type="danger"
-             slot="reference"
+              size="mini"
+              type="danger"
+              slot="reference"
             >删除
-          </el-button>
+            </el-button>
           </el-popconfirm>
 
         </template>
@@ -55,7 +62,7 @@
     </el-table>
     <!--    添加弹出框-->
     <el-dialog
-      title="添加模板类型"
+      title="添加设备型号"
       :visible.sync="flags.addDialogVisible"
       width="50%"
       :before-close="beforeClose">
@@ -65,6 +72,16 @@
         </el-form-item>
         <el-form-item label="类型描述">
           <el-input v-model="typeTemp.remark"></el-input>
+        </el-form-item>
+        <el-form-item label="厂商">
+          <el-select v-model="typeTemp.vendor" clearable>
+            <el-option
+              v-for="(item, key) in this.$store.getters.vendorTypes"
+              :key="key"
+              :label="item.name"
+              :value="item.name"
+            ></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -76,10 +93,12 @@
 </template>
 
 <script>
-import { getUnitTypesList, addUnitType, updateUnitType, deleteUnitType } from '@/api/typesManage'
+import { addUnitType, deleteUnitType, getUnitTypesList, updateUnitType } from '@/api/typesManage'
+import {typeMixin} from "@/views/typesManage/mixin/typeMixin";
 
 export default {
-  name: 'templateTypes',
+  name: 'UnitTypes',
+  mixins: [typeMixin],
   data() {
     return {
       list: [],
@@ -89,9 +108,13 @@ export default {
       },
       typeTemp: {
         name: '',
-        remark: ''
+        remark: '',
+        vendor: ''
       }
     }
+  },
+  mounted() {
+    this.getList()
   },
   methods: {
     beforeClose() {
@@ -137,21 +160,18 @@ export default {
       })
     },
     getList() {
-      getUnitTypesList().then(res => {
-        // enableEdit
-        const data = res.map(item => {
-          item.enableEdit = false
-          return item
-        })
-        this.list = data
-      }).catch(erro => {
-        console.log(erro)
-        this.$message({ type: 'error', message: '获取列表失败！' })
-      })
+      this.updateType('unitTypes')
+      // getUnitTypesList().then(res => {
+      //   // enableEdit
+      //   this.list = res.map(item => {
+      //     item.enableEdit = false
+      //     return item
+      //   })
+      // }).catch(erro => {
+      //   console.log(erro)
+      //   this.$message({ type: 'error', message: '获取列表失败！' })
+      // })
     }
-  },
-  mounted() {
-    this.getList()
   }
 }
 </script>

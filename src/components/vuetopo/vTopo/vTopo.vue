@@ -1,11 +1,12 @@
 <!--
  * @Author: caojing
  * @Date: 2017-10-20 09:29:55
- * @LastEditors: caojing
- * @LastEditTime: 2018-11-27 10:57:15
+ * @LastEditors: weilixing
+ * @LastEditTime: 2020-11-16 10:57:15
  -->
 <template>
   <div class="topoComponent">
+    <!-- 头部标题栏-->
     <div v-show="editable" class="svgHead">
       <ul class="svgHeadItemLst">
         <li
@@ -18,38 +19,24 @@
         >
           <i class="svgHeadItemImg" :class="ele.iron " />
         </li>
+        <li class="svgHeadItem" title="重新渲染" @click="svgMainKey += 1"><i class="el-icon-refresh" /></li>
       </ul>
-      <h3>{{ topoData.name }}</h3>
+      <!--      <span style="font-size: 14px">{{ topoData.name }}</span>-->
+      <el-input style="width: 180px" v-model="topoData.name" size="mini" />
       <ul class="svgHeadItemLst">
-        <!--          <li class="svgToolBarItem" @click="saveTopoJson" title="保存">-->
-        <!--            <i class="fa fa-save svgToolBarIcon"></i>-->
-        <!--            <span  class="svgToolBarTxt hidden-xs-only">保存</span>-->
-        <!--          </li>-->
-        <el-popconfirm
-          title="是否保存该拓扑？"
-          @onConfirm="clickSave"
-        >
+        <el-popconfirm title="是否保存该拓扑？" @onConfirm="clickSave">
           <el-button slot="reference" icon="el-icon-finished" type="primary" size="mini">保存</el-button>
         </el-popconfirm>
-
-<!--        <li class="svgToolBarItem" title="上传">-->
-<!--          <i class="fa fa-upload svgToolBarIcon" />-->
-<!--          <span class="svgToolBarTxt hidden-xs-only">上传</span>-->
-<!--        </li>-->
-<!--        <li class="svgToolBarItem" title="下载">-->
-<!--          <i class="fa fa-download svgToolBarIcon" />-->
-<!--          <span class="svgToolBarTxt hidden-xs-only">下载</span>-->
-<!--        </li>-->
-<!--        <li class="svgToolBarItem" title="保存图片" @click="saveTopoImage">-->
-<!--          <i class="fa fa-file-image-o svgToolBarIcon" />-->
-<!--          <span class="svgToolBarTxt hidden-xs-only">保存图片</span>-->
-<!--        </li>-->
       </ul>
     </div>
     <div class="svgMain">
-      <!--      左侧侧边栏-->
-
-      <v-shapebar v-show="editable" :shape-node-lst-data="toolBarData" @click="dragShapeNode" />
+      <!--  左侧侧边栏-->
+      <v-shapebar
+        v-show="editable"
+        :shape-node-lst-data="toolBarData"
+        @selected="selectedEquipment"
+        @click="dragShapeNode"
+      />
 
       <div :id="'topoId'+topoId" ref="topoWrap" class="topoWrap" @contextmenu.prevent="RClick">
         <svg
@@ -90,72 +77,8 @@
           </defs>
           <rect fill="url(#Pattern)" :width="svgAttr.width" :height="svgAttr.height" />
           <g>
-            <g
-              v-for="(ele,key) in topoData.nodes"
-              :key="ele.id"
-              class="nodesG"
-              :class="{isSelect:ele.isSelect,hoverShowConnectorArror:editable}"
-              :transform="'translate('+ele.x+','+ele.y+')'"
-              @mouseover.stop="mouseoverNode(key,$event)"
-              @mousedown.stop="dragSvgNode(key,$event)"
-              @mouseout.stop="mouseoutLeftConnector(key)"
-            >
-              <rect x="0" y="0" rx="2" ry="2" :width="ele.width" :height="ele.height" class="reactClass" />
-              <!-- <text  v-if="ele.classType == 'T1'" class="nodeName" x="5" y="15">{{ele.classType}}</text> -->
-              <text v-if="ele.classType == 'T1'" class="nodeName" x="5" y="15">{{ ele.name }}</text>
-              <image
-                v-if="ele.classType == 'T1'"
-                class="nodeImg"
-                :xlink:href="ele.icon"
-                :x="ele.width - 18"
-                :y="3"
-                height="15px"
-                width="15px"
-              />
-
-              <image
-                v-if="ele.classType == 'T2'"
-                class="nodeImg"
-                :xlink:href="ele.icon"
-                :x="7"
-                :y="7"
-                height="36px"
-                width="36px"
-              />
-              <text v-if="ele.classType == 'T2'" class="nodeName" x="0" :y="ele.height + 14">
-                {{ ele.name }}
-              </text>
-              <g
-                class="connectorArror"
-                :class="{'connector':ele.isLeftConnectShow}"
-                :transform="'translate('+ele.width/2+','+ele.height/2+')'"
-              >
-                <circle r="8" cx="0" cy="0" class="circleColor" />
-                <line x1="-3" y1="-5" x2="4" y2="0.5" stroke="#fff" />
-                <line x1="4" y1="-0.5" x2="-3" y2="5" stroke="#fff" />
-              </g>
-              <!--              <g class="connectorArror" :class="{'connector':ele.isLeftConnectShow}" :transform="'translate('+ele.width/2+','+'-0'+')'">-->
-              <!--                <circle r="8" cx="0" cy="0" class="circleColor"></circle>-->
-              <!--                <line x1="-3" y1="-5" x2="4" y2="0.5" stroke="#fff"></line>-->
-              <!--                <line x1="4" y1="-0.5" x2="-3" y2="5" stroke="#fff"></line>-->
-              <!--              </g>-->
-              <g
-                class="connectorArror"
-                :class="{'connector':ele.isRightConnectShow}"
-                :transform="'translate('+ele.width/2+','+ele.height/2+')'"
-                @mousedown.stop="drawConnectLine(key,$event)"
-              >
-                <circle r="8" cx="0" cy="0" class="circleColor" />
-                <line x1="-3" y1="-5" x2="4" y2="0.5" stroke="#fff" />
-                <line x1="4" y1="-0.5" x2="-3" y2="5" stroke="#fff" />
-              </g>
-              <!--              <g class="connectorArror" :class="{'connector':ele.isRightConnectShow}" :transform="'translate('+ele.width/2+','+ele.height+')'" @mousedown.stop="drawConnectLine(key,$event)">-->
-              <!--                <circle r="8" cx="0" cy="0" class="circleColor"></circle>-->
-              <!--                <line x1="-3" y1="-5" x2="4" y2="0.5" stroke="#fff"></line>-->
-              <!--                <line x1="4" y1="-0.5" x2="-3" y2="5" stroke="#fff"></line>-->
-              <!--              </g>-->
-            </g>
             <!-- node间关系连线样式 -->
+            <!-- 改变线条是否显示在node的下面还是上面：原理：连接g标签在节点之上，则显示在下方，反之；增加属性判断显示上面的还是下面的g连线            -->
             <g
               v-for="(ele,key) in topoData.connectors"
               v-if="ele.type === 'Line'"
@@ -164,18 +87,120 @@
               :class="{active:ele.isSelect}"
               @mousedown.stop="selectConnectorLine(key)"
             >
-              /**
-              绘制直线
-              **/
-              <line
-                class="connectorLine"
-                :stroke-width="ele.strokeW"
-                :stroke="ele.color"
-                :x1="ele.sourceNode.x + (ele.sourceNode.width/2) "
-                :y1="ele.sourceNode.y + (ele.sourceNode.height/2)"
-                :x2="ele.targetNode.x + (ele.targetNode.width/2)"
-                :y2="ele.targetNode.y + (ele.targetNode.height/2)"
-              />
+              <g v-if="ele.status !== 'alarm'">
+                <!-- 绘制直线-->
+                <line
+                  class="connectorLine"
+                  :stroke-width="ele.strokeW"
+                  :stroke="ele.color"
+                  :x1="ele.sourceNode.x + (ele.sourceNode.width/2) "
+                  :y1="ele.sourceNode.y + (ele.sourceNode.height/2)"
+                  :x2="ele.targetNode.x + (ele.targetNode.width/2)"
+                  :y2="ele.targetNode.y + (ele.targetNode.height/2)"
+                />
+                <defs>
+                  <marker
+                    id="arrow"
+                    markerWidth="10"
+                    markerHeight="10"
+                    orient="auto"
+                    markerUnits="strokeWidth"
+                    refX="0"
+                    refY="2"
+                  >
+                    <path d="M0,0 L0,4 L5,2 z" fill="#336699" />
+                  </marker>
+                </defs>
+                <line
+                  class="connectorLine"
+                  :stroke-width="ele.strokeW"
+                  :stroke="ele.color"
+                  :x1="ele.sourceNode.x + (ele.sourceNode.width/2) "
+                  :y1="ele.sourceNode.y + (ele.sourceNode.height/2)"
+                  :x2="ele.sourceNode.x + (ele.targetNode.x - ele.sourceNode.x)/2 + (ele.targetNode.width/2)"
+                  :y2="ele.sourceNode.y + (ele.targetNode.y - ele.sourceNode.y)/2 + (ele.targetNode.height/2)"
+                  marker-end="url(#arrow)"
+                >
+                  <animate
+                    attributeName="x2"
+                    begin="0s"
+                    dur="5s"
+                    :from="ele.sourceNode.x + (ele.sourceNode.width/2)"
+                    :to="ele.sourceNode.x + (ele.targetNode.x - ele.sourceNode.x)/2 + (ele.targetNode.width/2)"
+                    calcMode="linear"
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="y2"
+                    begin="0s"
+                    dur="5s"
+                    :from="ele.sourceNode.y + (ele.sourceNode.height/2)"
+                    :to="ele.sourceNode.y + (ele.targetNode.y - ele.sourceNode.y)/2 + (ele.targetNode.height/2)"
+                    calcMode="linear"
+                    repeatCount="indefinite"
+                  />
+                </line>
+                <line
+                  class="connectorLine"
+                  :stroke-width="ele.strokeW"
+                  :stroke="ele.color"
+                  :x1="ele.targetNode.x + (ele.targetNode.width/2) "
+                  :y1="ele.targetNode.y + (ele.targetNode.height/2)"
+                  :x2="ele.sourceNode.x + (ele.targetNode.x - ele.sourceNode.x)/2 + (ele.targetNode.width/2)"
+                  :y2="ele.sourceNode.y + (ele.targetNode.y - ele.sourceNode.y)/2 + (ele.targetNode.height/2)"
+                  marker-end="url(#arrow)"
+                >
+                  <animate
+                    attributeName="x2"
+                    begin="0s"
+                    dur="5s"
+                    :from="ele.targetNode.x + (ele.targetNode.width/2)"
+                    :to="ele.sourceNode.x + (ele.targetNode.x - ele.sourceNode.x)/2 + (ele.targetNode.width/2)"
+                    calcMode="linear"
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="y2"
+                    begin="0s"
+                    dur="5s"
+                    :from="ele.targetNode.y + (ele.targetNode.height/2)"
+                    :to="ele.sourceNode.y + (ele.targetNode.y - ele.sourceNode.y)/2 + (ele.targetNode.height/2)"
+                    calcMode="linear"
+                    repeatCount="indefinite"
+                  />
+                </line>
+              </g>
+              <g v-else>
+                <line
+                  class="connectorLine"
+                  :stroke-width="ele.strokeW"
+                  :stroke="ele.color"
+                  :x1="ele.sourceNode.x + (ele.sourceNode.width/2) "
+                  :y1="ele.sourceNode.y + (ele.sourceNode.height/2)"
+                  :x2="ele.targetNode.x + (ele.targetNode.width/2)"
+                  :y2="ele.targetNode.y + (ele.targetNode.height/2)"
+                />
+              </g>
+              <!--            两个点的线条的中心点xc=x1+(x2-x1)/2 ,yc同理，记得加上node的长或者高  -->
+              <!--    流动的线条-->
+              <!--              <line-->
+              <!--                class="lineMove1"-->
+              <!--                :stroke-width="4"-->
+              <!--                :stroke="ele.color"-->
+              <!--                :x1="ele.sourceNode.x + (ele.sourceNode.width/2) "-->
+              <!--                :y1="ele.sourceNode.y + (ele.sourceNode.height/2)"-->
+              <!--                :x2="ele.targetNode.x + (ele.targetNode.width/2)"-->
+              <!--                :y2="ele.targetNode.y + (ele.targetNode.height/2)"-->
+              <!--              />-->
+              <!--              <line-->
+              <!--                class="lineMove2"-->
+              <!--                :stroke-width="4"-->
+              <!--                :stroke="ele.color"-->
+              <!--                :x2="ele.sourceNode.x + (ele.sourceNode.width/2) "-->
+              <!--                :y2="ele.sourceNode.y + (ele.sourceNode.height/2)"-->
+              <!--                :x1="ele.targetNode.x + (ele.targetNode.width/2)"-->
+              <!--                :y1="ele.targetNode.y + (ele.targetNode.height/2)"-->
+              <!--              />-->
 
               /**
               * 连线方式一共7种情况
@@ -291,6 +316,92 @@
               <!--                'H' + ele.targetNode.x"-->
               <!--                ></path>-->
             </g>
+            <!--  节点-->
+            <g
+              v-for="(ele,key) in topoData.nodes"
+              :key="ele.id"
+              class="nodesG"
+              :class="{isSelect:ele.isSelect,hoverShowConnectorArror:editable}"
+              :transform="'translate('+ele.x+','+ele.y+')'"
+              @mouseover.stop="mouseoverNode(key,$event)"
+              @mousedown.stop="dragSvgNode(key,$event)"
+              @mouseout.stop="mouseoutLeftConnector(key)"
+            >
+              <rect
+                x="0"
+                y="0"
+                rx="2"
+                ry="2"
+                :width="ele.width"
+                :height="ele.height"
+                class="reactClass"
+                :class="{'node-alarm': ele.status === '离线'}"
+              />
+              <!-- <text  v-if="ele.classType == 'T1'" class="nodeName" x="5" y="15">{{ele.classType}}</text> -->
+              <text v-if="ele.classType === 'T1'" class="nodeName" x="5" y="15">{{ ele.name }}</text>
+              <!--              :xlink:href="ele.icon"-->
+              <image
+                v-if="ele.classType === 'T1'"
+                class="nodeImg"
+                href="@/assets/topo/switch.svg"
+                :x="ele.width - 18"
+                :y="3"
+                height="15px"
+                width="15px"
+              />
+              <!--:xlink:href="ele.icon"-->
+              <image
+                v-if="ele.classType == 'T2'"
+                class="nodeImg"
+                href="@/assets/topo/switch.svg"
+                :x="-2"
+                :y="-2"
+                height="54px"
+                width="55px"
+              />
+              <image
+                v-if="ele.status === '离线'"
+                class="nodeImg"
+                href="@/assets/topo/er/rings.svg"
+                :x="-25"
+                :y="-25"
+                height="100px"
+                width="100px"
+              />
+              <!--              x:y= 7，35px -->
+              <text v-if="ele.classType == 'T2'" class="nodeName" x="0" :y="ele.height + 14">
+                {{ ele.name }}
+              </text>
+              <!--           显示连接点   :class="{'connector':ele.isLeftConnectShow}"-->
+              <g
+                class="connectorArror"
+                :transform="'translate('+ele.width/2+','+ele.height/2+')'"
+              >
+                <circle r="8" cx="0" cy="0" class="circleColor" />
+                <!--                <line x1="-3" y1="-5" x2="4" y2="0.5" stroke="#fff"/>-->
+                <!--                <line x1="4" y1="-0.5" x2="-3" y2="5" stroke="#fff"/>-->
+              </g>
+              <!--              <g class="connectorArror" :class="{'connector':ele.isLeftConnectShow}" :transform="'translate('+ele.width/2+','+'-0'+')'">-->
+              <!--                <circle r="8" cx="0" cy="0" class="circleColor"></circle>-->
+              <!--                <line x1="-3" y1="-5" x2="4" y2="0.5" stroke="#fff"></line>-->
+              <!--                <line x1="4" y1="-0.5" x2="-3" y2="5" stroke="#fff"></line>-->
+              <!--              </g>-->
+              <!--       显示连接点        :class="{'connector':ele.isRightConnectShow}"-->
+              <g
+                class="connectorArror"
+                :transform="'translate('+ele.width/2+','+ele.height/2+')'"
+                @mousedown.stop="drawConnectLine(key,$event)"
+              >
+                <circle r="8" cx="0" cy="0" class="circleColor" />
+                <!--                <line x1="-3" y1="-5" x2="4" y2="0.5" stroke="#fff"/>-->
+                <!--                <line x1="4" y1="-0.5" x2="-3" y2="5" stroke="#fff"/>-->
+              </g>
+              <!--              <g class="connectorArror" :class="{'connector':ele.isRightConnectShow}" :transform="'translate('+ele.width/2+','+ele.height+')'" @mousedown.stop="drawConnectLine(key,$event)">-->
+              <!--                <circle r="8" cx="0" cy="0" class="circleColor"></circle>-->
+              <!--                <line x1="-3" y1="-5" x2="4" y2="0.5" stroke="#fff"></line>-->
+              <!--                <line x1="4" y1="-0.5" x2="-3" y2="5" stroke="#fff"></line>-->
+              <!--              </g>-->
+            </g>
             <!-- 动态绘制的连线 -->
             <g>
               <line
@@ -334,7 +445,14 @@
             fill="rgba(170,210,232,0.5)"
           />
         </svg>
-        <v-topo-attr-panel v-show="editable" :topo-data="topoData" :v-select-node-data="selectNodeData" />
+        <!--        右侧属性框-->
+        <v-topo-attr-panel
+          v-show="editable"
+          :is-show-panel="isShowPanel"
+          :topo-data="topoData"
+          :v-select-node-data="selectNodeData"
+          @changeshow="changeShowPanel"
+        />
       </div>
     </div>
     <div
@@ -356,7 +474,10 @@
       width="60%"
       :before-close="handleCloseAddConnect"
     >
-      <div slot="title"><span class="el-dialog__title" style="border-left: 4px #66b1ff solid; padding-left: 5px">添加连接关系</span></div>
+      <div slot="title"><span
+        class="el-dialog__title"
+        style="border-left: 4px #66b1ff solid; padding-left: 5px"
+      >添加连接关系</span></div>
       <el-form label-position="left">
         <el-row :gutter="20">
           <el-col :span="12">
@@ -380,8 +501,11 @@
 
                 @focus="SearchInterfacesById(connectorTemp.sourceNode.id,'sourceInterfaces')"
               >
-                <div slot="empty"><div v-if="sourceInterfacesLoading" style="height: 20px; padding: 10px; color: rgb(96,98,102);">
-                  <i class="el-icon-loading" />Loading...</div></div>
+                <div slot="empty">
+                  <div v-if="sourceInterfacesLoading" style="height: 20px; padding: 10px; color: rgb(96,98,102);">
+                    <i class="el-icon-loading" />Loading...
+                  </div>
+                </div>
                 <el-option
                   v-for="(item,key) in sourceInterfaces"
                   :key="key"
@@ -411,8 +535,11 @@
 
                 @focus="SearchInterfacesById(connectorTemp.targetNode.id,'targetInterfaces')"
               >
-                <div slot="empty"><div v-if="sourceInterfacesLoading" style="height: 20px; padding: 10px; color: rgb(96,98,102);">
-                  <i class="el-icon-loading" />Loading...</div></div>
+                <div slot="empty">
+                  <div v-if="sourceInterfacesLoading" style="height: 20px; padding: 10px; color: rgb(96,98,102);">
+                    <i class="el-icon-loading" />Loading...
+                  </div>
+                </div>
                 <el-option
                   v-for="(item,key) in targetInterfaces"
                   :key="key"
@@ -436,17 +563,17 @@
 <script>
 // import connectorRules from '@/components/vuetopo/config/connectorRules' // 连线包含关系规则
 import vTopoAttrPanel from './components/vTopoAttrPanel'
-import vShapebar from './components/vShapebar'
+import vShapebar from './components/vShapebar/vShapebar'
 import { data } from './data'
 import { methods } from './methods'
 import { props } from './props'
+
 export default {
   components: {
     vTopoAttrPanel,
     vShapebar
   },
-  props,
-  data,
+  mixins: [props, data, methods],
   computed: {
     nodes() {
       return this.topoData.nodes
@@ -456,22 +583,21 @@ export default {
     this.deleteNodeAndConnetor() // 绑定删除Node事件
     this.topoId = this.GenNonDuplicateID(5)
     this.initTopoWH() // 初始化topo组件宽高·
-  },
-  methods
+  }
 }
 </script>
 <style scoped lang="less">
-@svg-common-color: #768699;
+@svg-common-color: #336699;
 @stroke-width: 2;
 @stroke-select-width: 3;
 @stroke-select-color: red;
 @border-color: #aaaaaa;
 @storke-dasharray: 5, 5;
-@theme-color: rgb(245,247,250);
+@theme-color: rgb(245, 247, 250);
 @theme-border-color: #aaaaaa;
-@theme-font-color:#525252;
+@theme-font-color: #525252;
 //垂直分割线
-.Vertical-Separator-Lines{
+.Vertical-Separator-Lines {
   height: 30%;
   width: 2px;
   background: #3a8ee6;
@@ -479,6 +605,7 @@ export default {
   top: 30%;
   left: calc(50% - 0px);
 }
+
 .svgSelectClass {
   filter: url(#f1);
 }
@@ -707,6 +834,12 @@ export default {
     cursor: default;
   }
 
+  .node-alarm {
+    --innerRadius: 100px;
+    stroke: red;
+    fill: #f1b2b2;
+  }
+
   .connectorArror {
     display: none;
 
@@ -737,13 +870,39 @@ export default {
     .svgSelectClass;
   }
 }
+// 流动线条样式
+.lineMove1 {
+  stroke: red;
+  stroke-dasharray: 10 10;
+  animation: rot1 20s linear infinite;
+}
+
+@keyframes rot1 {
+  100% {
+    //stroke-dasharray: 100% 100%;
+    stroke-dashoffset: 100%;
+  }
+}
+
+.lineMove2 {
+  stroke: blueviolet;
+  stroke-dasharray: 0 100%;
+  animation: rot2 8s linear infinite;
+}
+
+@keyframes rot2 {
+  100% {
+    stroke-dasharray: 100% 50%;
+  }
+}
 </style>
 <style>
-ul,li{
+ul, li {
   margin: 0;
   padding: 0;
   list-style: none;
 }
+
 .el-collapse-item__header {
   -webkit-user-select: none;
   user-select: none;
@@ -759,4 +918,5 @@ ul,li{
   text-align: left;
   padding-left: 5px;
 }
+
 </style>

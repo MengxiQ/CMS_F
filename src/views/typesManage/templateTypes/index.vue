@@ -71,9 +71,11 @@
 
 <script>
 import { getTemplateTypesList, addTemplateTypes, updateTemplateTypes, deleteTemplateTypes } from '@/api/typesManage'
+import {typeMixin} from "@/views/typesManage/mixin/typeMixin";
 
 export default {
-  name: 'templateTypes',
+  name: 'TemplateTypes',
+  mixins: [typeMixin],
   data() {
     return {
       list: [],
@@ -131,17 +133,18 @@ export default {
       })
     },
     getList() {
-      getTemplateTypesList().then(res => {
-        // enableEdit
-        const data = res.map(item => {
-          item.enableEdit = false
-          return item
-        })
-        this.list = data
-      }).catch(erro => {
-        console.log(erro)
-        this.$message({ type: 'error', message: '获取列表失败！' })
-      })
+      this.updateType('templateTypes')
+      // getTemplateTypesList().then(res => {
+      //   // enableEdit
+      //   const data = res.map(item => {
+      //     item.enableEdit = false
+      //     return item
+      //   })
+      //   this.list = data
+      // }).catch(erro => {
+      //   console.log(erro)
+      //   this.$message({ type: 'error', message: '获取列表失败！' })
+      // })
     }
   },
   mounted() {

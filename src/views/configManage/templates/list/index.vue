@@ -1,22 +1,50 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.name" size="small" placeholder="模板名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input
+        v-model="listQuery.name"
+        size="small"
+        placeholder="模板名称"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
       <el-select
         v-model="listQuery.tempType"
-        size="small" placeholder="模板类型"
+        size="small"
+        placeholder="模板类型"
         clearable
-        class="filter-item" style="width: 130px">
-         <el-option v-for="(item, key) in this.$store.getters.templateTypes"
-                           :key="key" :label="item.name" :value="item.id" />
+        class="filter-item"
+        style="width: 130px"
+      >
+        <el-option
+          v-for="(item, key) in this.$store.getters.templateTypes"
+          :key="key"
+          :label="item.name"
+          :value="item.id"
+        />
       </el-select>
       <el-button v-waves size="small" class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
-      <el-button size="small" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button
+        size="small"
+        class="filter-item"
+        style="margin-left: 10px;"
+        type="primary"
+        icon="el-icon-edit"
+        @click="handleCreate"
+      >
         添加
       </el-button>
-      <el-button size="small" class="filter-item" style="margin-left: 10px;" type="success" icon="el-icon-refresh" @click="handlerefresh">
+      <el-button
+        size="small"
+        class="filter-item"
+        style="margin-left: 10px;"
+        type="success"
+        icon="el-icon-refresh"
+        @click="handlerefresh"
+      >
         刷新
       </el-button>
     </div>
@@ -31,63 +59,71 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-<!--      展开行-->
+      <!--      展开行-->
       <el-table-column type="expand">
-        <div slot="header" slot-scope="scope"> <i class="el-icon-view"></i></div>
+        <div slot="header" slot-scope=""><i class="el-icon-view" /></div>
         <template slot-scope="props">
-          <el-form label-position="left"  class="demo-table-expand">
-          <el-form-item label="支持设备:">
-            <span v-for="(item , key) in props.row.support"
-               :key="key"
-               class="support-item"
-            >{{ item}}</span>
-          </el-form-item>
+          <el-form label-position="left" class="demo-table-expand">
+            <el-form-item label="支持设备:">
+              <span
+                v-for="(item , key) in props.row.support"
+                :key="key"
+                class="support-item"
+              >{{ item }}</span>
+            </el-form-item>
 
-             <el-form-item label="模板功能:">
-            <div>命令：{{props.row.function?props.row.function.name: 'null' }}&nbsp; &nbsp; # &nbsp; &nbsp;{{ props.row.function?props.row.function.remark:'null' }}</div>
-          </el-form-item>
+            <el-form-item label="模板功能:">
+              <div>命令：{{ props.row.function ? props.row.function.name : 'null' }}&nbsp; &nbsp; # &nbsp;
+                &nbsp;{{ props.row.function ? props.row.function.remark : 'null' }}
+              </div>
+            </el-form-item>
             <el-form-item label="模板描述:">
-            <div>{{ props.row.remark }}</div>
-          </el-form-item>
+              <div>{{ props.row.remark }}</div>
+            </el-form-item>
             <el-form-item label="模板参数:">
               <el-row>
-                <el-col v-for="(item, key) in props.row.params_set" :span="24" :key="key">
-                  <span class="show-param—item">参数{{key+1}}：{{ item.name }}</span>
-                  <span class="show-param—item">描述：{{item.remark}}</span>
-                  <span class="show-param—item">约束：{{item.constraint}}</span>
+                <el-col v-for="(item, key) in props.row.params_set" :key="key" :span="24">
+                  <span class="show-param—item">参数{{ key + 1 }}：{{ item.name }}</span>
+                  <span class="show-param—item">描述：{{ item.remark }}</span>
+                  <span class="show-param—item">约束：{{ item.constraint }}</span>
                 </el-col>
               </el-row>
-          </el-form-item>
+            </el-form-item>
           </el-form>
           <h4>模板内容：</h4>
-<!--          <pre class="code">-->
-<!--              {{props.row.templateData.trim()}}-->
-<!--          </pre>-->
-          <template-edit class="code-block" :template="props.row" :readOnly="true"></template-edit>
+          <!--          <pre class="code">-->
+          <!--              {{props.row.templateData.trim()}}-->
+          <!--          </pre>-->
+          <template-edit class="code-block" :template="props.row" :read-only="true" />
 
         </template>
       </el-table-column>
-<!--      -->
-      <el-table-column label="模板名称"
-                       prop="name"
-                       align="center"
-                       :class-name="getSortClass('id')">
+      <!--      -->
+      <el-table-column
+        label="模板名称"
+        prop="name"
+        align="center"
+        :class-name="getSortClass('id')"
+      />
+      <el-table-column
+        label="模板类型"
+        prop="tempType.name"
+        align="center"
+        :class-name="getSortClass('id')"
+      />
+      <el-table-column
+        label="模板功能"
+        prop="function.name"
+        align="center"
+        :class-name="getSortClass('id')"
+      />
+      <el-table-column label="最后更新" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.updateDate | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <!--          <span>{{ row.stock_date }}</span>-->
+        </template>
       </el-table-column>
-      <el-table-column label="模板类型"
-                       prop="tempType.name" align="center"
-                        :class-name="getSortClass('id')">
-      </el-table-column>
-      <el-table-column label="模板功能"
-                       prop="function.remark" align="center"
-                        :class-name="getSortClass('id')">
-      </el-table-column>
-            <el-table-column label="最后更新"  align="center">
-              <template slot-scope="{row}">
-                <span>{{ row.updateDate | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-      <!--          <span>{{ row.stock_date }}</span>-->
-              </template>
-            </el-table-column>
-      <el-table-column label="模板内容" align="center"  class-name="small-padding fixed-width">
+      <el-table-column label="模板内容" align="center" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button size="mini" type="primary" @click="handleEditTemplate(row)">编辑</el-button>
         </template>
@@ -104,65 +140,100 @@
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+    <pagination
+      v-show="total>0"
+      :total="total"
+      :page.sync="listQuery.page"
+      :limit.sync="listQuery.limit"
+      @pagination="getList"
+    />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="80%" @close="clsotEditDialog">
-      <el-form ref="dataForm"  label-position="left" label-width="80px" >
-            <el-form-item label="模板名称" >
-              <el-input style="width: 250px" v-model="temp.name" />
-            </el-form-item>
-            <el-form-item label="模板类型" >
-              <el-select v-model="temp.tempType"
-                         filterable
-                         placeholder="Please select">
-                <el-option v-for="(item, key) in this.$store.getters.templateTypes"
-                           :key="key" :label="item.name" :value="item.name" />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="支持型号" >
-<!--              //支持的模板型号-->
-              <el-select
-               v-model="temp.support"
-               multiple
-               filterable
-              >
-                <el-option v-for="(item, key) in this.$store.getters.unitTypes"
-                           :key="key" :label="item.name" :value="item.name" />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="模板功能" >
-              <el-select
-                v-model="temp.function"
-                filterable
-                :placeholder="'select'"
-              >
-              <el-option v-for="(item, key) in this.$store.getters.functionTypes"
-                         :key="key" :label="item.name" :value="item.name" >
-                <span  style="float: left; margin-right: 20px"> {{item.name}}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px ">{{item.remark}}</span>
-              </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="最后更新">
-              <el-date-picker v-model="temp.updateDate" type="datetime" placeholder="Please pick a date" />
-            </el-form-item>
-            <el-form-item label="模板描述">
-              <el-input v-model="temp.remark" type="textarea" />
-            </el-form-item>
+      <el-form ref="dataForm" label-position="left" label-width="80px">
+        <el-form-item label="模板名称">
+          <el-input v-model="temp.name" style="width: 250px" />
+        </el-form-item>
+        <el-form-item label="模板类型">
+          <el-select
+            v-model="temp.tempType"
+            filterable
+            placeholder="Please select"
+          >
+            <el-option
+              v-for="(item, key) in this.$store.getters.templateTypes"
+              :key="key"
+              :label="item.name"
+              :value="item.name"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="支持型号">
+          <!--              //支持的模板型号-->
+          <el-select
+            v-model="temp.support"
+            multiple
+            filterable
+          >
+            <el-option
+              v-for="(item, key) in this.$store.getters.unitTypes"
+              :key="key"
+              :label="item.name"
+              :value="item.name"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="模板功能">
+          <el-select
+            v-model="temp.function"
+            filterable
+            :placeholder="'select'"
+          >
+            <el-option
+              v-for="(item, key) in this.$store.getters.functionTypes"
+              :key="key"
+              :label="item.name"
+              :value="item.name"
+            >
+              <span style="float: left; margin-right: 20px"> {{ item.name }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px ">{{ item.remark }}</span>
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="最后更新">
+          <el-date-picker v-model="temp.updateDate" type="datetime" placeholder="Please pick a date" />
+        </el-form-item>
+        <el-form-item label="模板描述">
+          <el-input v-model="temp.remark" type="textarea" />
+        </el-form-item>
         <h4>模板内容：</h4>
         <h4>参数:(动态添加表单) # 核验xml data中是否有$(参数)
-          <el-button @click="handleAddParam" title="添加模板参数" style="transform: scale(0.8)" size="mini" type="" icon="el-icon-plus"></el-button></h4>
+          <el-button
+            title="添加模板参数"
+            style="transform: scale(0.8)"
+            size="mini"
+            type=""
+            icon="el-icon-plus"
+            @click="handleAddParam"
+          />
+        </h4>
         <el-row>
           <el-col v-for="(item, key) in temp.params" :key="key" :span="24" style="font-weight: 700">
-            参数{{key}}：
-            <label style="font-weight: normal" class="param-item">名称<el-input v-model="item.name" class="param-item-input" size="mini" ></el-input></label>
-            <label style="font-weight: normal" class="param-item">描述<el-input v-model="item.remark" class="param-item-input" size="mini"  placeholder="可选"></el-input></label>
-            <label style="font-weight: normal" class="param-item">约束<el-input v-model="item.constraint" class="param-item-input" size="mini"  placeholder="参数约束"></el-input></label>
+            参数{{ key }}：
+            <label style="font-weight: normal" class="param-item">名称
+              <el-input v-model="item.name" class="param-item-input" size="mini" />
+            </label>
+            <label style="font-weight: normal" class="param-item">描述
+              <el-input v-model="item.remark" class="param-item-input" size="mini" placeholder="可选" />
+            </label>
+            <label style="font-weight: normal" class="param-item">约束
+              <el-input v-model="item.constraint" class="param-item-input" size="mini" placeholder="参数约束" />
+            </label>
+            <label><el-button type="danger" size="mini" @click="deleteParam(key)">删除</el-button></label>
           </el-col>
         </el-row>
 
         <div style="border:1px solid #bfcbd9">
-          <template-edit  :template="temp" :readOnly="false"></template-edit>
+          <template-edit :template="temp" :read-only="false" />
         </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -175,11 +246,11 @@
       </div>
     </el-dialog>
 
-
-    <el-dialog  title="编辑模板" :visible="isEditTemplate" width="90%" @close="isEditTemplate = false">
-<!--      <h1 style="position:absolute; margin: 0;padding: 0;width: 100%;text-align: left;font-size: 17px;font-weight: normal;height: 20px">{{ativeTemplate.name}}</h1>-->
-      <template slot="title">编辑模板: <span style="font-weight: bold; color: #3d7ed5">{{ativeTemplate.name}}</span></template>
-      <template-edit class="code-block" :template="ativeTemplate" :readOnly="false"></template-edit>
+    <el-dialog title="编辑模板" :visible="isEditTemplate" width="90%" @close="isEditTemplate = false">
+      <!--      <h1 style="position:absolute; margin: 0;padding: 0;width: 100%;text-align: left;font-size: 17px;font-weight: normal;height: 20px">{{ativeTemplate.name}}</h1>-->
+      <template slot="title">编辑模板: <span style="font-weight: bold; color: #3d7ed5">{{ ativeTemplate.name }}</span>
+      </template>
+      <template-edit class="code-block" :template="ativeTemplate" :read-only="false" />
       <div slot="footer" class="dialog-footer">
         <el-button size="mini" @click="isEditTemplate = false">
           取消
@@ -196,7 +267,7 @@
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-import {getTemplatesList, saveTemplate, addTemplate, deleteTemplate, updateTemplate} from '@/api/templates'
+import { getTemplatesList, saveTemplate, addTemplate, deleteTemplate, updateTemplate } from '@/api/templates'
 import TemplateEdit from '@/views/configManage/templates/edit/index'
 
 export default {
@@ -211,9 +282,9 @@ export default {
   },
   data() {
     return {
-      //编辑模板
-      isEditTemplate:false,
-      ativeTemplate:{templateData:''},
+      // 编辑模板
+      isEditTemplate: false,
+      ativeTemplate: { templateData: '' },
       //
       tableKey: 0,
       list: null,
@@ -233,12 +304,12 @@ export default {
       showReviewer: false,
       temp: {
         name: '',
-        tempType:'',
+        tempType: '',
         support: [],
         updateDate: new Date(),
         function: null,
-        params: [{name:'', remark:'', constraint:''}],
-        templateData:'<-- 开始编辑你的模板内容!-->'
+        params: [{ name: '', remark: '', constraint: '' }],
+        templateData: '<-- 开始编辑你的模板内容!-->'
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -256,28 +327,36 @@ export default {
       downloadLoading: false
     }
   },
+  created() {
+    this.getList()
+    // this.$store.dispatch('getTypes')
+  },
   methods: {
-    //关闭编辑对话框
-    clsotEditDialog(){
-      this.resetTemp()
-       this.getList()
+    // 删除参数属性
+    deleteParam(key) {
+      console.log(key)
+      this.temp.params.splice(key, 1)
     },
-    //点击新增参数
-    handleAddParam(){
-      this.temp.params.push({name:'',remark:''})
+    // 关闭编辑对话框
+    clsotEditDialog() {
+      this.resetTemp()
+      this.getList()
+    },
+    // 点击新增参数
+    handleAddParam() {
+      this.temp.params.push({ name: '', remark: '' })
     },
     // 保存模板
-    saveTemplate(){
+    saveTemplate() {
       console.log(this.ativeTemplate)
       saveTemplate(this.ativeTemplate).then(res => {
-        console.log('res',res)
+        console.log('res', res)
         this.isEditTemplate = false
-        this.ativeTemplate = {templateData:''}
-        this.$message({type:'success',message:'保存成功'})
+        this.ativeTemplate = { templateData: '' }
+        this.$message({ type: 'success', message: '保存成功' })
       }).catch()
-
     },
-    handleEditTemplate(row){
+    handleEditTemplate(row) {
       this.ativeTemplate = row
       this.isEditTemplate = true
     },
@@ -326,14 +405,17 @@ export default {
     resetTemp() {
       this.temp = {
         name: '',
-        tempType:'',
+        tempType: '',
         support: [],
         updateDate: new Date(),
         function: null,
-        params:[{name:'',remark:'',constraint: null}],
-        templateData:'<-- 开始编辑你的模板内容!-->'
+        params: [{ name: '', remark: '', constraint: null }],
+        templateData: '<!- 开始编辑你的模板内容-->\n' +
+          '<!-get--> \n\n' +
+          '<!-create-->\n\n' +
+          '<!-update-->\n\n' +
+          '<!-delete-->\n\n'
       }
-
     },
     handleCreate() {
       this.resetTemp()
@@ -367,13 +449,13 @@ export default {
     handleUpdate(row) {
       const data = Object.assign({}, row)
       data.function = data.function.name
-      let params = data.params_set
-      let tempType = data.tempType.name
+      const params = data.params_set
+      const tempType = data.tempType.name
       data.params = params
       data.tempType = tempType
       delete data.params_set
 
-       this.temp = Object.assign({}, data) // copy obj
+      this.temp = Object.assign({}, data) // copy obj
       //
       // this.temp = row
       // console.log(this.temp)
@@ -386,7 +468,7 @@ export default {
       // })
     },
     updateData() {
-      updateTemplate(this.temp).then( res => {
+      updateTemplate(this.temp).then(res => {
         // const index = this.list.findIndex(v => v.id === this.temp.id)
         // this.list.splice(index, 1, this.temp)
         this.getList()
@@ -435,86 +517,90 @@ export default {
     getSortClass: function(key) {
       const sort = this.listQuery.sort
       return sort === `+${key}` ? 'ascending' : 'descending'
-    },
-  },
-    created() {
-    this.getList()
-    // this.$store.dispatch('getTypes')
-  },
-  mounted() {
-
-  },
-  updated() {
-
+    }
   }
 }
 </script>
 <style lang="scss" scoped>
-  .code-block{
-    border: 1px solid rgb(191, 203, 217);
-  }
-  .show-param—item{
-    padding: 5px;
-    margin-right: 10px;
-  }
-  .param-item{
-    display: inline-block;
-    margin: 10px;
-  }
-  .param-item-input{
-   display: inline-block;
-    width: 200px;
-    margin-left: 10px;
-  }
+.code-block {
+  border: 1px solid rgb(191, 203, 217);
+}
 
-  .filter-container{
-    padding: 10px;
-  }
-  .filter-item{
-    margin-right: 5px;
-  }
-  .dialog_content{
-    display: inline-block;
-    width: 50%;
-    padding:0 20px;
+.show-param—item {
+  padding: 5px;
+  margin-right: 10px;
+}
 
-  }
-  .left{
-    float: left;
-    border-right: rgb(52, 153, 215) dashed 1px;
-  }
-  .right{
-    float: right;
-  }
-  .dialog_body{
-    height: 500px;
-  }
-  .dialog_title{
-    color: #313131;
-  }
-   .demo-table-expand {
-    font-size: 0;
-  }
-  .demo-table-expand label {
-    width: 90px;
-    color: #99a9bf;
-  }
-  .demo-table-expand .el-form-item {
-    margin-right: 0;
-    margin-bottom: 0;
-    width: 50%;
+.param-item {
+  display: inline-block;
+  margin: 10px;
+}
 
-  }
-  .support-item{
-    margin: 0 20px 0 0;
-    //background: red;
-    //line-height: 25px;
-    ////height: 25px;
-  }
-  .code{
-    border: 1px solid rgb(235,238,245);
-    background-color: #f9f9f9;
-    color: #2b2f3a;
-    padding: 5px;
-  }
+.param-item-input {
+  display: inline-block;
+  width: 200px;
+  margin-left: 10px;
+}
+
+.filter-container {
+  padding: 10px;
+}
+
+.filter-item {
+  margin-right: 5px;
+}
+
+.dialog_content {
+  display: inline-block;
+  width: 50%;
+  padding: 0 20px;
+
+}
+
+.left {
+  float: left;
+  border-right: rgb(52, 153, 215) dashed 1px;
+}
+
+.right {
+  float: right;
+}
+
+.dialog_body {
+  height: 500px;
+}
+
+.dialog_title {
+  color: #313131;
+}
+
+.demo-table-expand {
+  font-size: 0;
+}
+
+.demo-table-expand label {
+  width: 90px;
+  color: #99a9bf;
+}
+
+.demo-table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  width: 50%;
+
+}
+
+.support-item {
+  margin: 0 20px 0 0;
+  //background: red;
+  //line-height: 25px;
+  ////height: 25px;
+}
+
+.code {
+  border: 1px solid rgb(235, 238, 245);
+  background-color: #f9f9f9;
+  color: #2b2f3a;
+  padding: 5px;
+}
 </style>

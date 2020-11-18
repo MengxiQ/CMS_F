@@ -7,6 +7,7 @@
           <el-step title="2:选择设备"></el-step>
           <el-step title="3:确认和挑选"></el-step>
         </el-steps>
+        <span style="font-size: smaller;color: #97a8be">tips: 批量用户指定的是用一个用户批量生产多个设备的用户。</span>
       </el-col>
     </el-row>
     <div id="0" v-show="active === 0" style="text-align: center; margin-top: 50px">
@@ -200,10 +201,10 @@
 
 <script>
 import { fetchList, batchUsers } from '@/api/netconfUsers'
-import {fetchEquipmentListByIp} from '@/api/equipment'
+import { fetchEquipmentListByIp } from '@/api/equipment'
 
 export default {
-  name: 'index',
+  name: 'Index',
   data() {
     return {
       query: {
@@ -214,8 +215,7 @@ export default {
         equipment: {
           beginIP: '',
           endIP: '',
-          vendor:''
-
+          vendor: ''
         }
       },
       active: 0,
@@ -237,8 +237,8 @@ export default {
       choicUser: {},
       equipmentsList: [],
       choicEquipments: [],
-      targetData: [],//key值的数组（设备id）
-      targerEquipments: [],//选中的用户
+      targetData: [],// key值的数组（设备id）
+      targerEquipments: [],// 选中的用户
       success:false,// 是否成功
     }
   },

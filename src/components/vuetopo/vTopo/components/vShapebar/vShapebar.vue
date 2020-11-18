@@ -15,59 +15,19 @@
         size="mini"
         @click.stop.prevent="isManage = !isManage"
       >
-        {{ isManage?'隐藏':'管理' }}</el-button>
+        {{ isManage ? '隐藏' : '管理' }}
+      </el-button>
       <el-popover
+        v-model="selectEquipmentVisible"
         placement="right"
         trigger="click"
         width="600"
       >
         <div class="select-equipment-contair">
-          <h1 style="font-weight: bold;padding: 0 0 10px 0;">添加设备</h1>
-          <el-form size="mini" :inline="true" :model="seachData" class="demo-form-inline">
-            <el-form-item label="起始IP:">
-              <el-input v-model="seachData.beginIP" placeholder="起始IP" />
-            </el-form-item>
-            <el-form-item label="结束IP:">
-              <el-input v-model="seachData.endIP" placeholder="结束IP" />
-            </el-form-item>
-            <el-form-item>
-              <el-button icon="el-icon-search" type="primary" @click="onSearch">查询</el-button>
-            </el-form-item>
-            <ul class="select-equipment-contair-show">
-              <el-table
-                ref="multipleTable"
-                :data="tableData"
-                tooltip-effect="dark"
-                style="width: 100%"
-                height="300"
-                @selection-change="handleSelectionChange"
-              >
-                <el-table-column
-                  type="selection"
-                  width="55"
-                />
-                <el-table-column
-                  label="IP"
-
-                  prop="ip"
-                />
-                <el-table-column
-                  prop="name"
-                  label="名称"
-                />
-                <el-table-column
-                  prop="type"
-                  label="类型"
-                />
-              </el-table>
-            </ul>
-          </el-form>
-          <br>
-          <el-button style="float: right;margin-right: 10px" type="" size="mini">取消</el-button>
-          <el-button style="float: right;margin-right: 10px" type="primary" size="mini">添加</el-button>
-
+          <!-- 添加设备-->
+          <query-equipment @selected="selected"></query-equipment>
+          <el-button style="float: right; margin-right: 5px" size="mini" @click="selectEquipmentVisible = false">关闭</el-button>
         </div>
-
         <el-button
           slot="reference"
           type="primary"
@@ -100,10 +60,11 @@
           @mousedown.stop.prevent="dragShapeNode(shapeNodeLstData,key,$event)"
         >
           <div class="shapeIcon">
-            <img class="shapeIconImg" :src="ele.icon">
+<!--            <img class="shapeIconImg" :src="ele.icon">-->
+            <img class="shapeIconImg" src="@/assets/topo/application.png">
           </div>
           <div class="shapeName">{{ ele.name }}</div>
-          <i v-if="isManage" class="el-icon-delete delete-btn" title="删除" @click.stop.prevent="deleteNode(key)" />
+          <i v-if="isManage" class="el-icon-delete delete-btn" title="删除" @click.stop.prevent="deleteNode(key)"/>
         </li>
       </ul>
       <!--      显示方式：列表-->
@@ -122,7 +83,7 @@
           <div class="shapeName-list" style="color: #3a8ee6">{{ ele.ip }}</div>
           <div class="shapeName-list">{{ ele.netype }}</div>
 
-          <i v-if="isManage" class="el-icon-delete delete-btn" title="删除" @click.stop.prevent="deleteNode(key)" />
+          <i v-if="isManage" class="el-icon-delete delete-btn" title="删除" @click.stop.prevent="deleteNode(key)"/>
         </li>
       </ul>
       <p style="color: #909399; padding: 50px 0px;text-align: left;">tips：del键--删除节点或者连线。</p>
@@ -132,36 +93,22 @@
 
 <script>
 // import shapeNodeLstData from '../../../data/toolbarNodeData' // 初始左侧toolbarNode数据（可从后台获取）
+import QueryEquipment from '@/components/vuetopo/vTopo/components/vShapebar/components/queryEquipments'
+
 export default {
   name: 'VShapebar',
-  components: {},
+  components: { QueryEquipment },
   props: {
     shapeNodeLstData: {
-      type: Array,
-      default() {
-        return []
-      }
+      type: Array
     }
   },
   data() {
     return {
+      selectEquipmentVisible: false,
       itemShowType: true,
-      // shapeNodeLstData:[] //shapebar数据
-      isManage: false,
-      seachData: {
-        beginIP: '',
-        endIP: ''
-      },
-      tableData: [
-        { ip: '192.168.0.100', name: 'CE1', type: 'CE交换机' },
-        { ip: '192.168.0.100', name: 'CE1', type: 'CE交换机' },
-        { ip: '192.168.0.100', name: 'CE1', type: 'CE交换机' },
-        { ip: '192.168.0.100', name: 'CE1', type: 'CE交换机' },
-        { ip: '192.168.0.100', name: 'CE1', type: 'CE交换机' },
-        { ip: '192.168.0.100', name: 'CE1', type: 'CE交换机' },
-        { ip: '192.168.0.100', name: 'CE1', type: 'CE交换机' },
-        { ip: '192.168.0.100', name: 'CE1', type: 'CE交换机' }
-      ]
+      // shapeNodeLstData: [], // shapebar数据
+      isManage: false
     }
   },
   mounted() {
@@ -170,9 +117,24 @@ export default {
   created() {
   },
   methods: {
-    // 点击查询
-    onSearch() {
-      console.log(this.seachData)
+    // 时间，选择并返回的设备列表
+    selected(data) {
+      const shapeNodeLstData = data.map((item, key) => {
+        return {
+          type: 'ApplicationModule',
+          name: item.name,
+          icon: '@/assets/topo/application.png',
+          width: 50,
+          height: 50,
+          num: 1,
+          classType: 'T2',
+          ip: item.ip,
+          netype: item.type,
+          status: 'health'
+          // status: 'alarm'
+        }
+      })
+      this.$emit('selected', shapeNodeLstData)
     },
     // 多选
     handleSelectionChange() {
@@ -199,14 +161,17 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-@theme-color: rgb(245,247,250);
+@theme-color: rgb(245, 247, 250);
 @theme-border-color: #aaaaaa;
-@theme-font-color:#525252;
+@theme-font-color: #525252;
 @border-color: #aaaaaa;
 /*svgMain左侧工具栏*/
-.manage-btn{
-  float: right; margin-top: 7px; transform: scale(0.8)
+.manage-btn {
+  float: right;
+  margin-top: 7px;
+  transform: scale(0.8)
 }
+
 .shapebarWrap {
   height: 100%;
   box-sizing: border-box;
@@ -231,7 +196,7 @@ export default {
     overflow: hidden;
     white-space: nowrap;
     //border-bottom: 1px  solid @border-color;
-    box-shadow: rgba(0,0,0,0.2) 0 1px;
+    box-shadow: rgba(0, 0, 0, 0.2) 0 1px;
   }
 
   .shapeNodeLstWrap {
@@ -271,6 +236,7 @@ export default {
     margin-right: 0
   }
 }
+
 .shapeNode-list {
   position: relative;
   margin-top: 5px;
@@ -291,35 +257,39 @@ export default {
   //background: rebeccapurple;
 
 }
-.shapeNode-list:hover{
+
+.shapeNode-list:hover {
   background: #e4f1ff;
 }
+
 /*移动的node*/
 .shapeIcon {
   text-align: center;
   -webkit-user-select: none;
   user-select: none;
 }
+
 .shapeIcon-list {
   text-align: center;
   -webkit-user-select: none;
   user-select: none;
   display: inline-block;
 }
-  .shapeIconImg {
-    width: 28px;
-    height: 28px;
-    -webkit-user-select: none;
-    user-select: none;
-  }
 
-  .shapeIconImgi-list{
-    width: 20px;
-    height: 20px;
-    -webkit-user-select: none;
-    user-select: none;
-    display: inline-block;
-  }
+.shapeIconImg {
+  width: 28px;
+  height: 28px;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.shapeIconImgi-list {
+  width: 20px;
+  height: 20px;
+  -webkit-user-select: none;
+  user-select: none;
+  display: inline-block;
+}
 
 .shapeName {
   font-size: 12px;
@@ -332,6 +302,7 @@ export default {
   user-select: none;
   color: #000
 }
+
 .shapeName-list {
   font-size: 12px;
   text-overflow: ellipsis;
@@ -343,13 +314,15 @@ export default {
   display: inline-block;
   margin-left: 2px;
 }
-.delete-btn{
+
+.delete-btn {
   color: red;
   position: absolute;
   top: 2px;
   right: 2px;
 }
-.delete-btn:hover{
+
+.delete-btn:hover {
   font-weight: bold;
 }
 </style>

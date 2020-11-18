@@ -1,0 +1,159 @@
+<template>
+  <div v-loading="loadingInit">
+    <el-table
+      :data="list"
+      height="400"
+    >
+      <el-table-column
+        label="名称"
+        prop="ifName"
+        align="center"
+      />
+      <el-table-column
+        label="类型"
+        prop="l2Enable"
+        align="center"
+      >
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.l2Enable === 'enable'" size="" type="">二层</el-tag>
+          <el-tag v-else size="" type="success">三层</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="链路类型"
+        prop="l2Attribute.linkType"
+        align="center"
+      />
+      <el-table-column
+        label="接口vlan"
+        prop="l2Attribute.pvid"
+        align="center"
+      />
+      <el-table-column
+        label="TrunkVlan"
+        prop=""
+        align="center"
+      >
+        <template slot-scope="scope">
+          <span style="width: 100px; height: 50px; display: block; overflow: hidden ">
+            {{scope.row.l2Attribute ? scope.row.l2Attribute.trunkVlans : ''}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" align="center" width="150">
+        <template slot="header">
+<!--           <el-button type="primary" size="mini" @click="handleCreate">添加</el-button>-->
+          <el-button type="success" size="mini" @click="getList">刷新</el-button>
+        </template>
+        <template slot-scope="scope">
+          <el-button type="" size="mini" @click="handleUpdate(scope.row)">
+            编辑
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <!--    编辑框-->
+    <el-dialog :title="dialogEditStatus" :visible.sync="dialogEditShow" :before-close="beforCloseDialog">
+      <el-form label-position="left" label-width="120px">
+        <el-form-item
+          v-for="(item, key) in params"
+          :key="key"
+          style="position: relative; padding: 10px 0 20px 0"
+          :label="item.name"
+          size="medium"
+        >
+          <div style="position: absolute;z-index: 100;top: -28px; font-size: smaller; color: #5a5e66">{{ item.remark }}
+            <span style="margin-left: 5px;color: #3d7ed5">({{ item.constraint }})</span></div>
+          <el-select
+            v-if="(item.constraint).match('CHIOCE<(?<p>.*)>')"
+            v-model="temp[item.name]"
+            :disabled="temp.l2Enable === 'disable' && item.name === 'linkType'"
+          >
+            <el-option
+              v-for="(i, k) in constraint(item.constraint)"
+              :key="k"
+              :value="i"
+              :label="i"
+            />
+          </el-select>
+          <el-input
+            v-if="item.constraint === 'INT' || item.constraint === 'IP' || item.constraint === 'MASK' || item.constraint === 'WILDCARD' || item.constraint === 'STRING'"
+            v-model="temp[item.name]"
+            :disabled="temp.l2Enable === 'disable' && (item.name === 'linkType'|| item.name === 'pvid'|| item.name === 'trunkVlans'|| item.name === 'trunkVlans' )"
+          />
+        </el-form-item>
+      </el-form>
+      <el-row>
+        <el-col :span="24" style="text-align: right">
+          <el-button type="primary" size="mini" @click="handleSave()">保存</el-button>
+          <el-button type="" size="mini" @click="dialogEditShow = !dialogEditShow">取消</el-button>
+        </el-col>
+      </el-row>
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+import { baseMinxin } from '@/views/equipments/detail/components/Mixin/baseMixin'
+import { getEthernetInterfaces, createEthernetInterface, deleteEthernetInterface } from '@/api/detail/interfaces'
+
+export default {
+  name: 'EthernetInterfaces',
+  mixins: [baseMinxin],
+  data() {
+    return {
+      temp: {
+        ifName: '',
+        l2Enable: '',
+        linkType: '',
+        pvid: '',
+        trunkVlans: ''
+      }
+    }
+  },
+  methods: {
+    beforCloseDialog() {
+      this.dialogEditShow = false
+      this.temp = {
+        ifName: '',
+        l2Enable: '',
+        linkType: '',
+        pvid: '',
+        trunkVlans: ''
+      }
+    },
+    handleUpdate(row) {
+      this.temp.ifName = row.ifName
+      this.temp.l2Enable = row.l2Enable
+      if (row.l2Attribute) {
+        this.temp.linkType = row.l2Attribute.linkType
+        this.temp.pvid = row.l2Attribute.pvid
+        this.temp.trunkVlans = row.l2Attribute.trunkVlans
+      }
+      this.dialogEditStatus = 'update'
+      this.dialogEditShow = true
+    },
+    handleSave() {
+      this.loadingInit = true
+      const data = {
+        ip: this.ip,
+        data: this.temp
+      }
+      console.log(data)
+      createEthernetInterface(data).then(res => this.createSuccess()).catch(error => this.createError(error))
+    },
+    getList() {
+      this.loadingInit = true
+      getEthernetInterfaces(this.ip).then(res => {
+        console.log(res)
+        this.list = res.data.ethernet.ethernetIfs.ethernetIf
+        this.params = res.params
+        this.loadingInit = false
+      }).catch(error => this.getListError(error))
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>

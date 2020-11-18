@@ -1,7 +1,8 @@
 import request from '@/utils/request'
- /**
-  * 模板类型
-  * **/
+
+/**
+ * 模板类型
+ * **/
 export function getTemplateTypesList(params) {
   return request({
     url: '/typeManage/templateTypes/',
@@ -17,23 +18,25 @@ export function addTemplateTypes(data) {
     data
   })
 }
+
 export function updateTemplateTypes(data) {
   return request({
-    url: '/typeManage/templateTypes/'+data.id,
+    url: '/typeManage/templateTypes/' + data.id,
     method: 'put',
     data
   })
 }
+
 export function deleteTemplateTypes(id) {
   return request({
-    url: '/typeManage/templateTypes/'+id,
+    url: '/typeManage/templateTypes/' + id,
     method: 'delete'
   })
 }
 
- /**
-  * 设备型号
-  * **/
+/**
+ * 设备型号
+ * **/
 export function getUnitTypesList(params) {
   return request({
     url: '/typeManage/unitTypesTypes/',
@@ -49,19 +52,22 @@ export function addUnitType(data) {
     data
   })
 }
+
 export function updateUnitType(data) {
   return request({
-    url: '/typeManage/unitTypesTypes/'+data.id,
+    url: '/typeManage/unitTypesTypes/' + data.id,
     method: 'put',
     data
   })
 }
+
 export function deleteUnitType(id) {
   return request({
-    url: '/typeManage/unitTypesTypes/'+id,
+    url: '/typeManage/unitTypesTypes/' + id,
     method: 'delete'
   })
 }
+
 /**
  * 功能列表
  * **/
@@ -80,16 +86,18 @@ export function addFunction(data) {
     data
   })
 }
+
 export function updateFunction(data) {
   return request({
-    url: '/typeManage/functions/'+data.id,
+    url: '/typeManage/functions/' + data.id,
     method: 'put',
     data
   })
 }
+
 export function deleteFunction(id) {
   return request({
-    url: '/typeManage/functions/'+id,
+    url: '/typeManage/functions/' + id,
     method: 'delete'
   })
 }
@@ -112,16 +120,53 @@ export function addNeType(data) {
     data
   })
 }
+
 export function updateNeType(data) {
   return request({
-    url: '/typeManage/neTypes/'+data.id,
+    url: '/typeManage/neTypes/' + data.id,
     method: 'put',
     data
   })
 }
+
 export function deleteNeType(id) {
   return request({
-    url: '/typeManage/neTypes/'+id,
+    url: '/typeManage/neTypes/' + id,
     method: 'delete'
   })
 }
+
+/**
+ * 厂商类型
+ * **/
+export function getVendorTypesList(params) {
+  return request({
+    url: '/typeManage/vendorTypes/',
+    method: 'get',
+    params
+  })
+}
+
+export function addVendorType(data) {
+  return request({
+    url: '/typeManage/vendorTypes/',
+    method: 'post',
+    data
+  })
+}
+
+export function updateVendorType(data) {
+  return request({
+    url: '/typeManage/neTypes/' + data.id,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteVendorType(id) {
+  return request({
+    url: '/typeManage/vendorTypes/' + id,
+    method: 'delete'
+  })
+}
+

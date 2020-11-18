@@ -99,7 +99,7 @@ export const constantRoutes = [
         path: 'topos',
         name: 'Topos',
         component: () => import('@/views/view/topos/index'),
-        meta: { title: '拓扑列表', icon: 'el-icon-s-grid' },
+        meta: { title: '拓扑列表', icon: 'el-icon-s-grid' }
       //   children: [
       //     {
       //       path: 'detail/:name',
@@ -122,8 +122,8 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/configManage/templates',
     name: 'ConfigManage',
-    alwaysShow:true,
-    meta: { title: '配置管理',  icon: 'nested' },
+    alwaysShow: true,
+    meta: { title: '配置管理', icon: 'nested' },
     children: [
       {
         path: 'templates',
@@ -136,19 +136,25 @@ export const constantRoutes = [
         component: () => import('@/views/configManage/yangTool/index'), // Parent router-view
         name: 'yangTool',
         meta: { title: 'Yang工具', icon: 'nested' }
+      },
+      {
+        path: 'xmlTool',
+        component: () => import('@/views/configManage/yangTool/index'), // Parent router-view
+        name: 'xmlTool',
+        meta: { title: 'xml测试工具', icon: 'nested' }
       }
-        ]
+    ]
   },
 
   {
     path: '/types',
     component: Layout,
-    alwaysShow:true,
+    alwaysShow: true,
     meta: { title: '类型管理', icon: 'link' },
     children: [
       {
         path: 'templateTypes',
-        name:'templateTypes',
+        name: 'templateTypes',
         component: () => import('@/views/typesManage/templateTypes/index'),
         meta: { title: '模板类型', icon: 'link' }
       },
@@ -170,13 +176,26 @@ export const constantRoutes = [
         component: () => import('@/views/typesManage/functionTypes/index'),
         meta: { title: '功能列表', icon: 'link' }
       },
-       {
+      {
         path: 'vendorTypes',
         name: 'VendorTypes',
-        component: () => import('@/views/typesManage/functionTypes/index'),
+        component: () => import('@/views/typesManage/vendorTypes/index'),
         meta: { title: '厂商列表', icon: 'link' }
       }
     ]
+  },
+  {
+    path: '/batch',
+    component: Layout,
+    alwaysShow: true,
+    meta: { title: '批量管理', icon: 'link' },
+    children: [
+      {
+        path: 'templateTypes',
+        name: 'BatchTemplateTypes',
+        component: () => import('@/views/typesManage/templateTypes/index'),
+        meta: { title: '批量配置', icon: 'link' }
+      }]
   },
 
   // 404 page must be placed at the end !!!

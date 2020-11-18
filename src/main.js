@@ -17,16 +17,24 @@ import App from './App'
 import store from './store'
 import router from './router'
 
-
 // 代码编辑器
 import VueCodemirror from 'vue-codemirror'
 // import base style
 import 'codemirror/lib/codemirror.css'
-Vue.use(VueCodemirror, /* {
+Vue.use(VueCodemirror /* {
   options: { theme: 'base16-dark', ... },
   events: ['scroll', ...]
 } */)
+// 引入echart基本模板
+const echarts = require('echarts/lib/echarts')
+// 引入所需的图组件
+require('echarts/lib/chart/pie')
+// 引入提示框和title组件，图例
+require('echarts/lib/component/tooltip')
+require('echarts/lib/component/title')
+require('echarts/lib/component/legend')
 
+Vue.prototype.$echarts = echarts
 //
 import '@/icons' // icon
 import '@/permission' // permission control
