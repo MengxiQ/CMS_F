@@ -30,3 +30,11 @@ export function getSystemInfo(ip) {
   })
 }
 
+export function updateSystemInfo(data) {
+  return request({
+    url: '/detail/config/monitoring/systemInfo',
+    method: 'post',
+    data
+  })
+}
+

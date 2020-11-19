@@ -22,6 +22,7 @@
         placement="right"
         trigger="click"
         width="600"
+        title="添加设备"
       >
         <div class="select-equipment-contair">
           <!-- 添加设备-->
@@ -121,7 +122,7 @@ export default {
     selected(data) {
       const shapeNodeLstData = data.map((item, key) => {
         return {
-          type: 'ApplicationModule',
+          type: 'switch',
           name: item.name,
           icon: '@/assets/topo/application.png',
           width: 50,

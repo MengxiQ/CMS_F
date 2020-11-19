@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h1 style="font-weight: bold;padding: 0 0 10px 0;">添加设备</h1>
-    <el-form size="mini" :inline="true" class="demo-form-inline">
+<!--    <h4 style="font-weight: bold;padding: 0 0 10px 0;">添加设备</h4>-->
+    <el-form size="mini" :inline="true">
       <el-form-item label="起始IP:">
         <el-input v-model="seachData.beginIP" placeholder="起始IP"/>
       </el-form-item>
@@ -36,6 +36,10 @@
           <el-table-column
             prop="type"
             label="类型"
+          />
+          <el-table-column
+            prop="unittype"
+            label="型号"
           />
         </el-table>
       </ul>

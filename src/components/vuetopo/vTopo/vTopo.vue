@@ -22,7 +22,7 @@
         <li class="svgHeadItem" title="重新渲染" @click="svgMainKey += 1"><i class="el-icon-refresh" /></li>
       </ul>
       <!--      <span style="font-size: 14px">{{ topoData.name }}</span>-->
-      <el-input style="width: 180px" v-model="topoData.name" size="mini" />
+      <label style="font-size: 12px; font-weight: normal">名称：<el-input v-model="topoData.name" style="width: 180px" size="mini" /></label>
       <ul class="svgHeadItemLst">
         <el-popconfirm title="是否保存该拓扑？" @onConfirm="clickSave">
           <el-button slot="reference" icon="el-icon-finished" type="primary" size="mini">保存</el-button>
@@ -321,10 +321,10 @@
               v-for="(ele,key) in topoData.nodes"
               :key="ele.id"
               class="nodesG"
-              :class="{isSelect:ele.isSelect,hoverShowConnectorArror:editable}"
+              :class="{isSelect:ele.isSelect,hoverShowConnectorArror:editable,hoverShowNodetooltip: !editable}"
               :transform="'translate('+ele.x+','+ele.y+')'"
               @mouseover.stop="mouseoverNode(key,$event)"
-              @mousedown.stop="dragSvgNode(key,$event)"
+              @mousedown.stop="dragSvgNode(key,ele,$event)"
               @mouseout.stop="mouseoutLeftConnector(key)"
             >
               <rect
@@ -401,6 +401,46 @@
               <!--                <line x1="-3" y1="-5" x2="4" y2="0.5" stroke="#fff"></line>-->
               <!--                <line x1="4" y1="-0.5" x2="-3" y2="5" stroke="#fff"></line>-->
               <!--              </g>-->
+            <!-- 弹出框
+                            :class="{: !editable}"
+            -->
+              <g
+                class="isShowNodetooltip"
+              >
+                <!-- 阴影-->
+                <defs>
+                  <filter id="NodetooltipShadow" x="0" y="0" width="200%" height="200%">
+                    <feOffset result="offOut" in="SourceAlpha" dx="1" dy="1" />
+                    <feGaussianBlur result="blurOut" in="offOut" stdDeviation="2" />
+                    <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+                  </filter>
+                </defs>
+                <!--  方框-->
+                <rect
+                  :x="ele.width/1.5"
+                  :y="ele.height/1.5"
+                  rx="2"
+                  ry="2"
+                  width="150"
+                  height="200"
+                  class="Nodetooltip"
+                  filter="url(#NodetooltipShadow)"
+                />
+                <g
+                >
+                  <text
+                    :x="(ele.width/1.5) +10 "
+                    :y="(ele.height/1.5) + 20"
+                    fill="#606266"
+                    font-size="12"
+                  >
+                    <tspan :x="(ele.width/1.5) +10 " :y="(ele.height/1.5) + 20">名称: {{ele.name}}</tspan>
+                    <tspan :x="(ele.width/1.5) +10 " :y="(ele.height/1.5) + 50">类型: {{ele.netype}}</tspan>
+                    <tspan :x="(ele.width/1.5) +10 " :y="(ele.height/1.5) + 80">IP: {{ele.ip}}</tspan>
+                    <tspan :x="(ele.width/1.5) +10 " :y="(ele.height/1.5) + 110">状态: {{ele.status}}</tspan>
+                  </text>
+                </g>
+              </g>
             </g>
             <!-- 动态绘制的连线 -->
             <g>
@@ -561,7 +601,7 @@
   </div>
 </template>
 <script>
-// import connectorRules from '@/components/vuetopo/config/connectorRules' // 连线包含关系规则
+
 import vTopoAttrPanel from './components/vTopoAttrPanel'
 import vShapebar from './components/vShapebar/vShapebar'
 import { data } from './data'
@@ -596,6 +636,9 @@ export default {
 @theme-color: rgb(245, 247, 250);
 @theme-border-color: #aaaaaa;
 @theme-font-color: #525252;
+@Nodetooltip-border-width: 0;
+@Nodetooltip-border-color: #066a8b;
+@Nodetooltip-fill-color: #f8f8f8;
 //垂直分割线
 .Vertical-Separator-Lines {
   height: 30%;
@@ -791,7 +834,6 @@ export default {
     display: block;
   }
 }
-
 .nodesG {
   -webkit-user-select: none;
   user-select: none;
@@ -810,6 +852,9 @@ export default {
 
   &.hoverShowConnectorArror:hover .connectorArror {
     display: block
+  }
+  &.hoverShowNodetooltip:hover .isShowNodetooltip {
+    display: block;
   }
 
   .nodeImg {
@@ -833,13 +878,21 @@ export default {
     fill: #fff;
     cursor: default;
   }
+  .Nodetooltip {
+    stroke-width: @Nodetooltip-border-width;
+    stroke: @Nodetooltip-border-color;
+    fill: @Nodetooltip-fill-color;
+    cursor: default;
+  }
 
   .node-alarm {
     --innerRadius: 100px;
     stroke: red;
     fill: #f1b2b2;
   }
-
+  .isShowNodetooltip {
+    display: none;
+  }
   .connectorArror {
     display: none;
 
@@ -902,7 +955,22 @@ ul, li {
   padding: 0;
   list-style: none;
 }
+.pingMessage {
+  /*background: rgb(53, 56, 53);*/
+  color: white;
+}
+.pingMessage>.el-message__icon{
+  display: none;
+}
+.pingMessage>p {
+  padding: 0;
+  margin: 0;
 
+}
+.pingMessage>p>ul>li{
+  padding: 5px;
+  /*color: rgb(192,192,192);*/
+}
 .el-collapse-item__header {
   -webkit-user-select: none;
   user-select: none;
@@ -918,5 +986,4 @@ ul, li {
   text-align: left;
   padding-left: 5px;
 }
-
 </style>

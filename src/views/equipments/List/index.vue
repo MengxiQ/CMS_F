@@ -8,21 +8,15 @@
       <el-select v-model="listQuery.type" size="small" placeholder="类型" clearable class="filter-item">
         <el-option v-for="(item, key) in this.$store.getters.neTypes" :key="key" :label="item.name" :value="item.id"/>
       </el-select>
-      <el-button v-waves size="small" class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        搜索
-      </el-button>
-      <el-button size="small" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit"
-                 @click="handleCreate">
-        添加
-      </el-button>
-      <el-button v-waves size="small" :loading="downloadLoading" class="filter-item" type="primary"
-                 icon="el-icon-download" @click="handleDownload">
-        导出
-      </el-button>
-      <el-button size="small" class="filter-item" style="margin-left: 10px;" type="success" icon="el-icon-refresh"
-                 @click="handlerefresh">
-        刷新
-      </el-button>
+      <el-button size="small" class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜素</el-button>
+      <el-button-group style="float: right">
+        <el-button size="small" class="filter-item" style="" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button>
+  <!--      <el-button v-waves size="small" :loading="downloadLoading" class="filter-item" type="primary"-->
+  <!--                 icon="el-icon-download" @click="handleDownload">-->
+  <!--        导出-->
+  <!--      </el-button>-->
+        <el-button size="small" class="filter-item" style="" type="success" icon="el-icon-refresh" @click="handlerefresh">刷新</el-button>
+      </el-button-group>
       <!--      <el-input class="filter-item" v-model="inver"></el-input>-->
     </div>
 
@@ -82,12 +76,14 @@
       <!--      </el-table-column>-->
       <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="info" size="mini" @click="handleUpdate(row)">
+          <el-button-group>
+          <el-button type="" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
           <el-button size="mini" type="danger" @click="handleDelete(row,$index)">
             删除
           </el-button>
+            </el-button-group>
         </template>
       </el-table-column>
     </el-table>
@@ -541,7 +537,7 @@ export default {
 }
 
 .filter-item {
-  margin-right: 5px;
+  //margin-right: 5px;
 }
 
 .dialog_content {

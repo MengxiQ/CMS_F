@@ -547,7 +547,7 @@ export default {
 }
 
 .filter-item {
-  margin-right: 5px;
+  //margin-right: 5px;
 }
 
 .dialog_content {

@@ -1,8 +1,9 @@
-import connectorRules from '@/components/vuetopo/config/connectorRules'
+import connectorRules from '@/components/vuetopo/config/connectorRules' // 连线包含关系规则
 export const data = {
   data() {
     return {
-      lineDefaultColor: '#0099FF',
+      isAcitveNode: {}, // 保存鼠标左右键点击的点
+      lineDefaultColor: '#6699CC',
       svgMainKey: 0,
       isShowPanel: false, // 是否在外面强制显示属性框
       sourceInterfacesLoading: true, // 是否显示加载源接口

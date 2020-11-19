@@ -65,7 +65,7 @@ export const constantRoutes = [
       {
         path: 'list',
         name: 'EquipmentList',
-        component: () => import('@/views/equipments/equipmentList/index'),
+        component: () => import('@/views/equipments/List/index'),
         meta: { title: '设备列表', icon: 'table' }
       },
       {
@@ -83,8 +83,9 @@ export const constantRoutes = [
       {
         path: 'detail/:ip',
         name: 'Detail',
-        component: () => import('@/views/equipments/detail/index')
-
+        hidden: true,
+        component: () => import('@/views/equipments/detail/index'),
+        meta: { title: '配置' }
       }
     ]
   },
@@ -139,9 +140,9 @@ export const constantRoutes = [
       },
       {
         path: 'xmlTool',
-        component: () => import('@/views/configManage/yangTool/index'), // Parent router-view
+        component: () => import('@/views/configManage/xmlTool/index'), // Parent router-view
         name: 'xmlTool',
-        meta: { title: 'xml测试工具', icon: 'nested' }
+        meta: { title: 'XML工具', icon: 'el-icon-s-tools' }
       }
     ]
   },

@@ -4,13 +4,16 @@
       <el-col :span="4">
         <div v-if="!editable" >
           <h3 class="menu-title">
-            <el-button size="mini" type="" @click="addTopo">添加</el-button>
+<!--            <el-button size="mini" type="" @click="addTopo">添加</el-button>-->
+            <el-button-group>
             <el-button
               size="mini"
               type=""
               @click="isManage = !isManage"
             >管理
             </el-button>
+            <el-button icon="el-icon-refresh" type="success" size="mini"></el-button>
+              </el-button-group>
           </h3>
           <ul class="menu">
             <li
@@ -24,14 +27,14 @@
               <i v-show="isManage" class="el-icon-delete delete-item" @click="deleteItem(item)" />
             </li>
           </ul>
-          <el-button
-            v-show="isManage"
-            style="transform: scale(0.8)"
-            type="danger"
-            size="mini"
-            icon="el-icon-delete"
-          >删除
-          </el-button>
+<!--          <el-button-->
+<!--            v-show="isManage"-->
+<!--            style="transform: scale(0.8)"-->
+<!--            type="danger"-->
+<!--            size="mini"-->
+<!--            icon="el-icon-delete"-->
+<!--          >删除-->
+<!--          </el-button>-->
           <el-button style="transform: scale(0.8) " icon="el-icon-refresh" size="mini" type="primary" @click="detailKey += 1">ReSize</el-button>
           <p style="font-size:12px; color: #6f7180; line-height: 18px; padding: 4px; font-family: '微软雅黑'">
             tips:<br>

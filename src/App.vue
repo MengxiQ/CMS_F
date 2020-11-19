@@ -12,3 +12,8 @@ export default {
   }
 }
 </script>
+<style>
+  .CodeMirror{
+    height: 300px !important;
+  }
+</style>

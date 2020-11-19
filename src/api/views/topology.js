@@ -28,3 +28,11 @@ export function updateTopology(data) {
     data
   })
 }
+
+export function pingHost(query) {
+  return request({
+    url: '/views/topology/ping/',
+    method: 'get',
+    params: query
+  })
+}

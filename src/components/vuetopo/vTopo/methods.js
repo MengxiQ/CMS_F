@@ -1,4 +1,5 @@
-import { createTopology } from '@/api/views/topology'
+import { createTopology, pingHost } from '@/api/views/topology'
+
 export const methods = {
   methods: {
     GenNonDuplicateID(randomLength) {
@@ -6,25 +7,25 @@ export const methods = {
     },
     canConnectorTo(curNodeType, connectorToNodeType, connectorType) {
       // 当需要包含和连线规则的时候 清除以下注释
-      // let canConnector = false
-      // if(connectorType == 'Link'){
-      //   this.connectorRules.forEach((ele,key)=>{
-      //     if(ele.type == curNodeType){
-      //       ele.canLinkToType.forEach((el,index)=>{
-      //         if(el == connectorToNodeType) canConnector = true
-      //       })
-      //     }
-      //   })
-      // }else if(connectorType == 'Contain'){
-      //   this.connectorRules.forEach((ele,key)=>{
-      //     if(ele.type == curNodeType){
-      //       ele.canBeContainedType.forEach((el,index)=>{
-      //         if(el == connectorToNodeType) canConnector = true
-      //       })
-      //     }
-      //   })
-      // }
-      const canConnector = true
+      let canConnector = false
+      if (connectorType === 'Link') {
+        this.connectorRules.forEach((ele, key) => {
+          if (ele.type === curNodeType) {
+            ele.canLinkToType.forEach((el, index) => {
+              if (el === connectorToNodeType) canConnector = true
+            })
+          }
+        })
+      } else if (connectorType === 'Contain') {
+        this.connectorRules.forEach((ele, key) => {
+          if (ele.type === curNodeType) {
+            ele.canBeContainedType.forEach((el, index) => {
+              if (el === connectorToNodeType) canConnector = true
+            })
+          }
+        })
+      }
+      // canConnector = true
       return canConnector
     },
     // 拖拽shapeBar中的node
@@ -238,7 +239,8 @@ export const methods = {
       }
     },
     // 拖拽svg中的node
-    dragSvgNode(key, event) {
+    dragSvgNode(key, node, event) {
+      this.isAcitveNode = node
       if (!this.editable) return false // editable[false]（非编辑状态）：svgNode不可移动
       const mouseX0 = event.clientX + this.$(document).scrollLeft()// 鼠标点击下的位置
       const mouseY0 = event.clientY + this.$(document).scrollTop()
@@ -589,6 +591,7 @@ export const methods = {
       const CURNODE = this.topoData.nodes[key] // 当前点击node
       const nodeW = CURNODE.width // 当前node宽高
       const nodeH = CURNODE.height
+      const sourceNodeIP = CURNODE.ip
       const sourceNodeX = CURNODE.x
       const sourceNodeY = CURNODE.y
       const mouseX0 = event.clientX
@@ -618,7 +621,8 @@ export const methods = {
         const CONNECTORS = this.topoData.connectors
         const sourceNodeW = nodeW
         const sourceNodeH = nodeH
-        let targetNodeW = 0 // 目标节点相关信息
+        let targetNodeIP = '' // 目标节点相关信息
+        let targetNodeW = 0
         let targetNodeH = 0
         let targetNodeX = 0
         let targetNodeY = 0
@@ -637,6 +641,7 @@ export const methods = {
             // 获取目标节点宽高
             this.topoData.nodes.forEach((item, index) => {
               if (item.id === CONNECTLINE.endNode) {
+                targetNodeIP = item.ip
                 targetNodeW = item.width
                 targetNodeH = item.height
                 targetNodeX = item.x
@@ -669,6 +674,7 @@ export const methods = {
                 strokeW: 3, // 仅用于Line类型,默认3
                 color: this.lineDefaultColor, // 仅用于Line类型，默认颜色
                 targetNode: {
+                  ip: targetNodeIP,
                   x: targetNodeX,
                   y: targetNodeY,
                   id: CONNECTLINE.endNode,
@@ -677,6 +683,7 @@ export const methods = {
                   port: ''
                 },
                 sourceNode: {
+                  ip: sourceNodeIP,
                   x: sourceNodeX,
                   y: sourceNodeY,
                   id: CURNODE.id,
@@ -986,7 +993,7 @@ export const methods = {
           i--
           if (this.topoData.nodes.length > 0) {
             this.selectNodeIndex =
-                    this.selectNodeData = {}
+              this.selectNodeData = {}
           } else {
             this.selectNodeIndex = null
             this.selectNodeData = {}
@@ -994,6 +1001,48 @@ export const methods = {
           }
         }
       }
+    },
+    handleConfig() {
+      const ip = this.isAcitveNode.ip
+      if (this.isAcitveNode.status === '在线') {
+        this.$router.push({ path: '/equipments/detail/' + ip})
+      } else {
+        this.$message({ type: 'info', message: '无法配置：' + ip + '  ，状态：[' + this.isAcitveNode.status + '].' })
+      }
+    },
+    handlePing() {
+      let ip = this.isAcitveNode.ip
+      // 遍历所有元素，查找被选中的元素
+      const notify = this.$notify({
+        title: 'ping',
+        message: '<i class="el-icon-loading"></i><span>ping ' + ip + '...</span>',
+        duration: 0,
+        dangerouslyUseHTMLString: true,
+        showClose: false
+      })
+      for (let i = 0; i < this.topoData.nodes.length; i++) {
+        const node = this.topoData.nodes[i]
+        if (node.isSelect) {
+          ip = node.ip
+        }
+      }
+      const data = {
+        ip: ip
+      }
+      // this.$message('ping')
+      pingHost(data).then(res => {
+        let lis = ''
+        res.data.forEach(item => {
+          lis += '<li>' + item + '</li>'
+        })
+        const ul = '<ul>' + lis + '</ul>'
+        this.$message({ customClass: 'pingMessage', dangerouslyUseHTMLString: true, duration: 0, showClose: true, message: ul })
+        notify.close()
+      }).catch(error => {
+        console.log(error)
+        this.$message({ type: 'error', message: 'ping失败！' })
+        notify.close()
+      })
     },
     // 监听改变显示属性面板
     changeShowPanel(val) {
@@ -1012,20 +1061,31 @@ export const methods = {
           icon: 'el-icon-delete',
           onClick: () => this.RCdelete()
         },
+        // {
+        //   label: '添加连接关系',
+        //   minWidth: 0,
+        //   onClick: () => {
+        //     this.flag.addConnectVisible = true
+        //   }
+        // },
         {
-          label: '添加连接关系',
+          label: '配置',
+          minWidth: 0,
+          onClick: () => this.handleConfig()
+        },
+        {
+          label: '快速ping',
+          minWidth: 0,
+          onClick: () => this.handlePing()
+        },
+        {
+          label: '高级ping',
           minWidth: 0,
           onClick: () => {
-            this.flag.addConnectVisible = true
+            this.$message('传递ip地址，打开ping窗口')
           }
         },
         {
-          label: 'ping',
-          minWidth: 0,
-          onClick: () => {
-            this.$message('ping')
-          }
-        }, {
           label: 'tracer',
           minWidth: 0,
           onClick: () => {
