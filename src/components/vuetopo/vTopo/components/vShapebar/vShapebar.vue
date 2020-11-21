@@ -62,7 +62,7 @@
         >
           <div class="shapeIcon">
 <!--            <img class="shapeIconImg" :src="ele.icon">-->
-            <img class="shapeIconImg" src="@/assets/topo/application.png">
+            <img class="shapeIconImg" src="@/assets/topo/switch.svg">
           </div>
           <div class="shapeName">{{ ele.name }}</div>
           <i v-if="isManage" class="el-icon-delete delete-btn" title="删除" @click.stop.prevent="deleteNode(key)"/>
@@ -78,7 +78,7 @@
           @mousedown.stop.prevent="dragShapeNode(shapeNodeLstData,key,$event)"
         >
           <div class="shapeIcon-list">
-            <img class="shapeIconImgi-list" :src="ele.icon">
+            <img class="shapeIconImgi-list" src="@/assets/topo/switch.svg">
           </div>
           <div class="shapeName-list">{{ ele.name }}</div>
           <div class="shapeName-list" style="color: #3a8ee6">{{ ele.ip }}</div>

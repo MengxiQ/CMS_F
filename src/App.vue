@@ -14,6 +14,6 @@ export default {
 </script>
 <style>
   .CodeMirror{
-    height: 300px !important;
+    height: 500px !important;
   }
 </style>

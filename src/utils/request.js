@@ -8,7 +8,7 @@ import { getToken } from '@/utils/auth'
 const service = axios.create({
   baseURL: 'http://127.0.0.1:8282',
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 20000 // request timeout
+  timeout: 15000 // request timeout
 })
 
 // request interceptor
@@ -72,12 +72,15 @@ service.interceptors.response.use(
     // }
   },
   error => {
-    // console.log('err' + error) // for debug
-    // Message({
-    //   message: error.message,
-    //   type: 'error',
-    //   duration: 5 * 1000
-    // })
+    // Authentication failed
+    console.log(error) // for debug
+    if (error.response.data.msg === "AuthenticationException('Authentication failed.')") {
+      Message({
+        message: '认证失败：用户名或者密码错误.',
+        type: 'error',
+        duration: 5 * 1000
+      })
+    }
     return Promise.reject(error)
   }
 )

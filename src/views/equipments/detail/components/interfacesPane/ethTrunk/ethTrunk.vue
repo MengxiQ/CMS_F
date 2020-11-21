@@ -95,7 +95,7 @@ export default {
       // promise数组
       const promiseArr = [
         getEthTrunkInterfaces(this.ip).then(res => {
-          this.list = res.data.ifmtrunk.TrunkIfs.TrunkIf
+          this.list = ((((res.data || {}).ifmtrunk || {}).TrunkIfs || {}).TrunkIf) || []
           this.params = res.params
         }).catch(error => this.getListError(error)),
         getEthTrunkMember(this.ip).then(res => {

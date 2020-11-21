@@ -132,19 +132,32 @@ export default {
       this.dialogEditStatus = 'update'
       this.dialogEditShow = true
     },
+    createError(error) {
+      // The interface is not a L2 interface
+      const data = error.response['data']
+      console.log(String(data['msg']).search('interface'))
+      if (String(data['msg']).search('The interface is not a L2 interface.') === 0) {
+        this.$message({ type: 'success', message: '切换到三层接口' })
+        this.getList()
+        this.dialogEditShow = false
+      } else {
+        this.$message({ type: 'error', message: ' 配置失败!6666   error:' + data['msg'] })
+      }
+      this.loadingInit = false
+    },
     handleSave() {
       this.loadingInit = true
       const data = {
         ip: this.ip,
         data: this.temp
       }
-      console.log(data)
+      // console.log(data)
       createEthernetInterface(data).then(res => this.createSuccess()).catch(error => this.createError(error))
     },
     getList() {
       this.loadingInit = true
       getEthernetInterfaces(this.ip).then(res => {
-        console.log(res)
+        // console.log(res)
         this.list = res.data.ethernet.ethernetIfs.ethernetIf
         this.params = res.params
         this.loadingInit = false

@@ -33,7 +33,7 @@ export const methods = {
       // console.log(nodeData)
       const NODE = nodeData[key]
       const toolbarName = NODE.type
-      const toolbarIcon = NODE.icon
+      // const toolbarIcon = NODE.icon //拖动的图标
       const topoEle = this.$(`#topoId${this.topoId}`)
       const svgOffsetLeft = topoEle.find('.topoSvg').offset().left
       const svgOffsetTop = topoEle.find('.topoSvg').offset().top
@@ -48,10 +48,10 @@ export const methods = {
         isContainSvgArea = false
         /**
          * 减去侧边栏宽度 和 头部高度
-         * 如何动态获取侧边栏宽度？？
          * **/
         let sidebarWidht = this.$('#sidebar').width()
         const headerHeight = this.$('#navbar').height()
+        const tagViewHeight = this.$('#tags-view-container').height()
         if (window.innerWidth < 1010) {
           sidebarWidht = 0
           // headerHeight = 0
@@ -60,9 +60,10 @@ export const methods = {
          * 拖动shapeBar中图表 图标的位置
          * **/
         this.shapebarMoveNode.left = mouseX + 4 + this.$(document).scrollLeft() - sidebarWidht // 鼠标位置 + 文档滚动的距离
-        this.shapebarMoveNode.top = mouseY + 4 + this.$(document).scrollTop() - headerHeight
+        this.shapebarMoveNode.top = mouseY + 4 + this.$(document).scrollTop() - (headerHeight + tagViewHeight)
         this.shapebarMoveNode.name = toolbarName
-        this.shapebarMoveNode.icon = toolbarIcon
+        // this.shapebarMoveNode.icon = toolbarIcon
+        this.shapebarMoveNode.icon = require('@/assets/topo/switch.svg')
         this.shapebarMoveNode.isShow = true
         this.marker.isMarkerShow = false
         // 鼠标滑入svg区域内显示标尺并显示标尺正确位置

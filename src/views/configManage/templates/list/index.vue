@@ -267,7 +267,7 @@
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-import { getTemplatesList, saveTemplate, addTemplate, deleteTemplate, updateTemplate } from '@/api/templates'
+import { getTemplatesList, saveTemplate, addTemplate, deleteTemplate, updateTemplate } from '@/api/configManage/templates'
 import TemplateEdit from '@/views/configManage/templates/edit/index'
 
 export default {
