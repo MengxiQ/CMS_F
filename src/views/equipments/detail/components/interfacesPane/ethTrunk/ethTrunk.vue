@@ -2,6 +2,7 @@
   <div v-loading="loadingInit">
     <el-table :data="isArray(list) ? list : Array(list)" highlight-current-row>
       <el-table-column type="expand">
+        <template slot="header"><i class="el-icon-view"></i></template>
         <template slot-scope="scope">
           <div style="background-color: #f9f9f9; padding: 10px">
             <trunk-member-if

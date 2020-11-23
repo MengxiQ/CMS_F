@@ -1,8 +1,10 @@
 <template>
-  <div>
+  <div class="content">
     <div class="heard-tool">
-      <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleAdd">添加</el-button>
-      <el-button size="mini" type="success" icon="el-icon-refresh" @click="getList">刷新</el-button>
+      <el-button-group>
+        <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleAdd">添加</el-button>
+        <el-button size="mini" type="success" icon="el-icon-refresh" @click="getList">刷新</el-button>
+      </el-button-group>
     </div>
     <el-table
       v-loading="loading"
@@ -253,6 +255,9 @@ export default {
 <style scoped>
   .heard-tool {
     padding: 10px;
+  }
+  .content {
+    padding: 20px;
   }
 
 </style>

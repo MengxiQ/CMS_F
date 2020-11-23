@@ -1,28 +1,29 @@
 <template>
   <div style="position: relative">
     <el-steps :active="active" finish-status="success" simple>
-      <el-step title="1:选择模板"/>
-      <el-step title="2:配置模板"/>
-      <el-step title="3:选择设备"/>
-      <el-step title="4:配置结果"/>
+      <el-step title="1:选择模板" />
+      <el-step title="2:配置模板" />
+      <el-step title="3:选择设备" />
+      <el-step title="4:配置结果" />
     </el-steps>
     <div v-show="active === 0" id="0" class="step-contend">
-      <chioce-ttempalte @selectedtemplate="selectedtemplate"/>
+      <chioce-ttempalte @selectedtemplate="selectedtemplate" @diyconfig="diyconfig" />
     </div>
     <div v-show="active === 1" id="1" class="step-contend">
-      <config-template :template="template" :configmode="configMode" @generateconfig="generateconfig"/>
+      <config-template :template="template" :configmode="configMode" @generateconfig="generateconfig" />
     </div>
     <div v-show="active === 2" id="2" class="step-contend">
-      <chioce-equipments @selectedequipments="selectedequipments"/>
+      <chioce-equipments @selectedequipments="selectedequipments" />
     </div>
     <div v-show="active === 3 || active === 4" id="3" class="step-contend">
-      <result :result-list="resultList"/>
+      <result :result-list="resultList" />
     </div>
     <div class="button-content">
       <el-button-group>
         <el-button size="mini" type="primary" :disabled="active === 0" @click="previous">上一步</el-button>
         <el-button v-if="active === 2" size="mini" type="success" @click="batchConfig">下发配置</el-button>
-        <el-button v-if="active === 0 || active === 1 || active === 3" size="mini" type="primary" :disabled="nextDisable" @click="next">下一步</el-button>
+        <el-button v-if="active === 0 || active === 1 || active === 3" size="mini" type="primary" :disabled="nextDisable" @click="next">下一步
+        </el-button>
         <el-button v-if="active === 4" size="mini" type="success" @click="complete">完成</el-button>
       </el-button-group>
     </div>
@@ -47,7 +48,12 @@ export default {
       configMode: '',
       selectedEquipments: [],
       resultList: [],
-      notifys: []
+      notifys: [],
+      action: {
+        name: 'edit-config',
+        TemType: 'merge',
+        source: 'running'
+      }
     }
   },
   computed: {
@@ -69,6 +75,9 @@ export default {
   },
   methods: {
     previous() {
+      if (this.active === 2 && this.configMode === '自定义模板') {
+        this.active = 0
+      }
       if (this.active > 0) {
         this.active -= 1
       }
@@ -87,66 +96,93 @@ export default {
       this.configMode = data.configMode
     },
     generateconfig(data) {
-      this.configData = data
-      if (data !== '') {
+      if (this.configData !== '') {
+        this.configData = data.resCodeData
+        this.action = data.action
         this.$message({ type: 'success', message: '保存成功.' })
       } else {
         this.$message({ type: 'error', message: '配置内容不能为空.' })
+      }
+    },
+    diyconfig(data) {
+      // console.log(data)
+      if (data.resCodeData !== '') {
+        this.configData = data.resCodeData
+        this.action = data.action
+        this.configMode = data.configMode
+        this.active = 2
+        this.$message({ type: 'success', message: 'diy配置保存成功.' })
+      } else {
+        this.$message({ type: 'error', message: 'diy配置内容不能为空.' })
       }
     },
     selectedequipments(data) {
       this.selectedEquipments = data
     },
     batchConfig() {
-      // 循环批量下发配置
-      this.selectedEquipments.forEach((item, key) => {
-        const data = {
-          user: item.netconfusers_set[0],
-          ip: item.ip,
-          action: {
-            name: 'edit-config',
-            source: 'running'
-          },
-          sendCodeData: this.configData
-        }
-        // console.log(data)
-        // 下发一个配置
-        // 开始日志记录
-        const result = {
-          id: key + 1,
-          name: item.name,
-          ip: item.ip,
-          time: new Date(),
-          cost: '0ms',
-          status: 'success',
-          des: ''
-        }
-        const timeBegin = new Date() // 开始记录时间
-        // 提示
-        this.notifys.push(this.$notify({
-          title: '下发配置',
-          message: '<i class="el-icon-loading"></i>正在向[' + item.ip + ']下发配置.',
-          duration: 0,
-          dangerouslyUseHTMLString: true,
-          // showClose: false
-        }))
-        // 下发配置
-        sendXmlConfig(data).then(res => {
-          const timeEnd = new Date()
-          const cost = timeEnd - timeBegin // 花费的毫秒数
-          result.cost = cost
-          this.resultList.push(result)
-          this.notifys[key].close()
-          this.active = 4
-        }).catch(error => {
-          const timeEnd = new Date()
-          const cost = timeEnd - timeBegin // 花费的毫秒数
-          result.cost = cost
-          result.status = 'error'
-          result.des = error.response.data.msg
-          this.resultList.push(result)
-          this.notifys[key].close()
+      // 生产promise数组
+      const promisArr = this.selectedEquipments.map((item, key) => {
+        return new Promise((resolve, reject) => {
+          const data = {
+            user: item.netconfusers_set[0],
+            ip: item.ip,
+            action: this.action,
+            // action: {
+            //   name: 'edit-config',
+            //   source: 'running'
+            // },
+            sendCodeData: this.configData
+          }
+          // 下发一个配置
+          // 开始日志记录
+          const result = {
+            id: key + 1,
+            name: item.name,
+            ip: item.ip,
+            time: new Date(),
+            cost: '0ms',
+            status: 'success',
+            des: ''
+          }
+          const timeBegin = new Date() // 开始记录时间
+          // 下发配置
+          sendXmlConfig(data).then(res => {
+            const timeEnd = new Date()
+            const cost = timeEnd - timeBegin // 花费的毫秒数
+            result.cost = cost
+            this.resultList.push(result)
+            resolve('success')
+            // this.active = 4
+          }).catch(error => {
+            const timeEnd = new Date()
+            const cost = timeEnd - timeBegin // 花费的毫秒数
+            result.cost = cost
+            result.status = 'error'
+            result.des = error.response.data.msg
+            this.resultList.push(result)
+            reject('error')
+          })
         })
+      })
+      this.loding = true
+      const notify = this.$notify({
+        title: '下发配置',
+        message: '<i class="el-icon-loading"></i>正在向下发配置.',
+        duration: 0,
+        dangerouslyUseHTMLString: true
+        // showClose: false
+      })
+      Promise.all(promisArr).then(res => {
+        this.$message({ type: 'success', message: '操作完成, 全部配置下发成功.' })
+        notify.close()
+        this.loding = false
+        this.active = 4
+      }).catch(error => {
+        this.$message({ type: 'warning', message: '操作完成, 有部分未成功.' })
+        notify.close()
+        console.log(error)
+        this.active = 4
+        this.loding = false
       })
     },
     recursiveConfig(obj) {

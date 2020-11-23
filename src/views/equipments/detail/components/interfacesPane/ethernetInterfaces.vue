@@ -5,6 +5,13 @@
       height="400"
     >
       <el-table-column
+        type="index"
+        align="center"
+      >
+        <template slot="header"><i class="el-icon-view"></i>
+        </template>
+      </el-table-column>
+      <el-table-column
         label="名称"
         prop="ifName"
         align="center"
@@ -35,8 +42,9 @@
         align="center"
       >
         <template slot-scope="scope">
-          <span style="width: 100px; height: 50px; display: block; overflow: hidden ">
-            {{scope.row.l2Attribute ? scope.row.l2Attribute.trunkVlans : ''}}</span>
+<!--          <span style="width: 100px; height: 50px; display: block; overflow: hidden ">-->
+<!--&lt;!&ndash;            {{scope.row.l2Attribute ? scope.row.l2Attribute.trunkVlans : ''}}&ndash;&gt;-->
+<!--          </span>-->
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="150">
@@ -141,7 +149,7 @@ export default {
         this.getList()
         this.dialogEditShow = false
       } else {
-        this.$message({ type: 'error', message: ' 配置失败!6666   error:' + data['msg'] })
+        this.$message({ dangerouslyUseHTMLString: true, type: 'error', message: ' 配置失败! <br><br>  提示信息:' + data['msg'] })
       }
       this.loadingInit = false
     },

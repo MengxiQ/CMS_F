@@ -13,7 +13,7 @@
     <div v-else class="topoAttrBody">
       <div class="topoAttrMain">
 
-        <el-form label-width="100px" class="demo-ruleForm" label-position="left">
+        <el-form :disabled="!editable" label-width="100px" class="demo-ruleForm" label-position="left">
           <div v-if="vSelectNodeData.type == 'Line'">
             <h1 style="text-align: left;font-size: larger;box-shadow: -4px 0px #b3d8ff;padding: 3px 5px">样式设置：</h1>
             <el-form-item label="颜色选择">
@@ -30,7 +30,7 @@
             </el-form-item>
             <h1 style="text-align: left;font-size: larger;box-shadow: -4px 0px #b3d8ff;padding: 3px 5px">
               连接设置：<el-link type="primary" @click="getList">添加</el-link></h1>
-            <el-form label-position="top" style="text-align: left">
+            <el-form :disabled="!editable" label-position="top" style="text-align: left">
               <el-form-item :label="'目标接口('+vSelectNodeData.sourceNode.ip+')'">
                 <el-select v-model="vSelectNodeData.sourceNode.port" placeholder="请选择">
                   <el-option
@@ -54,7 +54,7 @@
             </el-form>
           </div>
           <div v-else>
-            <el-form label-position="left" label-width="80px">
+            <el-form :disabled="!editable" label-position="left" label-width="80px">
               <el-form-item label="名称">
                 <el-input v-model="vSelectNodeData['name']" />
               </el-form-item>
@@ -107,6 +107,9 @@ export default {
   components: {},
   props: {
     isShowPanel: {
+      type: Boolean
+    },
+    editable: {
       type: Boolean
     },
     topoData: {
@@ -198,7 +201,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
-  width: 400px;
+  width: 300px;
   position: absolute;
   top: 0;
   right: -400px;

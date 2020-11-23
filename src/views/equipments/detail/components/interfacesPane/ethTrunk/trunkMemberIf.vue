@@ -3,12 +3,21 @@
     <el-row>
       <el-col :span="24">
         <el-button size="mini" type="primary" @click="handleCreate">添加</el-button>
-        <el-button size="mini" type="primary" @click="6">批量</el-button>
+<!--        <el-button size="mini" type="primary" @click="6">批量</el-button>-->
       </el-col>
     </el-row>
     <el-table
-      :data="list">
-      <el-table-column type="selection"></el-table-column>
+      :data="list"
+      max-height="200px"
+    >
+      <el-table-column
+        type="index"
+        align="center"
+      >
+        <template slot="header"><i class="el-icon-view"></i>
+        </template>
+      </el-table-column>
+<!--      <el-table-column type="selection"></el-table-column>-->
       <el-table-column label="接口名称" prop="memberIfName"></el-table-column>
       <el-table-column label="接口带宽" prop="weight"></el-table-column>
       <el-table-column align="center" label="操作" prop="" width="150">

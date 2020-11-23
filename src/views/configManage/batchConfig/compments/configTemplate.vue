@@ -4,67 +4,67 @@
       <el-col :md="9" :lg="8">
         <div class="content-form">
           <h5 style="border-left: 4px solid rgb(0,34,64); padding:0px 10px">名称：{{ template.name }}</h5>
-          <p style="font-size: smaller;padding: 0 5px 5px 5px">功能：{{ template.function ? template.function.name : '' }}</p>
+          <p style="font-size: smaller;padding: 0 5px 5px 5px">功能：{{template.function ? template.function.name : '' }}</p>
           <el-form label-position="" label-width="100px">
-          <el-form-item
-            v-for="(item, key) in template.params_set"
-            :key="key"
-            style="position: relative; padding: 10px 0 20px 0"
-            :label="item.name"
-            size="medium"
-          >
-            <div style="position: absolute;z-index: 100;top: -28px; font-size: smaller; color: #5a5e66">{{ item.remark }}
-              <span style="margin-left: 5px;color: #3d7ed5">({{ item.constraint }})</span></div>
-            <el-select
-              v-if="(item.constraint).match('CHIOCE<(?<p>.*)>')"
-              v-model="temp[item.name]"
+            <el-form-item
+              v-for="(item, key) in template.params_set"
+              :key="key"
+              style="position: relative; padding: 10px 0 20px 0"
+              :label="item.name"
+              size="medium"
             >
-              <el-option
-                v-for="(i, k) in constraint(item.constraint)"
-                :key="k"
-                :value="i"
-                :label="i"
+              <div style="position: absolute;z-index: 100;top: -28px; font-size: smaller; color: #5a5e66">{{ item.remark }}
+                <span style="margin-left: 5px;color: #3d7ed5">({{ item.constraint }})</span></div>
+              <el-select
+                v-if="(item.constraint).match('CHIOCE<(?<p>.*)>')"
+                v-model="temp[item.name]"
+              >
+                <el-option
+                  v-for="(i, k) in constraint(item.constraint)"
+                  :key="k"
+                  :value="i"
+                  :label="i"
+                />
+              </el-select>
+              <el-switch
+                v-if="item.constraint === 'BLOOEAN'"
+                v-model="temp[item.name]"
+                active-color="#13ce66"
+                inactive-color="#ff4949"
+                active-value="true"
+                inactive-value="false"
               />
-            </el-select>
-            <el-switch
-              v-if="item.constraint === 'BLOOEAN'"
-              v-model="temp[item.name]"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-              active-value="true"
-              inactive-value="false"
-            />
-            <el-input
-              v-if="item.constraint.search('INT') >= 0 || item.constraint === 'IP' || item.constraint === 'MASK' || item.constraint === 'WILDCARD' || item.constraint.search('STRING') >= 0"
-              v-model="temp[item.name]"
-            />
-          </el-form-item>
-        </el-form>
+              <el-input
+                v-if="item.constraint.search('INT') >= 0 || item.constraint === 'IP' || item.constraint === 'MASK' || item.constraint === 'WILDCARD' || item.constraint.search('STRING') >= 0"
+                v-model="temp[item.name]"
+              />
+            </el-form-item>
+          </el-form>
         </div>
       </el-col>
       <el-col :md="15" :lg="16">
         <div content="content-generate">
           <p>
-            <label><span class="key">动作：</span>
-              <el-radio-group v-model="action.type" size="mini">
-                <el-radio-button label="config"></el-radio-button>
+            <label><span class="key">模板类型：</span>
+              <el-radio-group v-model="action.TemType" size="mini">
+                <el-radio-button label="merge"></el-radio-button>
                 <el-radio-button label="delete"></el-radio-button>
               </el-radio-group>
             </label>
           </p>
           <p>
-            <label><span class="key" >配置源：</span>
+            <label><span class="key">配置源：</span>
               <el-radio-group v-model="action.source" size="mini">
                 <el-radio-button label="running"></el-radio-button>
-                <el-radio-button label="startup"></el-radio-button>
-                <el-radio-button label="other"></el-radio-button>
+<!--                <el-radio-button label="startup"></el-radio-button>-->
+<!--                <el-radio-button label="other"></el-radio-button>-->
               </el-radio-group>
             </label>
           </p>
           <el-button-group>
-          <el-button size="mini" type="primary" @click="handleGenerate">生成配置</el-button>
-          <el-button size="mini" type="primary" @click="handleSave">保存</el-button>
-            </el-button-group>
+            <el-button size="mini" type="primary" @click="handleGenerate">生成配置</el-button>
+            <el-button size="mini" type="primary" @click="handleSave">保存</el-button>
+          </el-button-group>
           <codemirror v-model="resCodeData" :options="CmOptions"></codemirror>
         </div>
       </el-col>
@@ -102,7 +102,8 @@ export default {
       },
       resCodeData: '',
       action: {
-        type: 'config',
+        name: 'edit-config',
+        TemType: 'merge',
         source: 'running'
       }
     }
@@ -116,14 +117,19 @@ export default {
       const data = {
         temp: this.temp,
         template: this.template.templateData,
-        configMode: this.configmode
+        configMode: this.configmode,
+        action: this.action
       }
       GenerateConfig(data).then(res => {
         this.resCodeData = res.data
       }).catch()
     },
     handleSave() {
-      this.$emit('generateconfig', this.resCodeData)
+      this.$emit('generateconfig', {
+        resCodeData: this.resCodeData,
+        configMode: this.configmode,
+        action: this.action
+      })
     }
   }
 }
@@ -138,6 +144,7 @@ export default {
   /*width: 500px;*/
   padding: 15px;
 }
+
 .key {
   font-size: smaller;
 }

@@ -72,7 +72,7 @@ export const constantRoutes = [
         path: 'netconfUser',
         name: 'NetconfUser',
         component: () => import('@/views/equipments/netconfUser/index'),
-        meta: { title: 'NetConf用户', icon: 'el-icon-user-solid' }
+        meta: { title: '设备用户', icon: 'el-icon-user-solid' }
       },
       {
         path: 'batchUsers',
@@ -132,12 +132,12 @@ export const constantRoutes = [
         name: 'Templates',
         meta: { title: '模板列表', icon: 'nested' }
       },
-      {
-        path: 'yangTool',
-        component: () => import('@/views/configManage/yangTool/index'), // Parent router-view
-        name: 'yangTool',
-        meta: { title: 'Yang工具', icon: 'nested' }
-      },
+      // {
+      //   path: 'yangTool',
+      //   component: () => import('@/views/configManage/yangTool/index'), // Parent router-view
+      //   name: 'yangTool',
+      //   meta: { title: 'Yang工具', icon: 'nested' }
+      // },
       {
         path: 'xmlTool',
         component: () => import('@/views/configManage/xmlTool/index'), // Parent router-view
@@ -149,13 +149,13 @@ export const constantRoutes = [
         component: () => import('@/views/configManage/batchConfig/batchConfig'), // Parent router-view
         name: 'batchConfig',
         meta: { title: '批量配置', icon: 'el-icon-s-tools' }
-      },
-      {
-        path: 'guideConfig',
-        component: () => import('@/views/configManage/xmlTool/index'), // Parent router-view
-        name: 'guideConfig',
-        meta: { title: '配置向导', icon: 'el-icon-s-tools' }
       }
+      // {
+      //   path: 'guideConfig',
+      //   component: () => import('@/views/configManage/xmlTool/index'), // Parent router-view
+      //   name: 'guideConfig',
+      //   meta: { title: '配置向导', icon: 'el-icon-s-tools' }
+      // }
     ]
   },
 
@@ -208,7 +208,7 @@ const createRouter = () => new Router({
 })
 
 const router = createRouter()
-
+export const asyncRoutes = []
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
   const newRouter = createRouter()

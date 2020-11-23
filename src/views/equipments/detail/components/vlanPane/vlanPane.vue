@@ -2,22 +2,28 @@
   <div v-loading="loadingInit">
     <el-row>
       <el-col :span="24">
-        <el-button size="mini" type="primary" @click="handleCreate">添加</el-button>
-        <el-dropdown trigger="click">
-          <el-button style="margin-left: 10px" type="primary" size="mini">批量<i
-            class="el-icon-arrow-down el-icon--right"></i>
-          </el-button>
-          <el-button size="mini" type="success" @click="getList" icon="el-icon-refresh">刷新</el-button>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item><i class="el-icon-edit"></i>批量添加</el-dropdown-item>
-            <el-dropdown-item><i class="el-icon-delete-solid"></i> 批量删除</el-dropdown-item>
-            <el-dropdown-item><i class="el-icon-eleme"></i>批量导出</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
+        <el-button-group>
+          <el-button size="mini" type="primary" @click="handleCreate">添加</el-button>
+          <el-button size="mini" type="success" @click="getList">刷新</el-button>
+        </el-button-group>
+<!--        <el-dropdown trigger="click">-->
+<!--          <el-button style="margin-left: 10px" type="primary" size="mini">批量<i-->
+<!--            class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
+<!--          </el-button>-->
+<!--          <el-button size="mini" type="success" @click="getList" icon="el-icon-refresh">刷新</el-button>-->
+<!--          <el-dropdown-menu slot="dropdown">-->
+<!--            <el-dropdown-item><i class="el-icon-edit"></i>批量添加</el-dropdown-item>-->
+<!--            <el-dropdown-item><i class="el-icon-delete-solid"></i> 批量删除</el-dropdown-item>-->
+<!--            <el-dropdown-item><i class="el-icon-eleme"></i>批量导出</el-dropdown-item>-->
+<!--          </el-dropdown-menu>-->
+<!--        </el-dropdown>-->
       </el-col>
     </el-row>
     <el-table :data="list">
-      <el-table-column type="selection"></el-table-column>
+<!--      <el-table-column type="selection"></el-table-column>-->
+      <el-table-column type="index">
+        <template slot="header"><i class="el-icon-view"></i></template>
+      </el-table-column>
       <el-table-column label="vlanId" prop="vlanId"></el-table-column>
       <el-table-column label="名称" prop="vlanName"></el-table-column>
       <el-table-column label="描述" prop="vlanDesc"></el-table-column>
@@ -146,8 +152,8 @@ export default {
         this.loadingInit = false
         // this.temp = Object.assign({}, this.params[0])
       }).catch(error => {
-        const data = error.response['data']
-        this.$message({ type: 'error', message: ' 请求失败，请尝试刷新!   error:' + data['msg'] })
+        console.log(error)
+        this.$message({ type: 'error', message: ' 请求失败，请尝试刷新! ' })
         this.loadingInit = false
       })
     }

@@ -35,7 +35,7 @@
           <el-input v-model="temp[item.name]"></el-input>
         </el-form-item>
         <el-form-item v-if="dialogEditStatus === 'update'">
-          <span>tips:<p> 更改IP、掩码长度，出接口等参数为新增静态路由。如需更改请删除指定路由。</p></span>
+          <span>tips: 更改IP、掩码长度，出接口等参数为新增静态路由。如需更改请删除指定路由。</span>
         </el-form-item>
       </el-form>
       <el-row>

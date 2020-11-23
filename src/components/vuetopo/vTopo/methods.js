@@ -242,10 +242,18 @@ export const methods = {
     // 拖拽svg中的node
     dragSvgNode(key, node, event) {
       this.isAcitveNode = node
+      const CURNODE = this.topoData.nodes[key] // 点击的node对象
+      CURNODE.isSelect = true
+      this.topoData.nodes.forEach((node, key) => { // 关联属性设置框
+        if (node.id === CURNODE.id) {
+          this.selectNodeData = node
+        }
+      })
+      // 权限检查
       if (!this.editable) return false // editable[false]（非编辑状态）：svgNode不可移动
       const mouseX0 = event.clientX + this.$(document).scrollLeft()// 鼠标点击下的位置
       const mouseY0 = event.clientY + this.$(document).scrollTop()
-      const CURNODE = this.topoData.nodes[key] // 点击的node对象
+      // const CURNODE = this.topoData.nodes[key] // 点击的node对象
       const startX = CURNODE.x // 节点开始位置
       const startY = CURNODE.y
       const curNodeId = CURNODE.id // 当前结点id
@@ -325,13 +333,13 @@ export const methods = {
       const NodePoint4 = [NodeEndX, (NodeEndY + nodeH)]
       // 如果点击的node有contain关系，先记录下targetNode
       TOPODATA.connectors.forEach((ele, key) => {
-        if (ele.type == 'Contain' && ele.sourceNode.id == curNodeId) {
+        if (ele.type === 'Contain' && ele.sourceNode.id === curNodeId) {
           originTargetNodeId = ele.targetNode.id
         }
       })
       if (originTargetNodeId) {
         TOPODATA.nodes.forEach((node, key) => {
-          if (node.id == originTargetNodeId) originTargetNode = node
+          if (node.id === originTargetNodeId) originTargetNode = node
         })
       }
       // 情况一：移出后依然恢复原来的位置，前提：1.移除的距离在一定范围 2.点击的节点有父层包含关系
@@ -353,7 +361,7 @@ export const methods = {
       for (let i = (TOPODATA.nodes.length - 1); i >= 0; i--) { // forEach无法跳出循环,暂用for循环
         const targetNode = TOPODATA.nodes[i]
         isContainNode = false // 初始isContainNode为false的值
-        if (CURNODE.id != targetNode.id) { // 排除自身元素
+        if (CURNODE.id !== targetNode.id) { // 排除自身元素
           const minX = targetNode.x
           const maxX = targetNode.x + targetNode.width
           const minY = targetNode.y
@@ -734,7 +742,7 @@ export const methods = {
     },
     // 点击选中连线
     selectConnectorLine(key) {
-      if (!this.editable) return false // 如果非编辑状态 不可点击
+      // if (!this.editable) return false // 如果非编辑状态 不可点击
       const connectors = this.topoData.connectors
       const nodes = this.topoData.nodes
       const selectLine = this.topoData.connectors[key]
@@ -1006,7 +1014,7 @@ export const methods = {
     handleConfig() {
       const ip = this.isAcitveNode.ip
       if (this.isAcitveNode.status === '在线') {
-        this.$router.push({ path: '/equipments/detail/' + ip})
+        this.$router.push({ path: '/equipments/detail/' + ip })
       } else {
         this.$message({ type: 'info', message: '无法配置：' + ip + '  ，状态：[' + this.isAcitveNode.status + '].' })
       }
@@ -1055,20 +1063,28 @@ export const methods = {
 
       // 判断是否有选中节点
       // menu  1. 有选中的节点则显示不同的右键菜单
-      this.$contextmenu({
-        items: [{
-          label: '删除',
-          minWidth: 0,
-          icon: 'el-icon-delete',
-          onClick: () => this.RCdelete()
-        },
-        // {
-        //   label: '添加连接关系',
-        //   minWidth: 0,
-        //   onClick: () => {
-        //     this.flag.addConnectVisible = true
-        //   }
-        // },
+      const editItems = [{
+        label: '删除',
+        minWidth: 0,
+        icon: 'el-icon-delete',
+        onClick: () => this.RCdelete()
+      },
+      // {
+      //   label: '添加连接关系',
+      //   minWidth: 0,
+      //   onClick: () => {
+      //     this.flag.addConnectVisible = true
+      //   }
+      // },
+      {
+        label: '节点属性',
+        minWidth: 0,
+        onClick: () => {
+          this.isShowPanel = true
+        }
+      }
+      ]
+      const viewItems = [
         {
           label: '配置',
           minWidth: 0,
@@ -1100,7 +1116,9 @@ export const methods = {
             this.isShowPanel = true
           }
         }
-        ],
+      ]
+      this.$contextmenu({
+        items: this.editable ? editItems : viewItems,
         event,
         customClass: 'class-a',
         minWidth: 0

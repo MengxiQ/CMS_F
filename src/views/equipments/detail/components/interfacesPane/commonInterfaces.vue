@@ -4,20 +4,21 @@
       :data="list"
       height="400"
     >
-      <el-table-column type="expand">
-        <template slot-scope="scope">
-          <div class="expand">
-            <h3 class="label-h5">IPv4配置:</h3>
-            <el-form v-if="scope.row.ipv4Config.am4CfgAddrs" inline>
-              <el-form-item label="IP地址:"><span>{{ scope.row.ipv4Config.am4CfgAddrs.am4CfgAddr.ifIpAddr }}</span>
-              </el-form-item>
-              <el-form-item label="掩码:"><span>{{ scope.row.ipv4Config.am4CfgAddrs.am4CfgAddr.subnetMask }}</span>
-              </el-form-item>
-            </el-form>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column label="状态" width="100" prop="ifAdminStatus">
+<!--      <el-table-column type="expand">-->
+<!--        <template slot="header"><i class="el-icon-view"></i></template>-->
+<!--        <template slot-scope="scope">-->
+<!--          <div class="expand">-->
+<!--            <h3 class="label-h5">IPv4配置:</h3>-->
+<!--            <el-form v-if="scope.row.ipv4Config.am4CfgAddrs" inline>-->
+<!--              <el-form-item label="IP地址:"><span>{{ scope.row.ipv4Config.am4CfgAddrs.am4CfgAddr.ifIpAddr }}</span>-->
+<!--              </el-form-item>-->
+<!--              <el-form-item label="掩码:"><span>{{ scope.row.ipv4Config.am4CfgAddrs.am4CfgAddr.subnetMask }}</span>-->
+<!--              </el-form-item>-->
+<!--            </el-form>-->
+<!--          </div>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
+      <el-table-column label="状态" width="100" prop="ifAdminStatus" align="center">
         <template slot-scope="scope">
           <span v-if="scope.row.ifAdminStatus === 'up'" class="el-icon-success" style="color: #67C23A" />
           <span v-else class="el-icon-error" style="color: #F56C6C" />
@@ -28,21 +29,15 @@
         prop="ifName"
         align="center"
       />
-      <el-table-column
-        label="路由类型"
-        prop="ifRouterType"
-        align="center"
-      />
-      <el-table-column
-        label="描述"
-        prop="ifDescr"
-        align="center"
-      />
+<!--      <el-table-column-->
+<!--        label="描述"-->
+<!--        prop="ifDescr"-->
+<!--        align="center"-->
+<!--      />-->
       <el-table-column
         label="MAC"
         prop="ifMac"
         align="center"
-        width="130"
       />
       <el-table-column
         label="类型"
@@ -52,6 +47,16 @@
         <template slot-scope="scope">
           <el-tag v-if="scope.row.isL2SwitchPort === 'true'" size="" type="">二层</el-tag>
           <el-tag v-else size="" type="success">三层</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="IPv4" align="center">
+        <template slot-scope="props">
+          <span>{{props.row.ipv4Config.am4CfgAddrs ? props.row.ipv4Config.am4CfgAddrs.am4CfgAddr.ifIpAddr : ''}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Mask" align="center">
+        <template slot-scope="props">
+          <span>{{props.row.ipv4Config.am4CfgAddrs ? props.row.ipv4Config.am4CfgAddrs.am4CfgAddr.subnetMask : ''}}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="150">
@@ -105,7 +110,7 @@
       <el-row>
         <el-col :span="24" style="text-align: right">
           <el-button type="primary" size="mini" @click="handleSave()">保存</el-button>
-          <el-button type="" size="mini" @click="dialogEditShow = !dialogEditShow">取消</el-button>
+          <el-button type="" size="mini" @click="beforCloseDialog">取消</el-button>
         </el-col>
       </el-row>
     </el-dialog>
@@ -142,13 +147,6 @@ export default {
   methods: {
     beforCloseDialog() {
       this.dialogEditShow = false
-      // this.temp.ifAdminStatus = 'down'
-      // this.temp.ifName = ''
-      // this.temp.ifDescr = ''
-      // this.temp.isL2SwitchPort = ''
-      // this.temp.l2Enable = 'disable'
-      // this.temp.ifIpAddr = ''
-      // this.temp.subnetMask = ''
       this.temp = {
         ifName: '',
         ifIpAddr: '',
@@ -160,8 +158,6 @@ export default {
       }
     },
     handleDelete(row) {
-      // console.log('row', row)
-      // console.log('temp', this.temp)
       const data = {
         ip: this.ip,
         data: row,

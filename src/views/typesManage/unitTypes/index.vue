@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="content">
     <div class="heard-tool">
       <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleAdd">添加</el-button>
     </div>
@@ -177,7 +177,10 @@ export default {
 </script>
 
 <style scoped>
-.heard-tool {
-  padding: 10px;
-}
+  .heard-tool {
+    /*padding: 10px;*/
+  }
+  .content {
+    padding: 20px;
+  }
 </style>

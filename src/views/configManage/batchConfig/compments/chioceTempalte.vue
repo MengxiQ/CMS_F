@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="">
-      <div >
+      <div>
         <el-radio-group v-model="configMode" size="mini">
           <el-radio-button label="系统模板" />
           <el-radio-button label="自定义模板" />
@@ -177,7 +177,21 @@
           </el-col>
         </el-row>
       </div>
-      <div v-else>自定义模板</div>
+      <div v-else class="diy-content">
+        <p>
+          <label><span class="key">配置源：</span>
+            <el-radio-group v-model="action.source" size="mini">
+              <el-radio-button label="running" />
+<!--              <el-radio-button label="startup" />-->
+<!--              <el-radio-button label="other" />-->
+            </el-radio-group>
+          </label>
+        </p>
+        <el-button-group>
+          <el-button size="mini" type="primary" @click="handleSave">保存</el-button>
+        </el-button-group>
+        <codemirror v-model="resCodeData" :options="CmOptions" />
+      </div>
     </div>
   </div>
 </template>
@@ -199,7 +213,22 @@ export default {
         name: '',
         temptype: ''
       },
-      configMode: '系统模板'
+      configMode: '系统模板',
+      configData: {},
+      CmOptions: {
+        mode: 'text/xml',
+        tabSize: 4,
+        theme: 'cobalt',
+        lineNumbers: true,
+        line: true,
+        readOnly: false
+      },
+      action: {
+        name: 'edit-config',
+        TemType: 'merge',
+        source: 'running'
+      },
+      resCodeData: ''
     }
   },
   created() {
@@ -229,6 +258,13 @@ export default {
         this.listLoading = false
       }).catch(_ => {
         this.$message({ type: 'error', message: '获取模板列表失败。' })
+      })
+    },
+    handleSave() {
+      this.$emit('diyconfig', {
+        resCodeData: this.resCodeData,
+        configMode: this.configMode,
+        action: this.action
       })
     }
   }
@@ -265,5 +301,8 @@ export default {
 .select-title-li {
   display: inline-block;
   margin-right: 10px;
+}
+.diy-content {
+  padding: 20px;
 }
 </style>

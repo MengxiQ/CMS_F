@@ -62,6 +62,8 @@
               />
             </pattern>
           </defs>
+          <!-- 节点和连线 的阴影-->
+          <!-- 连线的阴影导致的出现选中状态下连线消失的bug -->
           <defs>
             <filter id="f1" x="0" y="0" width="200%" height="200%">
               <feOffset result="offOut" in="SourceGraphic" dx="4" dy="4" />
@@ -77,7 +79,7 @@
           </defs>
           <rect fill="url(#Pattern)" :width="svgAttr.width" :height="svgAttr.height" />
           <g>
-            <!-- node间关系连线样式 -->
+            <!-- node间关系连线connectorsG -->
             <!-- 改变线条是否显示在node的下面还是上面：原理：连接g标签在节点之上，则显示在下方，反之；增加属性判断显示上面的还是下面的g连线            -->
             <g
               v-for="(ele,key) in topoData.connectors"
@@ -202,9 +204,9 @@
               <!--                :y1="ele.targetNode.y + (ele.targetNode.height/2)"-->
               <!--              />-->
 
-              /**
-              * 连线方式一共7种情况
-              */
+<!--              /**-->
+<!--              * 连线方式一共7种情况-->
+<!--              */-->
               <!-- 自连 -->
               <!--              <path-->
               <!--                class="connectorLine"-->
@@ -407,7 +409,7 @@
               <g
                 class="isShowNodetooltip"
               >
-                <!-- 阴影-->
+                <!-- 提示框的阴影-->
                 <defs>
                   <filter id="NodetooltipShadow" x="0" y="0" width="200%" height="200%">
                     <feOffset result="offOut" in="SourceAlpha" dx="1" dy="1" />
@@ -450,8 +452,8 @@
                 :y1="connectingLine.y1"
                 :x2="connectingLine.x2"
                 :y2="connectingLine.y2"
-                stroke="#768699"
-                stroke-width="2"
+                stroke="#42b983"
+                stroke-width="4"
               />
             </g>
           </g>
@@ -485,9 +487,9 @@
             fill="rgba(170,210,232,0.5)"
           />
         </svg>
-        <!--        右侧属性框-->
+        <!--        右侧属性框 v-show="editable"-->
         <v-topo-attr-panel
-          v-show="editable"
+          :editable="editable"
           :is-show-panel="isShowPanel"
           :topo-data="topoData"
           :v-select-node-data="selectNodeData"
@@ -651,6 +653,11 @@ export default {
 
 .svgSelectClass {
   filter: url(#f1);
+}
+.svgSelectLineClass {
+  //filter: url(#f1);
+  stroke-width: 4px;
+  stroke: #42b983;
 }
 
 .topoComponent {
@@ -901,7 +908,8 @@ export default {
     }
 
     .circleColor {
-      fill: @svg-common-color
+      //fill: @svg-common-color;
+      fill: #42b983;
     }
   }
 }
@@ -920,7 +928,8 @@ export default {
   }
 
   &.active .connectorLine {
-    .svgSelectClass;
+    //.svgSelectClass;
+    .svgSelectLineClass;
   }
 }
 // 流动线条样式
