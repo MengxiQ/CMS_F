@@ -2,6 +2,7 @@
   <div v-loading="loadingInit">
     <el-table :data="isArray(list) ? list : Array(list)" highlight-current-row>
       <el-table-column type="expand">
+        <template slot="header"><i class="el-icon-view"></i></template>
         <template slot-scope="scope">
           <div style="background-color: #f9f9f9; padding: 10px">
             <trunk-member-if
@@ -95,7 +96,7 @@ export default {
       // promise数组
       const promiseArr = [
         getEthTrunkInterfaces(this.ip).then(res => {
-          this.list = res.data.ifmtrunk.TrunkIfs.TrunkIf
+          this.list = ((((res.data || {}).ifmtrunk || {}).TrunkIfs || {}).TrunkIf) || []
           this.params = res.params
         }).catch(error => this.getListError(error)),
         getEthTrunkMember(this.ip).then(res => {

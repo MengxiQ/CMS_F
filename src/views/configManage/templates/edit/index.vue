@@ -15,7 +15,7 @@ export default {
       }
     }
   },
-  data(){
+  data() {
     return {
       cmOptions: {
       tabSize: 4,

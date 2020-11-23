@@ -12,7 +12,7 @@
               @click="isManage = !isManage"
             >管理
             </el-button>
-            <el-button icon="el-icon-refresh" type="success" size="mini"></el-button>
+            <el-button icon="el-icon-refresh" type="success" size="mini" @click="getList"></el-button>
               </el-button-group>
           </h3>
           <ul class="menu">
@@ -69,7 +69,7 @@
               type=""
               size="mini"
               style="float: right; margin-right: 5px;margin-top: 1px; display: inline-block; transform: scale(0.9)"
-              @click="editable = false"
+              @click="handleCancle"
             >取消
             </el-button>
           </div>
@@ -144,6 +144,10 @@ export default {
     })
   },
   methods: {
+    handleCancle() {
+      this.editable = false
+      this.getList()
+    },
     gotoDetail(key) {
       this.$router.push({ query: { key: key }})
       // this.activeTopo = this.toppsList[key]

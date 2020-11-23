@@ -5,6 +5,13 @@
       height="400"
     >
       <el-table-column
+        type="index"
+        align="center"
+      >
+        <template slot="header"><i class="el-icon-view"></i>
+        </template>
+      </el-table-column>
+      <el-table-column
         label="名称"
         prop="ifName"
         align="center"
@@ -35,8 +42,9 @@
         align="center"
       >
         <template slot-scope="scope">
-          <span style="width: 100px; height: 50px; display: block; overflow: hidden ">
-            {{scope.row.l2Attribute ? scope.row.l2Attribute.trunkVlans : ''}}</span>
+<!--          <span style="width: 100px; height: 50px; display: block; overflow: hidden ">-->
+<!--&lt;!&ndash;            {{scope.row.l2Attribute ? scope.row.l2Attribute.trunkVlans : ''}}&ndash;&gt;-->
+<!--          </span>-->
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="150">
@@ -132,19 +140,32 @@ export default {
       this.dialogEditStatus = 'update'
       this.dialogEditShow = true
     },
+    createError(error) {
+      // The interface is not a L2 interface
+      const data = error.response['data']
+      console.log(String(data['msg']).search('interface'))
+      if (String(data['msg']).search('The interface is not a L2 interface.') === 0) {
+        this.$message({ type: 'success', message: '切换到三层接口' })
+        this.getList()
+        this.dialogEditShow = false
+      } else {
+        this.$message({ dangerouslyUseHTMLString: true, type: 'error', message: ' 配置失败! <br><br>  提示信息:' + data['msg'] })
+      }
+      this.loadingInit = false
+    },
     handleSave() {
       this.loadingInit = true
       const data = {
         ip: this.ip,
         data: this.temp
       }
-      console.log(data)
+      // console.log(data)
       createEthernetInterface(data).then(res => this.createSuccess()).catch(error => this.createError(error))
     },
     getList() {
       this.loadingInit = true
       getEthernetInterfaces(this.ip).then(res => {
-        console.log(res)
+        // console.log(res)
         this.list = res.data.ethernet.ethernetIfs.ethernetIf
         this.params = res.params
         this.loadingInit = false

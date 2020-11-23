@@ -72,7 +72,7 @@ export const constantRoutes = [
         path: 'netconfUser',
         name: 'NetconfUser',
         component: () => import('@/views/equipments/netconfUser/index'),
-        meta: { title: 'NetConf用户', icon: 'el-icon-user-solid' }
+        meta: { title: '设备用户', icon: 'el-icon-user-solid' }
       },
       {
         path: 'batchUsers',
@@ -132,18 +132,30 @@ export const constantRoutes = [
         name: 'Templates',
         meta: { title: '模板列表', icon: 'nested' }
       },
-      {
-        path: 'yangTool',
-        component: () => import('@/views/configManage/yangTool/index'), // Parent router-view
-        name: 'yangTool',
-        meta: { title: 'Yang工具', icon: 'nested' }
-      },
+      // {
+      //   path: 'yangTool',
+      //   component: () => import('@/views/configManage/yangTool/index'), // Parent router-view
+      //   name: 'yangTool',
+      //   meta: { title: 'Yang工具', icon: 'nested' }
+      // },
       {
         path: 'xmlTool',
         component: () => import('@/views/configManage/xmlTool/index'), // Parent router-view
         name: 'xmlTool',
         meta: { title: 'XML工具', icon: 'el-icon-s-tools' }
+      },
+      {
+        path: 'batchConfig',
+        component: () => import('@/views/configManage/batchConfig/batchConfig'), // Parent router-view
+        name: 'batchConfig',
+        meta: { title: '批量配置', icon: 'el-icon-s-tools' }
       }
+      // {
+      //   path: 'guideConfig',
+      //   component: () => import('@/views/configManage/xmlTool/index'), // Parent router-view
+      //   name: 'guideConfig',
+      //   meta: { title: '配置向导', icon: 'el-icon-s-tools' }
+      // }
     ]
   },
 
@@ -151,54 +163,40 @@ export const constantRoutes = [
     path: '/types',
     component: Layout,
     alwaysShow: true,
-    meta: { title: '类型管理', icon: 'link' },
+    meta: { title: '类型管理', icon: 'el-icon-receiving' },
     children: [
       {
         path: 'templateTypes',
         name: 'templateTypes',
         component: () => import('@/views/typesManage/templateTypes/index'),
-        meta: { title: '模板类型', icon: 'link' }
+        meta: { title: '模板类型', icon: 'el-icon-takeaway-box' }
       },
       {
         path: 'unitTypes',
         name: 'UnitTypes',
         component: () => import('@/views/typesManage/unitTypes/index'),
-        meta: { title: '设备型号', icon: 'link' }
+        meta: { title: '设备型号', icon: 'el-icon-takeaway-box' }
       },
       {
         path: 'neTypes',
         name: 'NeTypes',
         component: () => import('@/views/typesManage/neTypes/index'),
-        meta: { title: '设备类型', icon: 'link' }
+        meta: { title: '设备类型', icon: 'el-icon-takeaway-box' }
       },
       {
         path: 'functionTypes',
         name: 'FunctionTypes',
         component: () => import('@/views/typesManage/functionTypes/index'),
-        meta: { title: '功能列表', icon: 'link' }
+        meta: { title: '功能列表', icon: 'el-icon-takeaway-box' }
       },
       {
         path: 'vendorTypes',
         name: 'VendorTypes',
         component: () => import('@/views/typesManage/vendorTypes/index'),
-        meta: { title: '厂商列表', icon: 'link' }
+        meta: { title: '厂商列表', icon: 'el-icon-takeaway-box' }
       }
     ]
   },
-  {
-    path: '/batch',
-    component: Layout,
-    alwaysShow: true,
-    meta: { title: '批量管理', icon: 'link' },
-    children: [
-      {
-        path: 'templateTypes',
-        name: 'BatchTemplateTypes',
-        component: () => import('@/views/typesManage/templateTypes/index'),
-        meta: { title: '批量配置', icon: 'link' }
-      }]
-  },
-
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
@@ -210,7 +208,7 @@ const createRouter = () => new Router({
 })
 
 const router = createRouter()
-
+export const asyncRoutes = []
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
   const newRouter = createRouter()

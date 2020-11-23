@@ -5,6 +5,9 @@ import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import locale from 'element-ui/lib/locale/lang/en' // lang i18n
+// 加密
+// import JsEncrypt from 'jsencrypt'
+// Vue.prototype.$jsEncrypt = JsEncrypt
 
 import '@/styles/index.scss' // global css
 import $ from 'jquery'
@@ -21,6 +24,7 @@ import router from './router'
 import VueCodemirror from 'vue-codemirror'
 // import base style
 import 'codemirror/lib/codemirror.css'
+
 Vue.use(VueCodemirror /* {
   options: { theme: 'base16-dark', ... },
   events: ['scroll', ...]

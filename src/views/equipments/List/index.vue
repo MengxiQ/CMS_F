@@ -1,96 +1,93 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.name" size="small" placeholder="设备名称" style="width: 200px;" class="filter-item"
-                @keyup.enter.native="handleFilter"/>
-      <el-input v-model="listQuery.ip" size="small" placeholder="IP地址" style="width: 200px;" class="filter-item"
-                @keyup.enter.native="handleFilter"/>
+      <el-input
+        v-model="listQuery.name"
+        size="small"
+        placeholder="设备名称"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
+        v-model="listQuery.ip"
+        size="small"
+        placeholder="IP地址"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
       <el-select v-model="listQuery.type" size="small" placeholder="类型" clearable class="filter-item">
         <el-option v-for="(item, key) in this.$store.getters.neTypes" :key="key" :label="item.name" :value="item.id"/>
       </el-select>
-      <el-button size="small" class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜素</el-button>
+      <el-button v-waves size="small" class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+        搜素
+      </el-button>
       <el-button-group style="float: right">
-        <el-button size="small" class="filter-item" style="" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button>
-  <!--      <el-button v-waves size="small" :loading="downloadLoading" class="filter-item" type="primary"-->
-  <!--                 icon="el-icon-download" @click="handleDownload">-->
-  <!--        导出-->
-  <!--      </el-button>-->
-        <el-button size="small" class="filter-item" style="" type="success" icon="el-icon-refresh" @click="handlerefresh">刷新</el-button>
+        <el-button size="small" class="filter-item" style="" type="primary" icon="el-icon-edit" @click="handleCreate">
+          添加
+        </el-button>
+        <!--      <el-button v-waves size="small" :loading="downloadLoading" class="filter-item" type="primary"-->
+        <!--                 icon="el-icon-download" @click="handleDownload">-->
+        <!--        导出-->
+        <!--      </el-button>-->
+        <el-button size="small" class="filter-item" style="" type="success" icon="el-icon-refresh" @click="handlerefresh">刷新
+        </el-button>
       </el-button-group>
-      <!--      <el-input class="filter-item" v-model="inver"></el-input>-->
     </div>
-
-    <!--    border-->
     <el-table
       :key="tableKey"
       v-loading="listLoading"
       :data="list"
       @sort-change="sortChange"
     >
-      <el-table-column type="index" width="50"></el-table-column>
-      <el-table-column label="IP" prop="id" align="center" width="" :class-name="getSortClass('id')">
-        <template slot-scope="{row}">
-          <span><el-link type="primary" @click="gotoDetail(row)">{{ row.ip }}</el-link></span>
-        </template>
-      </el-table-column>
-      <el-table-column label="型号" prop="unittype" align="center"  :class-name="getSortClass('id')">
-        <template slot-scope="{row}">
-          <span>{{ row.unittype }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="名称" prop="id" align="center"  :class-name="getSortClass('id')">
+      <!--      <el-table-column sortable label="index" type="index" align="" width="70" />-->
+      <el-table-column  label="名称" prop="name" align="" :class-name="getSortClass('name')">
         <template slot-scope="{row}">
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="设备类型" prop="id" align="center" :class-name="getSortClass('id')">
+      <el-table-column label="IP地址" prop="ip" align="" width="140" :class-name="getSortClass('ip')">
+        <template slot-scope="{row}">
+          <span><el-link type="primary" @click="gotoDetail(row)">{{ row.ip }}</el-link></span>
+        </template>
+      </el-table-column>
+      <el-table-column label="MAC地址" prop="mac" width="140"/>
+      <el-table-column label="型号" prop="unittype" align="" :class-name="getSortClass('unittype')">
+        <template slot-scope="{row}">
+          <span>{{ row.unittype }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="设备类型" prop="id" align="" :class-name="getSortClass('type')" width="100">
         <template slot-scope="{row}">
           <span>{{ row.type }}</span>
         </template>
       </el-table-column>
-      <!--      <el-table-column label="日期" width="150px" align="center">-->
-      <!--        <template slot-scope="{row}">-->
-      <!--          <span>{{ row.stock_date | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>-->
-      <!--&lt;!&ndash;          <span>{{ row.stock_date }}</span>&ndash;&gt;-->
-      <!--        </template>-->
-      <!--      </el-table-column>-->
-      <el-table-column label="状态" class-name="status-col" align="center" >
+      <el-table-column label="添加日期" width="150px" align="">
+        <template slot-scope="{row}">
+          <span>{{ parseTime(new Date(Date.parse(row.stock_date)), '{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="状态" class-name="status-col" align="">
         <template slot-scope="{row}">
           <el-tag :type="(row.status ? row.status.type.show_type : null)">
             {{ row.status ? row.status.type.name : '无状态' }}
           </el-tag>
         </template>
       </el-table-column>
-      <!--      <el-table-column label="控制" align="center" width="160" class-name="small-padding fixed-width">-->
-      <!--        <template slot-scope="{row}">-->
-      <!--          <el-button v-if="(row.status ? row.status.type.name : null) ==='离线' || (row.status ? row.status.type.name : null) === null " size="mini" type="success" @click="handleModifyStatus(row,'在线')">-->
-      <!--            上线-->
-      <!--          </el-button>-->
-      <!--          <el-button v-if="(row.status ? row.status.type.name : null) ==='在线' " size="mini" type="danger" @click="handleModifyStatus(row,'离线')">-->
-      <!--            下线-->
-      <!--          </el-button>-->
-      <!--          <el-button size="mini" type="primary">-->
-      <!--            配置-->
-      <!--          </el-button>-->
-      <!--        </template>-->
-      <!--      </el-table-column>-->
-      <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="" width="150" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button-group>
-          <el-button type="" size="mini" @click="handleUpdate(row)">
-            编辑
-          </el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(row,$index)">
-            删除
-          </el-button>
-            </el-button-group>
+            <el-button type="" size="mini" @click="handleUpdate(row)">编辑</el-button>
+            <el-button size="mini" type="danger" @click="handleDelete(row,$index)">删除
+            </el-button>
+          </el-button-group>
         </template>
       </el-table-column>
     </el-table>
-
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit"
-                @pagination="getList"/>
-
+    <!--    分页-->
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList"/>
+    <!--    弹出编辑框-->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="80%">
       <el-form ref="dataForm" :model="temp" label-position="left" label-width="80px" style="width:100% ;height: 100%">
         <div class="dialog_body">
@@ -101,14 +98,17 @@
             </el-form-item>
             <el-form-item label="设备类型" prop="type">
               <el-select v-model="temp.type" placeholder="Please select">
-                <el-option v-for="(item, key) in this.$store.getters.neTypes" :key="key" :label="item.name"
-                           :value="item.id"/>
+                <el-option v-for="(item, key) in this.$store.getters.neTypes" :key="key" :label="item.name" :value="item.id"/>
               </el-select>
             </el-form-item>
             <el-form-item label="型号" prop="unittype">
               <el-select v-model="temp.unittype">
-                <el-option v-for="(item,key) in this.$store.getters.unitTypes" :key="key" :label="item.name"
-                           :value="item.name"></el-option>
+                <el-option
+                  v-for="(item,key) in this.$store.getters.unitTypes"
+                  :key="key"
+                  :label="item.name"
+                  :value="item.name"
+                />
               </el-select>
             </el-form-item>
             <el-form-item label="IP" prop="ip">
@@ -119,11 +119,6 @@
             </el-form-item>
             <el-form-item label="创建时间" prop="stock_date">
               <el-date-picker v-model="temp.stock_date" type="datetime" placeholder="Please pick a date"/>
-            </el-form-item>
-            <el-form-item label="状态">
-              <!--          <el-select  class="filter-item" placeholder="Please select">-->
-              <!--            <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />-->
-              <!--          </el-select>-->
             </el-form-item>
             <el-form-item label="备注" prop="remark">
               <el-input v-model="temp.remark" type="textarea"/>
@@ -144,8 +139,11 @@
               <el-input v-model="temp.netconfusers_set[0].port"/>
             </el-form-item>
             <el-form-item label="类型参数" prop="device_params">
-              <el-select v-model="temp.netconfusers_set[0].device_params" class="filter-item"
-                         placeholder="Please select">
+              <el-select
+                v-model="temp.netconfusers_set[0].device_params"
+                class="filter-item"
+                placeholder="Please select"
+              >
                 <el-option v-for="item in device_params" :key="item.key" :label="item.display_name" :value="item.key"/>
               </el-select>
             </el-form-item>
@@ -179,31 +177,17 @@
 
 <script>
 
-// fetchNeType
 import {
-  createEquipment,
-  deleteEquipment,
-  fetchEquipmentList,
-  updateEquipment,
-  createStatus,
-  updateStatus
+  createEquipment, deleteEquipment, fetchEquipmentList, updateEquipment, createStatus, updateStatus
 } from '@/api/equipment'
 import waves from '@/directive/waves' // waves directive
-import {parseTime} from '@/utils'
+import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-//
-//
-//
-// // arr to obj, such as { CN : "China", US : "USA" }
-// const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
-//   acc[cur.key] = cur.display_name
-//   return acc
-// }, {})
 
 export default {
   name: 'EquipmentList',
-  components: {Pagination},
-  directives: {waves},
+  components: { Pagination },
+  directives: { waves },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -212,13 +196,6 @@ export default {
         // draft: 'info',
       }
       return statusMap[status]
-    },
-    // typeFilter(type) {
-    //   return calendarTypeKeyValue[type]
-    // },
-    parseTime(time) {
-      // return parseTime
-      return time
     }
   },
   data() {
@@ -226,9 +203,9 @@ export default {
       tableKey: 0,
       list: null,
       device_params: [
-        {key: 'huawei', display_name: '华为'},
-        {key: 'cisco', display_name: '思科'},
-        {key: 'ruijie', display_name: '锐捷'}
+        { key: 'huawei', display_name: '华为' },
+        { key: 'cisco', display_name: '思科' },
+        { key: 'ruijie', display_name: '锐捷' }
       ],
       total: 0,
       listLoading: true,
@@ -240,10 +217,6 @@ export default {
         type: undefined,
         sort: '+id'
       },
-      importanceOptions: [1, 2, 3],
-      calendarTypeOptions: [],
-      sortOptions: [{label: 'ID Ascending', key: '+id'}, {label: 'ID Descending', key: '-id'}],
-      statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       temp: {
         ip: null,
@@ -282,28 +255,31 @@ export default {
   },
   created() {
     this.getList()
-    setInterval(_ => {
-      console.log('refresh List.')
-      this.listLoading = true
-      fetchEquipmentList().then(response => {
-        if (response.results === null) {
-          this.list = response.results
-          this.total = response.count
-          this.listLoading = false
-        } else {
-          this.list = response
-          // this.$forceUpdate()
-          // console.log(this.list)
-          this.listLoading = false
-          this.$forceUpdate()
-        }
-      }).catch(error => {
-        console.log(error)
-        this.$message({ type: 'error', message: '请求失败！' })
-      })
-    }, 30000)
+    // setInterval(_ => {
+    // console.log('refresh List.')
+    this.listLoading = true
+    fetchEquipmentList().then(response => {
+      if (response.results === null) {
+        this.list = response.results
+        this.total = response.count
+        this.listLoading = false
+      } else {
+        this.list = response
+        // this.$forceUpdate()
+        // console.log(this.list)
+        this.listLoading = false
+        this.$forceUpdate()
+      }
+    }).catch(error => {
+      console.log(error)
+      this.$message({ type: 'error', message: '请求失败！' })
+    })
+    // }, 30000)
   },
   methods: {
+    parseTime(time, format) {
+      return parseTime(time, format)
+    },
     handlerefresh() {
       this.getList()
     },
@@ -330,7 +306,7 @@ export default {
         }
       }).catch(error => {
         console.log(error)
-        this.$message({type: 'error', message: '请求失败！'})
+        this.$message({ type: 'error', message: '请求失败！' })
       })
     },
     handleFilter() {
@@ -392,7 +368,7 @@ export default {
       }
     },
     sortChange(data) {
-      const {prop, order} = data
+      const { prop, order } = data
       if (prop === 'id') {
         this.sortByID(order)
       }
@@ -475,6 +451,9 @@ export default {
           type: 'success',
           duration: 2000
         })
+      }).catch(error => {
+        console.log(error)
+        this.$message({ type: 'error', message: '配置出错，请检查表单内容' + ((error.response || {}).data || {}).msg })
       })
     },
     handleDelete(row, index) {
@@ -500,20 +479,6 @@ export default {
       //   this.pvData = response.data.pvData
       //   this.dialogPvVisible = true
       // })
-    },
-    handleDownload() {
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
-        const data = this.formatJson(filterVal)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
-        })
-        this.downloadLoading = false
-      })
     },
     formatJson(filterVal) {
       return this.list.map(v => filterVal.map(j => {

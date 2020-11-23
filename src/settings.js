@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: '梦兮CMS',
+  title: 'CMS',
 
   /**
    * @type {boolean} true | false

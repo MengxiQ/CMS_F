@@ -119,8 +119,7 @@
       />
       <el-table-column label="最后更新" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.updateDate | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-          <!--          <span>{{ row.stock_date }}</span>-->
+          <span>{{parseTime(new Date(Date.parse(row.updateDate)))}}</span>
         </template>
       </el-table-column>
       <el-table-column label="模板内容" align="center" class-name="small-padding fixed-width">
@@ -267,19 +266,12 @@
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-import { getTemplatesList, saveTemplate, addTemplate, deleteTemplate, updateTemplate } from '@/api/templates'
+import { getTemplatesList, saveTemplate, addTemplate, deleteTemplate, updateTemplate } from '@/api/configManage/templates'
 import TemplateEdit from '@/views/configManage/templates/edit/index'
-
 export default {
   name: 'TemplatesList',
   components: { TemplateEdit, Pagination },
   directives: { waves },
-  filters: {
-    parseTime(time) {
-      // return parseTime
-      return time
-    }
-  },
   data() {
     return {
       // 编辑模板
@@ -332,6 +324,9 @@ export default {
     // this.$store.dispatch('getTypes')
   },
   methods: {
+    parseTime(time, format) {
+      return parseTime(time, format)
+    },
     // 删除参数属性
     deleteParam(key) {
       console.log(key)

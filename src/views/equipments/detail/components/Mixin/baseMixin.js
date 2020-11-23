@@ -45,8 +45,9 @@ export const baseMinxin = {
       this.loadingInit = false
     },
     createError(error) {
+      // The interface is not a L2 interface
       const data = error.response['data']
-      this.$message({ type: 'error', message: ' 配置失败!   error:' + data['msg'] })
+      this.$message({ dangerouslyUseHTMLString: true, type: 'error', message: ' 配置失败! <br><br>  提示信息:' + data['msg'] })
       this.loadingInit = false
     },
     handleUpdate(row) {
