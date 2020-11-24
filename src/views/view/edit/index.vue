@@ -1,7 +1,7 @@
 <template>
   <div class="edit">
-<!--        // 输入新建信息-->
-    <div v-if="!isCanEdit">
+    <!-- 输入新建信息-->
+    <div v-if="!isCanEdit" class="desc-content" >
       <img class="main-iron" src="@/assets/bg/zs_icon_xscl.svg">
       <p class="desc">
         创建拓扑可以方便配置和管理网络，点击按钮开始创建topo。
@@ -81,5 +81,8 @@ body{background:url('/src/assets/topo/canvas_bg.jpg');}
    margin: auto;
    line-height: 25px;
    text-align: center;
+ }
+ .desc-content {
+   margin-top: 100px;
  }
 </style>

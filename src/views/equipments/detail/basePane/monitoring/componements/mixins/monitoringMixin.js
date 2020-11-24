@@ -20,10 +20,10 @@ export const monitoringMixin = {
         // this.$message({ type: 'error', message: ' 请求失败，正在尝试重新刷新!' })
       }
       this.loadingInit = false
-      this.timer = setTimeout(_ => {
-        console.log('try again!')
-        this.getList()
-      }, 5000)
+      // this.timer = setTimeout(_ => {
+      //   console.log('try again!')
+      //   this.getList()
+      // }, 5000)
     }
   },
   mounted() {

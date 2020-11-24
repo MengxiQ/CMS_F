@@ -73,7 +73,7 @@
             </el-form-item>
 
             <el-form-item label="模板功能:">
-              <div>命令：{{ props.row.function ? props.row.function.name : 'null' }}&nbsp; &nbsp; # &nbsp;
+              <div>{{ props.row.function ? props.row.function.name : 'null' }}&nbsp; &nbsp; # &nbsp;
                 &nbsp;{{ props.row.function ? props.row.function.remark : 'null' }}
               </div>
             </el-form-item>
@@ -83,9 +83,9 @@
             <el-form-item label="模板参数:">
               <el-row>
                 <el-col v-for="(item, key) in props.row.params_set" :key="key" :span="24">
-                  <span class="show-param—item">参数{{ key + 1 }}：{{ item.name }}</span>
-                  <span class="show-param—item">描述：{{ item.remark }}</span>
-                  <span class="show-param—item">约束：{{ item.constraint }}</span>
+                  <span class="show-param-item">参数{{ key + 1 }}：{{ item.name }}</span>
+                  <span class="show-param-item">描述：{{ item.remark }}</span>
+                  <span class="show-param-item">约束：{{ item.constraint }}</span>
                 </el-col>
               </el-row>
             </el-form-item>
@@ -521,9 +521,8 @@ export default {
   border: 1px solid rgb(191, 203, 217);
 }
 
-.show-param—item {
+.show-param-item {
   padding: 5px;
-  margin-right: 10px;
 }
 
 .param-item {

@@ -16,6 +16,7 @@
       <chioce-equipments @selectedequipments="selectedequipments" />
     </div>
     <div v-show="active === 3 || active === 4" id="3" class="step-contend">
+      <el-button size="mini" type="" @click="resultList = []">清空</el-button>
       <result :result-list="resultList" />
     </div>
     <div class="button-content">

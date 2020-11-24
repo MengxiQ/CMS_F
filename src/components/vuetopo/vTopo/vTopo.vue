@@ -90,7 +90,7 @@
               @mousedown.stop="selectConnectorLine(key)"
             >
               <g v-if="ele.status !== 'alarm'">
-                <!-- 绘制直线-->
+                <!-- 连接线（直线）-->
                 <line
                   class="connectorLine"
                   :stroke-width="ele.strokeW"
@@ -100,6 +100,7 @@
                   :x2="ele.targetNode.x + (ele.targetNode.width/2)"
                   :y2="ele.targetNode.y + (ele.targetNode.height/2)"
                 />
+                <!--流动的连接线-->
                 <defs>
                   <marker
                     id="arrow"

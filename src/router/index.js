@@ -36,22 +36,20 @@ export const constantRoutes = [
     component: () => import('@/views/login/index'),
     hidden: true
   },
-
   {
-    path: '/404',
-    component: () => import('@/views/404'),
-    hidden: true
+    path: '/gohome',
+    component: Layout,
+    redirect: '/home'
   },
-
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: '/home',
     children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: '首页', icon: 'dashboard' }
+      path: 'home',
+      name: 'Home',
+      component: () => import('@/views/home/index'),
+      meta: { title: '首页', icon: 'el-icon-s-home' }
     }]
   },
 
@@ -65,14 +63,14 @@ export const constantRoutes = [
       {
         path: 'list',
         name: 'EquipmentList',
-        component: () => import('@/views/equipments/List/index'),
-        meta: { title: '设备列表', icon: 'table' }
+        component: () => import('@/views/equipments/list/index'),
+        meta: { title: '设备列表', icon: 'el-icon-help' }
       },
       {
         path: 'netconfUser',
         name: 'NetconfUser',
         component: () => import('@/views/equipments/netconfUser/index'),
-        meta: { title: '设备用户', icon: 'el-icon-user-solid' }
+        meta: { title: '设备用户', icon: 'el-icon-s-custom' }
       },
       {
         path: 'batchUsers',
@@ -124,13 +122,13 @@ export const constantRoutes = [
     redirect: '/configManage/templates',
     name: 'ConfigManage',
     alwaysShow: true,
-    meta: { title: '配置管理', icon: 'nested' },
+    meta: { title: '配置管理', icon: 'el-icon-s-finance' },
     children: [
       {
         path: 'templates',
         component: () => import('@/views/configManage/templates/list/index'), // Parent router-view
         name: 'Templates',
-        meta: { title: '模板列表', icon: 'nested' }
+        meta: { title: '模板列表', icon: 'el-icon-s-check' }
       },
       // {
       //   path: 'yangTool',
@@ -148,7 +146,7 @@ export const constantRoutes = [
         path: 'batchConfig',
         component: () => import('@/views/configManage/batchConfig/batchConfig'), // Parent router-view
         name: 'batchConfig',
-        meta: { title: '批量配置', icon: 'el-icon-s-tools' }
+        meta: { title: '批量配置', icon: 'el-icon-s-open' }
       }
       // {
       //   path: 'guideConfig',
@@ -197,12 +195,31 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/system',
+    component: Layout,
+    alwaysShow: true,
+    meta: { title: '系统管理', icon: 'el-icon-s-operation' },
+    children: [
+      {
+        path: 'users',
+        name: 'Users',
+        component: () => import('@/views/systemManage/users/index'),
+        meta: { title: '系统用户', icon: 'el-icon-s-custom' }
+      }
+    ]
+  },
   // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  { path: '*', redirect: '/404', hidden: true },
+  {
+    path: '/404',
+    component: () => import('@/views/404'),
+    hidden: true
+  }
 ]
 
 const createRouter = () => new Router({
-  // mode: 'history', // require service support
+  mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })

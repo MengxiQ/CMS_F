@@ -10,6 +10,7 @@
         </el-col>
       </el-row>
       <el-row v-loading="loadingInit">
+        <el-col :span="24"><el-button size="mini" @click="getList">刷新单板信息</el-button></el-col>
         <el-col class="col" v-for="(item, key) in list" :key="key" :md="12" :xs="24">
           <board-res-states :loading="loadingInit" :data="item" @reload="getList" />
         </el-col>

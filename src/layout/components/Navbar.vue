@@ -7,18 +7,16 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-<!--          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">-->
-          <div class="el-icon-user-solid username" ><span style="padding: 1px">{{ name }}</span></div>
-          <i class="el-icon-caret-bottom" />
+          <!-- <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">-->
+          <div class="username" ><i class="el-icon-user-solid" style="margin-right: 5px"/>{{ name }} <i class="el-icon-caret-bottom"/></div>
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
             <el-dropdown-item>
-              Home
-            </el-dropdown-item>
+              <i class="el-icon-s-home"></i>首页</el-dropdown-item>
           </router-link>
           <el-dropdown-item divided @click.native="logout">
-            <span style="display:block;">Log Out</span>
+            <span style="display:block;"><i class="el-icon-moon-night"></i>退出</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -89,6 +87,7 @@ export default {
     float: right;
     height: 100%;
     line-height: 50px;
+    margin-right: 15px;
 
     &:focus {
       outline: none;

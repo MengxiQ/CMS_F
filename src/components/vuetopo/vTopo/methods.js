@@ -1091,24 +1091,24 @@ export const methods = {
           onClick: () => this.handleConfig()
         },
         {
-          label: '快速ping',
+          label: 'ping',
           minWidth: 0,
           onClick: () => this.handlePing()
         },
-        {
-          label: '高级ping',
-          minWidth: 0,
-          onClick: () => {
-            this.$message('传递ip地址，打开ping窗口')
-          }
-        },
-        {
-          label: 'tracer',
-          minWidth: 0,
-          onClick: () => {
-            this.$message('tracer')
-          }
-        },
+        // {
+        //   label: '高级ping',
+        //   minWidth: 0,
+        //   onClick: () => {
+        //     this.$message('传递ip地址，打开ping窗口')
+        //   }
+        // },
+        // {
+        //   label: 'tracer',
+        //   minWidth: 0,
+        //   onClick: () => {
+        //     this.$message('tracer')
+        //   }
+        // },
         {
           label: '节点属性',
           minWidth: 0,
@@ -1193,15 +1193,6 @@ export const methods = {
       if (ip !== '' && ip !== null) {
         // 根据ip向后台查询接口
         this[param] = [
-          {
-            name: 'GE0/0/1'
-          },
-          {
-            name: 'GE0/0/2'
-          },
-          {
-            name: 'GE0/0/3'
-          }
         ]
       } else {
         this.$message({ type: 'warning', message: '请先选择设备！' })

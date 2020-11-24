@@ -41,6 +41,9 @@
       :data="list"
       @sort-change="sortChange"
     >
+      <el-table-column type="index" >
+        <template slot="header"><i class="el-icon-view"></i></template>
+      </el-table-column>
       <!--      <el-table-column sortable label="index" type="index" align="" width="70" />-->
       <el-table-column  label="名称" prop="name" align="" :class-name="getSortClass('name')">
         <template slot-scope="{row}">
@@ -52,18 +55,18 @@
           <span><el-link type="primary" @click="gotoDetail(row)">{{ row.ip }}</el-link></span>
         </template>
       </el-table-column>
-      <el-table-column label="MAC地址" prop="mac" width="140"/>
+      <el-table-column label="MAC地址" prop="mac"/>
       <el-table-column label="型号" prop="unittype" align="" :class-name="getSortClass('unittype')">
         <template slot-scope="{row}">
           <span>{{ row.unittype }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="设备类型" prop="id" align="" :class-name="getSortClass('type')" width="100">
+      <el-table-column label="设备类型" prop="id" align="" :class-name="getSortClass('type')">
         <template slot-scope="{row}">
           <span>{{ row.type }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="添加日期" width="150px" align="">
+      <el-table-column label="添加日期" align="">
         <template slot-scope="{row}">
           <span>{{ parseTime(new Date(Date.parse(row.stock_date)), '{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
@@ -147,9 +150,9 @@
                 <el-option v-for="item in device_params" :key="item.key" :label="item.display_name" :value="item.key"/>
               </el-select>
             </el-form-item>
-            <el-form-item label="hostkey" prop="hostkey">
-              <el-input v-model="temp.netconfusers_set[0].hostkey" type="textarea"/>
-            </el-form-item>
+<!--            <el-form-item label="hostkey" prop="hostkey">-->
+<!--              <el-input v-model="temp.netconfusers_set[0].hostkey" type="textarea"/>-->
+<!--            </el-form-item>-->
           </div>
         </div>
       </el-form>

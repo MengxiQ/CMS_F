@@ -13,9 +13,9 @@
     <div v-else class="topoAttrBody">
       <div class="topoAttrMain">
 
-        <el-form :disabled="!editable" label-width="100px" class="demo-ruleForm" label-position="left">
+        <el-form size="mini" :disabled="!editable" label-width="100px" class="demo-ruleForm" label-position="left">
           <div v-if="vSelectNodeData.type == 'Line'">
-            <h1 style="text-align: left;font-size: larger;box-shadow: -4px 0px #b3d8ff;padding: 3px 5px">样式设置：</h1>
+            <el-divider content-position="left"><span class="title">样式设置</span></el-divider>
             <el-form-item label="颜色选择">
               <el-color-picker v-model="vSelectNodeData.color" />
             </el-form-item>
@@ -28,9 +28,8 @@
                 :max="20"
               />
             </el-form-item>
-            <h1 style="text-align: left;font-size: larger;box-shadow: -4px 0px #b3d8ff;padding: 3px 5px">
-              连接设置：<el-link type="primary" @click="getList">添加</el-link></h1>
-            <el-form :disabled="!editable" label-position="top" style="text-align: left">
+            <el-divider content-position="left"><span class="title">连接设置</span> <el-link type="primary" :disabled="loading" @click="getList">采集</el-link></el-divider>
+            <el-form size="mini" v-loading="loading" :disabled="!editable" label-position="top" style="text-align: left">
               <el-form-item :label="'目标接口('+vSelectNodeData.sourceNode.ip+')'">
                 <el-select v-model="vSelectNodeData.sourceNode.port" placeholder="请选择">
                   <el-option
@@ -54,38 +53,38 @@
             </el-form>
           </div>
           <div v-else>
-            <el-form :disabled="!editable" label-position="left" label-width="80px">
-              <el-form-item label="名称">
+            <el-form size="mini" :disabled="!editable" label-position="left" label-width="80px">
+              <el-form-item label="节点名称">
                 <el-input v-model="vSelectNodeData['name']" />
               </el-form-item>
-              <el-form-item label="图标">
-                <el-input v-model="vSelectNodeData['icon']" />
-              </el-form-item>
-              <el-form-item label="类型">
+<!--              <el-form-item label="图标">-->
+<!--                <el-input v-model="vSelectNodeData['icon']" />-->
+<!--              </el-form-item>-->
+              <el-form-item label="节点类型">
                 <el-input v-model="vSelectNodeData['type']" />
               </el-form-item>
-              <el-form-item label="图标类型">
-                <el-select v-model="vSelectNodeData['classType']">
-                  <el-option label="T1 (容器)" value="T1" />
-                  <el-option label="T2 (节点)" value="T2" />
-                </el-select>
-              </el-form-item>
-              <el-form-item label="高">
-                <el-input v-model="vSelectNodeData['height']" />
-              </el-form-item>
-              <el-form-item label="宽">
-                <el-input v-model="vSelectNodeData['width']" />
-              </el-form-item>
+<!--              <el-form-item label="图标类型">-->
+<!--                <el-select  v-model="vSelectNodeData['classType']">-->
+<!--                  <el-option label="T1 (容器)" value="T1" />-->
+<!--                  <el-option label="T2 (节点)" value="T2" />-->
+<!--                </el-select>-->
+<!--              </el-form-item>-->
+<!--              <el-form-item  label="图标高度">-->
+<!--                <el-input v-model="vSelectNodeData['height']" />-->
+<!--              </el-form-item>-->
+<!--              <el-form-item  label="图标宽度">-->
+<!--                <el-input v-model="vSelectNodeData['width']" />-->
+<!--              </el-form-item>-->
             </el-form>
           </div>
         </el-form>
       </div>
-      <div class="topoAttrFooter">
-        <!--                <nl-button type="primary" style="margin-right:15px;">确定</nl-button>-->
-        <!--                <nl-button>取消</nl-button>-->
-        <el-button type="primary">确定</el-button>
-        <el-button type="">取消</el-button>
-      </div>
+<!--      <div class="topoAttrFooter">-->
+<!--        &lt;!&ndash;                <nl-button type="primary" style="margin-right:15px;">确定</nl-button>&ndash;&gt;-->
+<!--        &lt;!&ndash;                <nl-button>取消</nl-button>&ndash;&gt;-->
+<!--        <el-button type="primary">确定</el-button>-->
+<!--        <el-button type="">取消</el-button>-->
+<!--      </div>-->
     </div>
     <i
       class="topoAttrArrow"
@@ -129,7 +128,8 @@ export default {
     return {
       isTopoAttrShow: false,
       sourceNodeInterfaces: [],
-      targetNodeInterfaces: []
+      targetNodeInterfaces: [],
+      loading: false
 
     }
   },
@@ -163,6 +163,7 @@ export default {
       return node
     },
     getList() {
+      this.loading = true
       const sip = this.vSelectNodeData.sourceNode.ip
       const tip = this.vSelectNodeData.targetNode.ip
       // console.log(sip, tip)
@@ -180,9 +181,11 @@ export default {
       ]
       Promise.all(promiseArr).then(res => {
         console.log(res)
+        this.loading = false
         this.$message({ type: 'success', message: '获取接口列表成功.' })
       }).catch(error => {
         console.log(error)
+        this.loading = false
         this.$message({ type: 'error', message: '获取接口列表失败.检查设备是否在线.' })
       })
     }
@@ -265,6 +268,10 @@ export default {
       justify-content: center;
       align-items: center;
     }
+  }
+  .title {
+   font-size: 15px;
+    font-weight: ;
   }
 }
 </style>

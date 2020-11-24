@@ -29,11 +29,6 @@
         prop="ifName"
         align="center"
       />
-<!--      <el-table-column-->
-<!--        label="描述"-->
-<!--        prop="ifDescr"-->
-<!--        align="center"-->
-<!--      />-->
       <el-table-column
         label="MAC"
         prop="ifMac"
@@ -59,6 +54,11 @@
           <span>{{props.row.ipv4Config.am4CfgAddrs ? props.row.ipv4Config.am4CfgAddrs.am4CfgAddr.subnetMask : ''}}</span>
         </template>
       </el-table-column>
+      <el-table-column
+        label="描述"
+        prop="ifDescr"
+        align="center"
+      />
       <el-table-column label="操作" align="center" width="150">
         <template slot="header">
            <el-button type="primary" size="mini" @click="handleCreate">添加</el-button>
