@@ -2,7 +2,7 @@
  * @Author: caojing
  * @Date: 2017-10-20 09:29:55
  * @LastEditors: weilixing
- * @LastEditTime: 2020-11-16 10:57:15
+ * @LastEditTime: 2020-11-25 10:57:15
  -->
 <template>
   <div class="topoComponent">
@@ -19,7 +19,7 @@
         >
           <i class="svgHeadItemImg" :class="ele.iron " />
         </li>
-        <li class="svgHeadItem" title="重新渲染" @click="svgMainKey += 1"><i class="el-icon-refresh" /></li>
+<!--        <li class="svgHeadItem" title="重新渲染" @click="svgMainKey += 1"><i class="el-icon-refresh" /></li>-->
       </ul>
       <!--      <span style="font-size: 14px">{{ topoData.name }}</span>-->
       <label style="font-size: 12px; font-weight: normal">名称：<el-input v-model="topoData.name" style="width: 180px" size="mini" /></label>
@@ -89,8 +89,8 @@
               :class="{active:ele.isSelect}"
               @mousedown.stop="selectConnectorLine(key)"
             >
-              <g v-if="ele.status !== 'alarm'">
-                <!-- 绘制直线-->
+              <g v-if="ele.status === '在线'">
+                <!-- 连接线（直线）-->
                 <line
                   class="connectorLine"
                   :stroke-width="ele.strokeW"
@@ -100,83 +100,86 @@
                   :x2="ele.targetNode.x + (ele.targetNode.width/2)"
                   :y2="ele.targetNode.y + (ele.targetNode.height/2)"
                 />
-                <defs>
-                  <marker
-                    id="arrow"
-                    markerWidth="10"
-                    markerHeight="10"
-                    orient="auto"
-                    markerUnits="strokeWidth"
-                    refX="0"
-                    refY="2"
+                <!--流动的连接线-->
+                <g v-if="!editable">
+                  <defs>
+                    <marker
+                      id="arrow"
+                      markerWidth="10"
+                      markerHeight="10"
+                      orient="auto"
+                      markerUnits="strokeWidth"
+                      refX="0"
+                      refY="2"
+                    >
+                      <path d="M0,0 L0,4 L5,2 z" fill="#336699" />
+                    </marker>
+                  </defs>
+                  <line
+                    class="connectorLine"
+                    :stroke-width="ele.strokeW"
+                    :stroke="ele.color"
+                    :x1="ele.sourceNode.x + (ele.sourceNode.width/2) "
+                    :y1="ele.sourceNode.y + (ele.sourceNode.height/2)"
+                    :x2="ele.sourceNode.x + (ele.targetNode.x - ele.sourceNode.x)/2 + (ele.targetNode.width/2)"
+                    :y2="ele.sourceNode.y + (ele.targetNode.y - ele.sourceNode.y)/2 + (ele.targetNode.height/2)"
+                    marker-end="url(#arrow)"
                   >
-                    <path d="M0,0 L0,4 L5,2 z" fill="#336699" />
-                  </marker>
-                </defs>
-                <line
-                  class="connectorLine"
-                  :stroke-width="ele.strokeW"
-                  :stroke="ele.color"
-                  :x1="ele.sourceNode.x + (ele.sourceNode.width/2) "
-                  :y1="ele.sourceNode.y + (ele.sourceNode.height/2)"
-                  :x2="ele.sourceNode.x + (ele.targetNode.x - ele.sourceNode.x)/2 + (ele.targetNode.width/2)"
-                  :y2="ele.sourceNode.y + (ele.targetNode.y - ele.sourceNode.y)/2 + (ele.targetNode.height/2)"
-                  marker-end="url(#arrow)"
-                >
-                  <animate
-                    attributeName="x2"
-                    begin="0s"
-                    dur="5s"
-                    :from="ele.sourceNode.x + (ele.sourceNode.width/2)"
-                    :to="ele.sourceNode.x + (ele.targetNode.x - ele.sourceNode.x)/2 + (ele.targetNode.width/2)"
-                    calcMode="linear"
-                    repeatCount="indefinite"
-                  />
-                  <animate
-                    attributeName="y2"
-                    begin="0s"
-                    dur="5s"
-                    :from="ele.sourceNode.y + (ele.sourceNode.height/2)"
-                    :to="ele.sourceNode.y + (ele.targetNode.y - ele.sourceNode.y)/2 + (ele.targetNode.height/2)"
-                    calcMode="linear"
-                    repeatCount="indefinite"
-                  />
-                </line>
-                <line
-                  class="connectorLine"
-                  :stroke-width="ele.strokeW"
-                  :stroke="ele.color"
-                  :x1="ele.targetNode.x + (ele.targetNode.width/2) "
-                  :y1="ele.targetNode.y + (ele.targetNode.height/2)"
-                  :x2="ele.sourceNode.x + (ele.targetNode.x - ele.sourceNode.x)/2 + (ele.targetNode.width/2)"
-                  :y2="ele.sourceNode.y + (ele.targetNode.y - ele.sourceNode.y)/2 + (ele.targetNode.height/2)"
-                  marker-end="url(#arrow)"
-                >
-                  <animate
-                    attributeName="x2"
-                    begin="0s"
-                    dur="5s"
-                    :from="ele.targetNode.x + (ele.targetNode.width/2)"
-                    :to="ele.sourceNode.x + (ele.targetNode.x - ele.sourceNode.x)/2 + (ele.targetNode.width/2)"
-                    calcMode="linear"
-                    repeatCount="indefinite"
-                  />
-                  <animate
-                    attributeName="y2"
-                    begin="0s"
-                    dur="5s"
-                    :from="ele.targetNode.y + (ele.targetNode.height/2)"
-                    :to="ele.sourceNode.y + (ele.targetNode.y - ele.sourceNode.y)/2 + (ele.targetNode.height/2)"
-                    calcMode="linear"
-                    repeatCount="indefinite"
-                  />
-                </line>
+                    <animate
+                      attributeName="x2"
+                      begin="0s"
+                      dur="5s"
+                      :from="ele.sourceNode.x + (ele.sourceNode.width/2)"
+                      :to="ele.sourceNode.x + (ele.targetNode.x - ele.sourceNode.x)/2 + (ele.targetNode.width/2)"
+                      calcMode="linear"
+                      repeatCount="indefinite"
+                    />
+                    <animate
+                      attributeName="y2"
+                      begin="0s"
+                      dur="5s"
+                      :from="ele.sourceNode.y + (ele.sourceNode.height/2)"
+                      :to="ele.sourceNode.y + (ele.targetNode.y - ele.sourceNode.y)/2 + (ele.targetNode.height/2)"
+                      calcMode="linear"
+                      repeatCount="indefinite"
+                    />
+                  </line>
+                  <line
+                    class="connectorLine"
+                    :stroke-width="ele.strokeW"
+                    :stroke="ele.color"
+                    :x1="ele.targetNode.x + (ele.targetNode.width/2) "
+                    :y1="ele.targetNode.y + (ele.targetNode.height/2)"
+                    :x2="ele.sourceNode.x + (ele.targetNode.x - ele.sourceNode.x)/2 + (ele.targetNode.width/2)"
+                    :y2="ele.sourceNode.y + (ele.targetNode.y - ele.sourceNode.y)/2 + (ele.targetNode.height/2)"
+                    marker-end="url(#arrow)"
+                  >
+                    <animate
+                      attributeName="x2"
+                      begin="0s"
+                      dur="5s"
+                      :from="ele.targetNode.x + (ele.targetNode.width/2)"
+                      :to="ele.sourceNode.x + (ele.targetNode.x - ele.sourceNode.x)/2 + (ele.targetNode.width/2)"
+                      calcMode="linear"
+                      repeatCount="indefinite"
+                    />
+                    <animate
+                      attributeName="y2"
+                      begin="0s"
+                      dur="5s"
+                      :from="ele.targetNode.y + (ele.targetNode.height/2)"
+                      :to="ele.sourceNode.y + (ele.targetNode.y - ele.sourceNode.y)/2 + (ele.targetNode.height/2)"
+                      calcMode="linear"
+                      repeatCount="indefinite"
+                    />
+                  </line>
+                </g>
               </g>
               <g v-else>
                 <line
                   class="connectorLine"
                   :stroke-width="ele.strokeW"
-                  :stroke="ele.color"
+                  :stroke="editable ? ele.color : (ele.status === '在线' ? ele.color : 'red')"
                   :x1="ele.sourceNode.x + (ele.sourceNode.width/2) "
                   :y1="ele.sourceNode.y + (ele.sourceNode.height/2)"
                   :x2="ele.targetNode.x + (ele.targetNode.width/2)"

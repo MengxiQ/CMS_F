@@ -2,22 +2,22 @@
   <div>
     <pane :title="'系统信息'" @reload="getList">
       <div v-loading="loadingInit">
-       <ul class="content">
-         <li><span class="label">系统名称：</span>
-           <span v-if="!isEdit" class="value">{{ list.sysName }}</span>
-           <el-input style="width: 100px" v-else size="mini" v-model="temp.sysName"/>
-           <i title="编辑" style="margin-left: 10px; color: dodgerblue" class="el-icon-edit" @click="handledUpdate"/>
-           <i title="保存" v-if="isEdit" style="margin-left: 10px; color: dodgerblue" class="el-icon-s-order" @click="handledSave"/>
-         </li>
-         <li><span class="label">产品型号：</span><span class="value">{{ list.productName }}</span></li>
-         <li><span class="label">mac地址：</span><span class="value">{{ list.mac }}</span></li>
-         <li><span class="label">系统版本：</span><span class="value">{{ list.platformVer }}</span></li>
-         <li><span class="label">esn：</span><span class="value">{{ list.esn }}</span></li>
-         <li><span class="label">位置：</span><span v-if="!isEdit" class="value">{{ list.sysLocation }}</span><el-input style="width: 200px" v-else size="mini" v-model="temp.sysLocation"/></li>
-         <li><span class="label">系统时间：</span><span class="value">{{ timestampToTime(list.sysGmtTime) }}</span></li>
-         <li><span class="label">开机时长：</span><span class="value">{{ formatSeconds(list.sysUpTime) }}</span></li>
-         <li><span class="label">系统描述：</span><span class="value">{{ list.sysDesc }}</span></li>
-       </ul>
+        <ul class="content">
+          <li><span class="label">系统名称：</span>
+            <span v-if="!isEdit" class="value">{{ list.sysName }}</span>
+            <el-input v-else v-model="temp.sysName" style="width: 100px" size="mini" />
+            <i title="编辑" style="margin-left: 10px; color: dodgerblue" class="el-icon-edit" @click="handledUpdate" />
+            <i v-if="isEdit" title="保存" style="margin-left: 10px; color: dodgerblue" class="el-icon-s-order" @click="handledSave" />
+          </li>
+          <li><span class="label">产品型号：</span><span class="value">{{ list.productName }}</span></li>
+          <li><span class="label">mac地址：</span><span class="value">{{ list.mac }}</span></li>
+          <li><span class="label">系统版本：</span><span class="value">{{ list.platformVer }}</span></li>
+          <li><span class="label">esn：</span><span class="value">{{ list.esn }}</span></li>
+          <li><span class="label">位置：</span><span v-if="!isEdit" class="value">{{ list.sysLocation }}</span><el-input v-else v-model="temp.sysLocation" style="width: 200px" size="mini" /></li>
+          <li><span class="label">系统时间：</span><span class="value">{{ timestampToTime(list.sysGmtTime) }}</span></li>
+          <li><span class="label">开机时长：</span><span class="value">{{ formatSeconds(list.sysUpTime) }}</span></li>
+          <li><span class="label">系统描述：</span><span class="value">{{ list.sysDesc }}</span></li>
+        </ul>
       </div>
     </pane>
   </div>
@@ -26,7 +26,7 @@
 <script>
 import Pane from '@/components/pane/pane'
 import { monitoringMixin } from '@/views/equipments/detail/basePane/monitoring/componements/mixins/monitoringMixin'
-import { getSystemInfo , updateSystemInfo} from '@/api/detail/monitoring/monitoring'
+import { getSystemInfo, updateSystemInfo } from '@/api/detail/monitoring/monitoring'
 import { formatSeconds, timestampToTime } from '@/utils/time-tool'
 
 export default {
@@ -69,11 +69,13 @@ export default {
     },
     getList() {
       this.loadingInit = true
-      getSystemInfo(this.ip).then(res => {
-        console.log(res)
-        this.list = res.data.system.systemInfo
-        this.loadingInit = false
-      }).catch(error => this.getListError(error))
+      setTimeout(_ => {
+        getSystemInfo(this.ip).then(res => {
+        // console.log(res)
+          this.list = res.data.system.systemInfo
+          this.loadingInit = false
+        }).catch(error => this.getListError(error))
+      }, 1000)
     }
   }
 }

@@ -16,6 +16,7 @@
       <chioce-equipments @selectedequipments="selectedequipments" />
     </div>
     <div v-show="active === 3 || active === 4" id="3" class="step-contend">
+      <el-button size="mini" type="" @click="resultList = []">清空</el-button>
       <result :result-list="resultList" />
     </div>
     <div class="button-content">
@@ -124,7 +125,7 @@ export default {
       const promisArr = this.selectedEquipments.map((item, key) => {
         return new Promise((resolve, reject) => {
           const data = {
-            user: item.netconfusers_set[0],
+            user: item.user,
             ip: item.ip,
             action: this.action,
             // action: {
@@ -166,8 +167,8 @@ export default {
       })
       this.loding = true
       const notify = this.$notify({
-        title: '下发配置',
-        message: '<i class="el-icon-loading"></i>正在向下发配置.',
+        title: '配置',
+        message: '<i class="el-icon-loading"></i>正在下发配置...',
         duration: 0,
         dangerouslyUseHTMLString: true
         // showClose: false
@@ -178,28 +179,12 @@ export default {
         this.loding = false
         this.active = 4
       }).catch(error => {
-        this.$message({ type: 'warning', message: '操作完成, 有部分未成功.' })
+        this.$message({ type: 'warning', message: '操作完成.' })
         notify.close()
         console.log(error)
         this.active = 4
         this.loding = false
       })
-    },
-    recursiveConfig(obj) {
-      var output = ''
-      if (typeof obj === 'object') {
-        for (var key in obj) {
-          var item = obj[key]
-          if (typeof item === 'object') {
-            output += this.recursiveConfig(item)
-          } else {
-            output += key + ':' + item + '\n'
-          }
-        }
-      } else {
-        output += obj + '\n'
-      }
-      return output
     },
     complete() {
       this.template = {}

@@ -64,7 +64,7 @@
 
 <script>
 import { getVlans, createVlans, deleteVlans } from '@/api/detail/vlans'
-import { isArray} from '@/utils/isType'
+import { isArray } from '@/utils/isType'
 
 export default {
   name: 'VlanPane',
@@ -80,7 +80,7 @@ export default {
       dialogEditShow: false,
       params: [],
       temp: {},
-      loadingInit: true
+      loadingInit: true,
     }
   },
   mounted() {
@@ -104,7 +104,7 @@ export default {
       }).catch(error => {
         console.log(error)
         const data = error.response['data']
-        this.$message({ type: 'error', message: '初始化失败，请尝试刷新! ' + data['msg'] })
+        this.$message({ type: 'error', message: data['msg'] })
       })
     },
     handleCreate() {
@@ -153,7 +153,7 @@ export default {
         // this.temp = Object.assign({}, this.params[0])
       }).catch(error => {
         console.log(error)
-        this.$message({ type: 'error', message: ' 请求失败，请尝试刷新! ' })
+        this.$message({ type: 'error', message: ' 加载列表失败，请尝试刷新! ' })
         this.loadingInit = false
       })
     }

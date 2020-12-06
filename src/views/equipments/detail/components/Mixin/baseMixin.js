@@ -47,7 +47,7 @@ export const baseMinxin = {
     createError(error) {
       // The interface is not a L2 interface
       const data = error.response['data']
-      this.$message({ dangerouslyUseHTMLString: true, type: 'error', message: ' 配置失败! <br><br>  提示信息:' + data['msg'] })
+      this.$message({ dangerouslyUseHTMLString: true, type: 'error', message: ' 配置失败! <br>' + data['msg'] })
       this.loadingInit = false
     },
     handleUpdate(row) {
@@ -58,16 +58,16 @@ export const baseMinxin = {
     getListError(error) {
       if (error.response) {
         const data = error.response['data']
-        this.$message({ type: 'error', message: ' 请求失败，尝试刷新!   error:' + data['msg'] })
+        this.$message({ type: 'error', message: ' 请求失败，请尝试刷新!  ' + data['msg'] })
       } else {
         console.log(error)
-        this.$message({ type: 'error', message: ' 请求失败，尝试刷新!' })
+        this.$message({ type: 'error', message: ' 请求失败，请尝试刷新!' })
       }
       this.loadingInit = false
-      setTimeout(_ => {
-        console.log('try again!')
-        this.getList()
-      }, 5000)
+      // setTimeout(_ => {
+      //   console.log('try again!')
+      //   this.getList()
+      // }, 5000)
     }
   },
   mounted() {

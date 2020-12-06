@@ -1,8 +1,15 @@
 <template>
   <div>
-    <h5 class="label-h5">进程信息：
-      <el-link type="primary">编辑</el-link>
-      <el-button style="transform: scale(0.8)" size="mini" type="danger" @click="handleDelete">删除</el-button></h5>
+    <el-popconfirm
+      :title="'确定要删除ospf进程（' + item.processId+ '）吗？'"
+      @onConfirm="handleDelete()"
+    >
+      <el-button slot="reference" size="mini" type="danger">删除</el-button>
+    </el-popconfirm>
+    <!--    <h5 class="label-h5">进程信息：-->
+    <!--&lt;!&ndash;      <el-link type="primary">编辑</el-link>&ndash;&gt;-->
+    <!--      </h5>-->
+    <el-divider content-position="left">进程信息</el-divider>
     <el-form label-position="left" inline>
       <el-form-item label="processId:">
         <span class="form-titem-valus">{{ item.processId }}</span>
@@ -21,7 +28,7 @@
 </template>
 
 <script>
-import { getOspfProcess, deleteOspfProcess } from '@/api/detail/ospf/ospfProcess'
+import { deleteOspfProcess } from '@/api/detail/ospf/ospfProcess'
 
 export default {
   name: 'OspfProcess',
@@ -67,5 +74,9 @@ export default {
 </script>
 
 <style scoped>
+.form-titem-valus {
+  color: #6f7180;
+  margin-right: 20px;
 
+}
 </style>

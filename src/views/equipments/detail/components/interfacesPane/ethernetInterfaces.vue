@@ -8,7 +8,7 @@
         type="index"
         align="center"
       >
-        <template slot="header"><i class="el-icon-view"></i>
+        <template slot="header"><i class="el-icon-view" />
         </template>
       </el-table-column>
       <el-table-column
@@ -42,14 +42,14 @@
         align="center"
       >
         <template slot-scope="scope">
-<!--          <span style="width: 100px; height: 50px; display: block; overflow: hidden ">-->
-<!--&lt;!&ndash;            {{scope.row.l2Attribute ? scope.row.l2Attribute.trunkVlans : ''}}&ndash;&gt;-->
-<!--          </span>-->
+          <span style="max-width: 100px; max-height: 50px; display: block; overflow: hidden ">
+            <span>{{ scope.row.l2Attribute ? vlans(scope.row.l2Attribute.trunkVlans) : '' }}</span>
+          </span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="150">
         <template slot="header">
-<!--           <el-button type="primary" size="mini" @click="handleCreate">添加</el-button>-->
+          <!--           <el-button type="primary" size="mini" @click="handleCreate">添加</el-button>-->
           <el-button type="success" size="mini" @click="getList">刷新</el-button>
         </template>
         <template slot-scope="scope">
@@ -60,10 +60,11 @@
       </el-table-column>
     </el-table>
     <!--    编辑框-->
-    <el-dialog :title="dialogEditStatus" :visible.sync="dialogEditShow" :before-close="beforCloseDialog">
+    <el-dialog width="90%" :title="dialogEditStatus" :visible.sync="dialogEditShow" :before-close="beforCloseDialog">
       <el-form label-position="left" label-width="120px">
         <el-form-item
           v-for="(item, key) in params"
+          v-if="item.name !== 'trunkVlans'"
           :key="key"
           style="position: relative; padding: 10px 0 20px 0"
           :label="item.name"
@@ -84,10 +85,23 @@
             />
           </el-select>
           <el-input
-            v-if="item.constraint === 'INT' || item.constraint === 'IP' || item.constraint === 'MASK' || item.constraint === 'WILDCARD' || item.constraint === 'STRING'"
+            v-if="(item.name !== 'trunkVlans') && (item.constraint === 'INT' || item.constraint === 'IP' || item.constraint === 'MASK' || item.constraint === 'WILDCARD' || item.constraint === 'STRING')"
             v-model="temp[item.name]"
             :disabled="temp.l2Enable === 'disable' && (item.name === 'linkType'|| item.name === 'pvid'|| item.name === 'trunkVlans'|| item.name === 'trunkVlans' )"
           />
+        </el-form-item>
+        <el-form-item label="trunkVlans">
+          <el-select
+            class="input-item"
+            v-model="temp.trunkVlans"
+            multiple
+            filterable
+            allow-create
+            default-first-option
+            clearable
+          >
+<!--            <el-option label="all" :value="all" />-->
+          </el-select>
         </el-form-item>
       </el-form>
       <el-row>
@@ -102,13 +116,17 @@
 
 <script>
 import { baseMinxin } from '@/views/equipments/detail/components/Mixin/baseMixin'
-import { getEthernetInterfaces, createEthernetInterface, deleteEthernetInterface } from '@/api/detail/interfaces'
+import { getEthernetInterfaces, createEthernetInterface } from '@/api/detail/interfaces'
+import { isArray } from '@/utils/validate'
 
 export default {
   name: 'EthernetInterfaces',
+  filters: {
+  },
   mixins: [baseMinxin],
   data() {
     return {
+      all: [],
       temp: {
         ifName: '',
         l2Enable: '',
@@ -118,7 +136,24 @@ export default {
       }
     }
   },
+  computed: {},
+  created() {
+    for (let i = 1; i <= 4094; i++) {
+      this.all.push(i)
+    }
+  },
   methods: {
+    vlans(val) {
+      if (isArray(val)) {
+        if (JSON.stringify(val) === JSON.stringify(this.all)) {
+          return 'all'
+        } else {
+          return val
+        }
+      } else {
+        return null
+      }
+    },
     beforCloseDialog() {
       this.dialogEditShow = false
       this.temp = {
@@ -135,6 +170,7 @@ export default {
       if (row.l2Attribute) {
         this.temp.linkType = row.l2Attribute.linkType
         this.temp.pvid = row.l2Attribute.pvid
+        this.temp.oldTrunkVlans = row.l2Attribute.trunkVlans
         this.temp.trunkVlans = row.l2Attribute.trunkVlans
       }
       this.dialogEditStatus = 'update'
@@ -176,5 +212,7 @@ export default {
 </script>
 
 <style scoped>
-
+  .input-item {
+    width: 100%;
+  }
 </style>

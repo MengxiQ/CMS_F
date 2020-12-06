@@ -179,7 +179,7 @@
       </div>
       <div v-else class="diy-content">
         <p>
-          <label><span class="key">配置源：</span>
+          <label><span class="key">配置目标：</span>
             <el-radio-group v-model="action.source" size="mini">
               <el-radio-button label="running" />
 <!--              <el-radio-button label="startup" />-->

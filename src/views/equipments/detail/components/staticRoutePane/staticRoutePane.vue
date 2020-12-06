@@ -6,14 +6,14 @@
       </el-col>
     </el-row>
     <el-table :data="isArray(list) ? list : Array(list)">
-      <el-table-column align="center" label="vrf" prop="vrfName"></el-table-column>
-      <el-table-column align="center" label="网段" prop="prefix" width="120"></el-table-column>
-      <el-table-column align="center" label="掩码长度" prop="maskLength"></el-table-column>
-      <el-table-column align="center" label="目标vrf" prop="destVrfName"></el-table-column>
-      <el-table-column align="center" label="出接口" prop="ifName"></el-table-column>
-      <el-table-column align="center" label="下一跳" prop="nexthop" width="140"></el-table-column>
-      <el-table-column align="center" label="tag" prop="tag"></el-table-column>
-      <el-table-column align="center" label="描述" prop="description"></el-table-column>
+      <el-table-column align="center" label="vrf" prop="vrfName" />
+      <el-table-column align="center" label="网段" prop="prefix" width="120" />
+      <el-table-column align="center" label="掩码长度" prop="maskLength" />
+      <el-table-column align="center" label="目标vrf" prop="destVrfName" />
+      <el-table-column align="center" label="出接口" prop="ifName" />
+      <el-table-column align="center" label="下一跳" prop="nexthop" width="140" />
+      <el-table-column align="center" label="tag" prop="tag" />
+      <el-table-column align="center" label="描述" prop="description" />
       <el-table-column align="center" label="操作" prop="" width="150">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleUpdate(scope.row)">编辑</el-button>
@@ -25,14 +25,15 @@
     <el-dialog :title="dialogEditStatus" :visible.sync="dialogEditShow" :before-close="beforCloseDialog">
       <el-form label-position="left" label-width="100px">
         <el-form-item
-          style="position: relative; padding: 10px 0 20px 0"
           v-for="(item, key) in params"
           :key="key"
+          style="position: relative; padding: 10px 0 20px 0"
           :label="item.name"
-          size="medium">
+          size="medium"
+        >
           <div style="position: absolute;z-index: 100;top: -28px; font-size: smaller; color: #5a5e66">{{ item.remark }}
             <span style="margin-left: 5px;color: #3d7ed5">({{ item.constraint }})</span></div>
-          <el-input v-model="temp[item.name]"></el-input>
+          <el-input v-model="temp[item.name]" />
         </el-form-item>
         <el-form-item v-if="dialogEditStatus === 'update'">
           <span>tips: 更改IP、掩码长度，出接口等参数为新增静态路由。如需更改请删除指定路由。</span>
@@ -49,12 +50,19 @@
 </template>
 
 <script>
-import {baseMinxin} from '@/views/equipments/detail/components/Mixin/baseMixin'
-import {getSatic_route, createSatic_route, deleteSatic_route} from '@/api/detail/static_route'
+import { baseMinxin } from '@/views/equipments/detail/components/Mixin/baseMixin'
+import { getSatic_route, createSatic_route, deleteSatic_route } from '@/api/detail/static_route'
 
 export default {
   name: 'StaticRoutePane',
   mixins: [baseMinxin],
+  data() {
+    return {
+      temp: {
+        ifName: 'Invalid0'
+      }
+    }
+  },
   methods: {
     getList() {
       this.loadingInit = true

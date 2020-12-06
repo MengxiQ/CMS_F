@@ -8,7 +8,7 @@
         class="el-icon-refresh"
         @click="$emit('reload')"></el-link>
     </div>
-    <div class="content">
+    <div class="content" v-loading="loading">
       <slot></slot>
     </div>
   </div>
@@ -20,6 +20,9 @@ export default {
   props: {
     title: {
       type: String
+    },
+    loading: {
+      type: Boolean
     }
   }
 }
@@ -48,5 +51,6 @@ export default {
   }
   .content{
     padding: 10px;
+    min-height: 250px;
   }
 </style>

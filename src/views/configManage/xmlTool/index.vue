@@ -26,23 +26,23 @@
               <el-form-item label="厂商" placeholder="厂商标识符">
                 <el-select v-model="temp.device_params">
                   <el-option label="华为" value="huawei" />
-                  <el-option label="锐捷" value="ruijie" />
-                  <el-option label="思科" value="cisco" />
+<!--                  <el-option label="锐捷" :value="'ruijie'" />-->
+<!--                  <el-option label="思科" :value="'cisco'" />-->
                 </el-select>
               </el-form-item>
-              <el-form-item label="HostKey">
-                <el-input
-                  v-model="temp.user.hostkey"
-                  placeholder="请输入HostKey"
-                  type="textarea"
-                  :autosize="{ minRows: 1, }"
-                />
-              </el-form-item>
+<!--              <el-form-item label="HostKey">-->
+<!--                <el-input-->
+<!--                  v-model="temp.user.hostkey"-->
+<!--                  placeholder="请输入HostKey"-->
+<!--                  type="textarea"-->
+<!--                  :autosize="{ minRows: 1, }"-->
+<!--                />-->
+<!--              </el-form-item>-->
             </el-form>
             <el-divider content-position="left">配置选项</el-divider>
             <el-form size="mini" label-width="60px">
               <el-form-item label="配置库">
-                <el-select v-model="temp.action.source" size="mini">
+                <el-select v-model="temp.action.source" size="mini" :disabled="temp.action.name === 'get'">
                   <el-option label="running" value="running">running</el-option>
                   <el-option label="candidate" value="candidate">candidate</el-option>
                   <el-option label="startup" value="startup">startup</el-option>
@@ -50,6 +50,7 @@
               </el-form-item>
               <el-form-item label="动作">
                 <el-radio-group v-model="temp.action.name" style="" size="mini">
+                  <el-radio-button label="get" border>get</el-radio-button>
                   <el-radio-button label="get-config" border>get-config</el-radio-button>
                   <el-radio-button label="edit-config" border>edit-config</el-radio-button>
                 </el-radio-group>
@@ -104,10 +105,10 @@ export default {
         readOnly: true
       },
       temp: {
-        'ip': '',
+        'ip': '192.168.100.102',
         'user': {
-          'username': '',
-          'password': '',
+          'username': 'client001',
+          'password': 'Admin@wlx@2017',
           'port': 22,
           'device_params': 'huawei',
           'hostkey': null

@@ -7,7 +7,7 @@
           <el-step title="2:选择设备" />
           <el-step title="3:确认和挑选" />
         </el-steps>
-        <span style="font-size: smaller;color: #97a8be">tips: 批量用户指定的是用一个用户批量生产多个设备的用户。</span>
+        <p style="font-size: smaller;color: #97a8be; padding: 10px">tips: 批量用户指定的是用一个用户批量生产多个设备的用户。</p>
       </el-col>
     </el-row>
     <div v-show="active === 0" id="0" style="text-align: center; margin-top: 50px">

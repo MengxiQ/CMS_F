@@ -1,19 +1,20 @@
 <template>
   <div class="login-container">
+    <img class="logo" src="@/assets/logo.svg" alt="">
+    <h1 class="logo-title">CMS</h1>
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-
       <div class="title-container">
         <h3 class="title">配置管理系统</h3>
       </div>
 
       <el-form-item prop="username">
         <span class="svg-container">
-          <svg-icon icon-class="user" />
+          <i class="el-icon-user-solid" />
         </span>
         <el-input
           ref="username"
           v-model="loginForm.username"
-          placeholder="Username"
+          placeholder="用户名"
           name="username"
           type="text"
           tabindex="1"
@@ -23,62 +24,61 @@
 
       <el-form-item prop="password">
         <span class="svg-container">
-          <svg-icon icon-class="password" />
+          <i class="el-icon-key" />
         </span>
         <el-input
           :key="passwordType"
           ref="password"
           v-model="loginForm.password"
           :type="passwordType"
-          placeholder="Password"
+          placeholder="密码"
           name="password"
           tabindex="2"
           auto-complete="on"
           @keyup.enter.native="handleLogin"
+          show-password
         />
         <span class="show-pwd" @click="showPwd">
-          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+          <i :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
 
       <div class="tips">
-        <span style="float: right"> @MengxiQ</span>
+        <span style="float: right"> @WLX</span>
       </div>
-
     </el-form>
   </div>
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
-
+// import { validUsername } from '@/utils/validate'
 export default {
   name: 'Login',
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
-      } else {
-        callback()
-      }
-    }
-    const validatePassword = (rule, value, callback) => {
-      if (value.length < 5) {
-        callback(new Error('The password can not be less than 5 digits'))
-      } else {
-        callback()
-      }
-    }
+    // const validateUsername = (rule, value, callback) => {
+    //   if (!validUsername(value)) {
+    //     callback(new Error('Please enter the correct user name'))
+    //   } else {
+    //     callback()
+    //   }
+    // }
+    // const validatePassword = (rule, value, callback) => {
+    //   if (value.length < 5) {
+    //     callback(new Error('The password can not be less than 5 digits'))
+    //   } else {
+    //     callback()
+    //   }
+    // }
     return {
       loginForm: {
-        username: 'admin',
-        password: 'admin'
+        username: '',
+        password: ''
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        // username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        // password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       loading: false,
       passwordType: 'password',
@@ -105,26 +105,23 @@ export default {
       })
     },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          //
-
-          console.log(this.loginForm)
-          this.$jsEncrypt
-
-          //
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
-            this.loading = false
-          }).catch(() => {
-            this.loading = false
-          })
-        } else {
-          console.log('error submit!!')
-          return false
-        }
+      // this.$refs.loginForm.validate(valid => {
+      //   if (valid) {
+      this.loading = true
+      this.$store.dispatch('user/login', this.loginForm).then(() => {
+        this.$message({ type: 'success', message: '登录成功' })
+        this.$router.push({ path: this.redirect || '/' })
+        this.loading = false
+      }).catch(error => {
+        console.log(error)
+        this.$message({ type: 'error', message: '用户名或者密码错误' })
+        this.loading = false
       })
+      // } else {
+      //   this.$message({ type: 'error', message: '请注意表单信息格式' })
+      //   return false
+      // }
+      // })
     }
   }
 }
@@ -238,5 +235,19 @@ $light_gray:#eee;
     cursor: pointer;
     user-select: none;
   }
+}
+.logo {
+    position: absolute;
+    height: 100px;
+    top: 10px;
+    left: 10px;
+  }
+.logo-title {
+    font-size: 2em;
+    margin: 0.67em 0;
+    position: absolute;
+    top: 15px;
+    left: 120px;
+    color: white;
 }
 </style>

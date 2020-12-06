@@ -18,7 +18,7 @@
         @keyup.enter.native="handleFilter"
       />
       <el-select v-model="listQuery.type" size="small" placeholder="类型" clearable class="filter-item">
-        <el-option v-for="(item, key) in this.$store.getters.neTypes" :key="key" :label="item.name" :value="item.id"/>
+        <el-option v-for="(item, key) in this.$store.getters.neTypes" :key="key" :label="item.name" :value="item.id" />
       </el-select>
       <el-button v-waves size="small" class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜素
@@ -31,41 +31,34 @@
         <!--                 icon="el-icon-download" @click="handleDownload">-->
         <!--        导出-->
         <!--      </el-button>-->
-        <el-button size="small" class="filter-item" style="" type="success" icon="el-icon-refresh" @click="handlerefresh">刷新
+        <el-button size="small" class="filter-item" style="" type="success" icon="el-icon-refresh" @click="getList">刷新
         </el-button>
       </el-button-group>
     </div>
     <el-table
-      :key="tableKey"
-      v-loading="listLoading"
+      v-loading="loadingInit"
       :data="list"
-      @sort-change="sortChange"
     >
-      <!--      <el-table-column sortable label="index" type="index" align="" width="70" />-->
-      <el-table-column  label="名称" prop="name" align="" :class-name="getSortClass('name')">
-        <template slot-scope="{row}">
-          <span>{{ row.name }}</span>
-        </template>
+      <el-table-column type="index">
+        <template slot="header"><i class="el-icon-view" /></template>
       </el-table-column>
-      <el-table-column label="IP地址" prop="ip" align="" width="140" :class-name="getSortClass('ip')">
+      <el-table-column label="名称" prop="name" />
+      <el-table-column label="IP地址" prop="ip" align="" width="140">
         <template slot-scope="{row}">
           <span><el-link type="primary" @click="gotoDetail(row)">{{ row.ip }}</el-link></span>
         </template>
       </el-table-column>
-      <el-table-column label="MAC地址" prop="mac" width="140"/>
-      <el-table-column label="型号" prop="unittype" align="" :class-name="getSortClass('unittype')">
+      <el-table-column label="型号" prop="unittype.name" align="" />
+      <el-table-column label="设备类型" prop="type.name" align="" />
+      <el-table-column label="添加日期" align="">
         <template slot-scope="{row}">
-          <span>{{ row.unittype }}</span>
+          <span>{{ parseTime(new Date(Date.parse(row.stock_date))) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="设备类型" prop="id" align="" :class-name="getSortClass('type')" width="100">
+      <el-table-column label="用户" align="">
         <template slot-scope="{row}">
-          <span>{{ row.type }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="添加日期" width="150px" align="">
-        <template slot-scope="{row}">
-          <span>{{ parseTime(new Date(Date.parse(row.stock_date)), '{y}-{m}-{d} {h}:{i}') }}</span>
+          <el-button v-if="row.user === null" size="mini" type="danger" @click="handleCreateUser(row)">添加</el-button>
+          <el-button v-else size="mini" @click="handleUpdateUser(row)">编辑</el-button>
         </template>
       </el-table-column>
       <el-table-column label="状态" class-name="status-col" align="">
@@ -86,103 +79,87 @@
       </el-table-column>
     </el-table>
     <!--    分页-->
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList"/>
-    <!--    弹出编辑框-->
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="80%">
-      <el-form ref="dataForm" :model="temp" label-position="left" label-width="80px" style="width:100% ;height: 100%">
-        <div class="dialog_body">
-          <div class="dialog_content left">
-            <h3 class="dialog_title">基本信息：</h3>
-            <el-form-item label="设备名称" prop="name">
-              <el-input v-model="temp.name"/>
-            </el-form-item>
-            <el-form-item label="设备类型" prop="type">
-              <el-select v-model="temp.type" placeholder="Please select">
-                <el-option v-for="(item, key) in this.$store.getters.neTypes" :key="key" :label="item.name" :value="item.id"/>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="型号" prop="unittype">
-              <el-select v-model="temp.unittype">
-                <el-option
-                  v-for="(item,key) in this.$store.getters.unitTypes"
-                  :key="key"
-                  :label="item.name"
-                  :value="item.name"
-                />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="IP" prop="ip">
-              <el-input v-model="temp.ip"/>
-            </el-form-item>
-            <el-form-item label="MAC" prop="mac">
-              <el-input v-model="temp.mac"/>
-            </el-form-item>
-            <el-form-item label="创建时间" prop="stock_date">
-              <el-date-picker v-model="temp.stock_date" type="datetime" placeholder="Please pick a date"/>
-            </el-form-item>
-            <el-form-item label="备注" prop="remark">
-              <el-input v-model="temp.remark" type="textarea"/>
-            </el-form-item>
-          </div>
-          <div class="dialog_content right">
-            <h3 class="dialog_title">Netconf 用户信息:</h3>
-            <!--            <el-form-item label="设备IP" prop="equipment" aria-readonly="true" >-->
-            <!--              <el-input v-model="netconfUserTemp.equipment" readonly />-->
-            <!--            </el-form-item>-->
-            <el-form-item label="用户名" prop="username">
-              <el-input v-model="temp.netconfusers_set[0].username"/>
-            </el-form-item>
-            <el-form-item label="密码" prop="password">
-              <el-input v-model="temp.netconfusers_set[0].password"/>
-            </el-form-item>
-            <el-form-item label="port" prop="port">
-              <el-input v-model="temp.netconfusers_set[0].port"/>
-            </el-form-item>
-            <el-form-item label="类型参数" prop="device_params">
-              <el-select
-                v-model="temp.netconfusers_set[0].device_params"
-                class="filter-item"
-                placeholder="Please select"
-              >
-                <el-option v-for="item in device_params" :key="item.key" :label="item.display_name" :value="item.key"/>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="hostkey" prop="hostkey">
-              <el-input v-model="temp.netconfusers_set[0].hostkey" type="textarea"/>
-            </el-form-item>
-          </div>
-        </div>
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+    <!--    编辑设备-弹出编辑框-->
+    <el-dialog :title="textMap[dialogEditStatus]" :visible="dialogEditShow" width="50%" :before-close="handleCloseDialog">
+      <el-form size="" label-position="left" label-width="80px">
+        <el-form-item label="设备名称" prop="name">
+          <el-input v-model="temp.name" />
+        </el-form-item>
+        <el-form-item label="设备类型" prop="type">
+          <el-select v-model="temp.type" placeholder="Please select">
+            <el-option v-for="(item, key) in this.$store.getters.neTypes" :key="key" :label="item.name" :value="item.id" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="型号" prop="unittype">
+          <el-select v-model="temp.unittype">
+            <el-option
+              v-for="(item,key) in this.$store.getters.unitTypes"
+              :key="key"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="IP" prop="ip">
+          <el-input v-model="temp.ip" />
+        </el-form-item>
+        <el-form-item label="创建时间" prop="stock_date">
+          <el-date-picker v-model="temp.stock_date" disabled type="datetime" placeholder="Please pick a date" />
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="temp.remark" type="textarea" />
+        </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          确认
-        </el-button>
+      <div slot="footer">
+        <el-button @click="handleCloseDialog">取消</el-button>
+        <el-button type="primary" @click="dialogEditStatus==='create'?createData():updateData()">确认</el-button>
       </div>
     </el-dialog>
-
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel"/>
-        <el-table-column prop="pv" label="Pv"/>
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">Confirm</el-button>
-      </span>
+    <!--编辑用户-->
+    <el-dialog
+      :title="user_textMap[user_dialogEditStatus]"
+      :visible="addUserDialogVisible"
+      width="50%"
+      :before-close="handleCloseDialogUser"
+    >
+      <el-form label-position="left" label-width="80px">
+        <el-form-item label="设备IP">
+         <el-input v-model="user_temp.networkequipment" disabled/>
+        </el-form-item>
+        <el-form-item label="用户名">
+          <el-input v-model="user_temp.username" />
+        </el-form-item>
+        <el-form-item label="密码">
+          <el-input v-model="user_temp.password" />
+        </el-form-item><el-form-item label="端口号">
+          <el-input v-model="user_temp.port" />
+        </el-form-item>
+        <el-form-item label="厂商">
+          <el-select v-model="user_temp.device_params" style="">
+            <el-option label="华为" value="huawei" />
+            <el-option label="锐捷" value="ruijie" />
+            <el-option label="思科" value="cisco" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleCloseDialogUser">取 消</el-button>
+        <el-button type="primary" @click="user_dialogEditStatus==='create'?createUserData():updateUserData()">确认</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
 
-import {
-  createEquipment, deleteEquipment, fetchEquipmentList, updateEquipment, createStatus, updateStatus
-} from '@/api/equipment'
+import { deleteEquipment, fetchEquipmentList, updateEquipment, createEquipment } from '@/api/equipment'
+import { createNetconfuser, updateNetconfuser } from '@/api/netconfUsers'
 import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import { commonOperationMixin } from '@/views/mixins/commonOperationMixin'
+import { commonNetworkMixin } from '@/views/mixins/commonNetwork'
+import { commonValidateMixin } from '@/views/mixins/commonValidateMixin'
 
 export default {
   name: 'EquipmentList',
@@ -198,17 +175,25 @@ export default {
       return statusMap[status]
     }
   },
+  mixins: [commonValidateMixin, commonNetworkMixin, commonOperationMixin],
   data() {
     return {
-      tableKey: 0,
-      list: null,
+      // user:
+      addUserDialogVisible: false,
+      user_temp: {},
+      user_dialogEditStatus: '',
+      user_textMap: { // 重写这个以达到显示创建和编辑框的显示标题
+        update: '编辑用户',
+        create: '添加用户'
+      },
+      // 设备列表：
+      list: [],
       device_params: [
         { key: 'huawei', display_name: '华为' },
         { key: 'cisco', display_name: '思科' },
         { key: 'ruijie', display_name: '锐捷' }
       ],
       total: 0,
-      listLoading: true,
       listQuery: {
         page: 1,
         limit: 10,
@@ -217,7 +202,6 @@ export default {
         type: undefined,
         sort: '+id'
       },
-      showReviewer: false,
       temp: {
         ip: null,
         mac: null,
@@ -226,63 +210,28 @@ export default {
         name: '',
         type: null,
         unittype: '',
-        netconfUser: null,
-        netconfusers_set: [{
-          'id': null,
-          'equipment': '',
-          'username': '',
-          'password': '',
-          'port': 22,
-          'device_params': 'huawei',
-          'hostkey': null
-        }]
+        remark: ''
       },
-      dialogFormVisible: false,
-      dialogStatus: '',
-      textMap: {
-        update: 'Edit',
-        create: 'Create'
+      restTemp: {
+        ip: null,
+        mac: null,
+        stock_date: new Date(),
+        status: null,
+        name: '',
+        type: null,
+        unittype: '',
+        remark: ''
       },
-      dialogPvVisible: false,
-      pvData: [],
-      rules: {
-        // type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        // timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        // title: [{ required: true, message: 'title is required', trigger: 'blur' }]
-      },
-      downloadLoading: false
+      textMap: { // 重写这个以达到显示创建和编辑框的显示标题
+        update: '编辑设备',
+        create: '添加设备'
+      }
     }
   },
   created() {
     this.getList()
-    // setInterval(_ => {
-    // console.log('refresh List.')
-    this.listLoading = true
-    fetchEquipmentList().then(response => {
-      if (response.results === null) {
-        this.list = response.results
-        this.total = response.count
-        this.listLoading = false
-      } else {
-        this.list = response
-        // this.$forceUpdate()
-        // console.log(this.list)
-        this.listLoading = false
-        this.$forceUpdate()
-      }
-    }).catch(error => {
-      console.log(error)
-      this.$message({ type: 'error', message: '请求失败！' })
-    })
-    // }, 30000)
   },
   methods: {
-    parseTime(time, format) {
-      return parseTime(time, format)
-    },
-    handlerefresh() {
-      this.getList()
-    },
     gotoDetail(row) {
       console.log(row)
       const statusType = ((row.status || {}).type || {}).name
@@ -295,237 +244,97 @@ export default {
       }
     },
     getList() {
-      this.listLoading = true
+      this.loadingInit = true
       fetchEquipmentList(this.listQuery).then(response => {
         if (response !== null) {
           this.list = response.results
           this.total = response.count
-          this.listLoading = false
         } else {
-          return null
+          this.list = []
+          this.total = 0
         }
+        this.loadingInit = false
       }).catch(error => {
         console.log(error)
         this.$message({ type: 'error', message: '请求失败！' })
+      })
+    },
+    handleCloseDialog() {
+      this.beforeDialogClose(_ => {
+        this.temp = Object.assign({}, this.restTemp)
+        this.dialogEditShow = false
       })
     },
     handleFilter() {
       this.listQuery.page = 1
       this.getList()
     },
-    handleModifyStatus(row, status) {
-      // 如果状态为空则给设备创建新状态
-      if (row.status === null) {
-        const data = {
-          'id': row.id,
-          'status': {
-            'type_id': 1,
-            'date': new Date(),
-            'site': '',
-            'remark': ''
-          }
-        }
-        createStatus(data).then(res => {
-          console.log(res)
-          row.status = res
-          this.$message({
-            message: '操作Success',
-            type: 'success'
-          })
-        }).catch(reason => {
-          console.log(reason)
-        })
-      }
-      // 如果状态不为空则更新状态
-      if (row.status) {
-        const temp = {
-          'id': row.status.id,
-          'type_id': 1,
-          'date': new Date(),
-          'site': '',
-          'remark': ''
-        }
-        // 根据传过来的值“在线”则更新为在线
-        switch (status) {
-          case '在线':
-            temp.remark = '在线'
-            temp.type_id = 1
-            break
-          case '离线':
-            temp.remark = '离线'
-            temp.type_id = 2
-            break
-        }
-        updateStatus(temp).then(response => {
-          row.status = response
-          this.$message({
-            message: '操作Success',
-            type: 'success'
-          })
-        }).catch(reason => {
-          console.log(reason)
-        })
-      }
-    },
-    sortChange(data) {
-      const { prop, order } = data
-      if (prop === 'id') {
-        this.sortByID(order)
-      }
-    },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.listQuery.sort = '+id'
-      } else {
-        this.listQuery.sort = '-id'
-      }
-      this.handleFilter()
-    },
-    resetTemp() {
-      this.temp = {
-        ip: null,
-        mac: null,
-        stock_date: new Date(),
-        status: null,
-        name: '',
-        type: null,
-        unittype: '',
-        netconfUser: null,
-        netconfusers_set: [{
-          'id': null,
-          'equipment': '',
-          'username': '',
-          'password': '',
-          'port': 22,
-          'device_params': 'huawei',
-          'hostkey': null
-        }]
-      }
-    },
     handleCreate() {
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      // this.$nextTick(() => {
-      //   this.$refs['dataForm'].clearValidate()
-      // })
-    },
-    createData() {
-      // 拼接数据
-      createEquipment(this.temp).then(respon => {
-        this.dialogFormVisible = false
-        // 或许不用刷新，可以直接append返回的数据
-        this.handlerefresh()
-        this.$notify({
-          title: 'Success',
-          message: 'Created Successfully',
-          type: 'success',
-          duration: 2000
-        })
-      }).catch(reason => {
-        console.log(reason)
-        this.$notify({
-          title: 'Fault',
-          message: 'Created Faults',
-          type: 'danger',
-          duration: 2000
-        })
-      })
+      this.temp = Object.assign({}, this.restTemp)
+      this.dialogEditStatus = 'create'
+      this.dialogEditShow = true
     },
     handleUpdate(row) {
-      this.temp = Object.assign({}, row) // copy obj
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    updateData() {
-      updateEquipment(this.temp).then(() => {
-        const index = this.list.findIndex(v => v.id === this.temp.id)
-        this.list.splice(index, 1, this.temp)
-        this.dialogFormVisible = false
-        this.$notify({
-          title: 'Success',
-          message: 'Update Successfully',
-          type: 'success',
-          duration: 2000
-        })
-      }).catch(error => {
-        console.log(error)
-        this.$message({ type: 'error', message: '配置出错，请检查表单内容' + ((error.response || {}).data || {}).msg })
-      })
+      this.temp.id = row.id
+      this.temp.ip = row.ip
+      this.temp.name = row.name
+      this.temp.unittype = row.unittype.id
+      this.temp.type = row.type.id
+      this.temp.remark = row.remark
+      this.dialogEditStatus = 'update'
+      this.dialogEditShow = true
     },
     handleDelete(row, index) {
-      deleteEquipment(row).then(reason => {
-        this.$notify({
-          title: 'Success',
-          message: 'Delete Successfully',
-          type: 'success',
-          duration: 2000
-        })
-        this.list.splice(index, 1)
-      }).catch(reason => {
-        this.$notify({
-          title: 'Faults',
-          message: 'Delete Faults',
-          type: 'danger',
-          duration: 2000
-        })
+      deleteEquipment(row).then(res => this.opsSuccess('删除')).catch(error => this.opsError(error, '删除'))
+    },
+    createData() {
+      createEquipment(this.temp).then(res => this.opsSuccess('创建')).catch(error => this.opsError(error, '创建'))
+    },
+    updateData() {
+      updateEquipment(this.temp).then(res => this.opsSuccess('更新')).catch(error => this.opsError(error, '更新'))
+    },
+    // user:
+    handleCloseDialogUser() {
+      this.beforeDialogClose(_ => {
+        this.user_temp = Object.assign({}, {})
+        this.addUserDialogVisible = false
       })
     },
-    handleFetchPv(pv) {
-      // fetchPv(pv).then(response => {
-      //   this.pvData = response.data.pvData
-      //   this.dialogPvVisible = true
-      // })
+    handleCreateUser(row) {
+      this.user_temp = Object.assign({}, {})
+      this.user_temp.networkequipment = row.ip
+      this.user_dialogEditStatus = 'create'
+      this.addUserDialogVisible = true
     },
-    formatJson(filterVal) {
-      return this.list.map(v => filterVal.map(j => {
-        if (j === 'timestamp') {
-          return parseTime(v[j])
-        } else {
-          return v[j]
-        }
+    handleUpdateUser(row) {
+      this.user_temp.networkequipment = row.networkequipment
+      this.user_temp = Object.assign({}, row.user)
+      this.user_temp.networkequipment = row.ip
+      this.user_dialogEditStatus = 'update'
+      this.addUserDialogVisible = true
+    },
+    createUserData() {
+      this.loadingInit = true
+      createNetconfuser(this.user_temp).then(res => this.opsSuccess('创建用户', _ => {
+        this.addUserDialogVisible = false
+        this.loadingInit = false
+      })).catch(error => this.opsError(error, '创建用户', _ => {
+        this.addUserDialogVisible = false
+        this.loadingInit = false
       }))
     },
-    getSortClass: function(key) {
-      const sort = this.listQuery.sort
-      return sort === `+${key}` ? 'ascending' : 'descending'
+    updateUserData() {
+      this.loadingInit = true
+      updateNetconfuser(this.user_temp).then(res => this.opsSuccess('更新用户', _ => {
+        this.addUserDialogVisible = false
+        this.loadingInit = false
+      })).catch(error => this.opsError(error, '更新用户', _ => {
+        this.addUserDialogVisible = false
+        this.loadingInit = false
+      }))
     }
   }
 }
 </script>
 <style lang="scss" scoped>
-.filter-container {
-  padding: 10px;
-}
-
-.filter-item {
-  //margin-right: 5px;
-}
-
-.dialog_content {
-  display: inline-block;
-  width: 50%;
-  padding: 0 20px;
-
-}
-
-.left {
-  float: left;
-  border-right: rgb(52, 153, 215) dashed 1px;
-}
-
-.right {
-  float: right;
-}
-
-.dialog_body {
-  height: 500px;
-}
-
-.dialog_title {
-  color: #313131;
-}
 </style>

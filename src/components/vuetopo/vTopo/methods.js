@@ -895,18 +895,24 @@ export const methods = {
     // 保存topo的json数据
     saveTopoJson() {
       // this.$store.commit('saveTopo', this.topoData)
-      console.log(this.topoData)
+      // console.log(this.topoData)
       const data = {
         name: this.topoData.name,
         nodes: JSON.stringify(this.topoData.nodes),
         connectors: JSON.stringify(this.topoData.connectors)
       }
-      createTopology(data).then(res => {
-        this.$message({ type: 'success', message: '保存成功。' })
-      }).catch(error => {
-        console.log(error)
-        this.$message({ type: 'danger', message: '保存失败。' })
-      })
+      if (data.name === undefined || data.name === '') {
+        this.$message({ type: 'error', message: '请输入topo名称。' })
+      }
+      else {
+        createTopology(data).then(res => {
+          this.$message({type: 'success', message: '保存成功。'})
+          this.$emit('savesuccess')
+        }).catch(error => {
+          console.log(error)
+          this.$message({type: 'error', message: '保存失败。'})
+        })
+      }
       // console.log(JSON.stringify(this.topoData))
     },
     saveTopoImage() {
@@ -1020,38 +1026,48 @@ export const methods = {
       }
     },
     handlePing() {
-      let ip = this.isAcitveNode.ip
-      // 遍历所有元素，查找被选中的元素
-      const notify = this.$notify({
-        title: 'ping',
-        message: '<i class="el-icon-loading"></i><span>ping ' + ip + '...</span>',
-        duration: 0,
-        dangerouslyUseHTMLString: true,
-        showClose: false
-      })
-      for (let i = 0; i < this.topoData.nodes.length; i++) {
-        const node = this.topoData.nodes[i]
-        if (node.isSelect) {
-          ip = node.ip
-        }
-      }
-      const data = {
-        ip: ip
-      }
-      // this.$message('ping')
-      pingHost(data).then(res => {
-        let lis = ''
-        res.data.forEach(item => {
-          lis += '<li>' + item + '</li>'
+      const ip = this.isAcitveNode.ip
+      if (ip !== undefined) {
+        // 遍历所有元素，查找被选中的元素
+        const notify = this.$notify({
+          title: 'ping',
+          message: '<i class="el-icon-loading"></i><span>ping ' + ip + '...</span>',
+          duration: 0,
+          dangerouslyUseHTMLString: true,
+          showClose: false
         })
-        const ul = '<ul>' + lis + '</ul>'
-        this.$message({ customClass: 'pingMessage', dangerouslyUseHTMLString: true, duration: 0, showClose: true, message: ul })
-        notify.close()
-      }).catch(error => {
-        console.log(error)
-        this.$message({ type: 'error', message: 'ping失败！' })
-        notify.close()
-      })
+        // for (let i = 0; i < this.topoData.nodes.length; i++) {
+        //   const node = this.topoData.nodes[i]
+        //   if (node.isSelect) {
+        //     ip = node.ip
+        //   }
+        // }
+        const data = {
+          ip: ip
+        }
+        // this.$message('ping')
+        pingHost(data).then(res => {
+          let lis = ''
+          res.data.forEach(item => {
+            lis += '<li>' + item + '</li>'
+          })
+          const ul = '<ul>' + lis + '</ul>'
+          this.$message({
+            customClass: 'pingMessage',
+            dangerouslyUseHTMLString: true,
+            duration: 0,
+            showClose: true,
+            message: ul
+          })
+          notify.close()
+        }).catch(error => {
+          console.log(error)
+          this.$message({ type: 'error', message: 'ping失败！' })
+          notify.close()
+        })
+      } else {
+        this.$message({ type: 'warning', message: '没有选中设备。' })
+      }
     },
     // 监听改变显示属性面板
     changeShowPanel(val) {
@@ -1091,24 +1107,24 @@ export const methods = {
           onClick: () => this.handleConfig()
         },
         {
-          label: '快速ping',
+          label: 'ping',
           minWidth: 0,
           onClick: () => this.handlePing()
         },
-        {
-          label: '高级ping',
-          minWidth: 0,
-          onClick: () => {
-            this.$message('传递ip地址，打开ping窗口')
-          }
-        },
-        {
-          label: 'tracer',
-          minWidth: 0,
-          onClick: () => {
-            this.$message('tracer')
-          }
-        },
+        // {
+        //   label: '高级ping',
+        //   minWidth: 0,
+        //   onClick: () => {
+        //     this.$message('传递ip地址，打开ping窗口')
+        //   }
+        // },
+        // {
+        //   label: 'tracer',
+        //   minWidth: 0,
+        //   onClick: () => {
+        //     this.$message('tracer')
+        //   }
+        // },
         {
           label: '节点属性',
           minWidth: 0,
@@ -1193,15 +1209,6 @@ export const methods = {
       if (ip !== '' && ip !== null) {
         // 根据ip向后台查询接口
         this[param] = [
-          {
-            name: 'GE0/0/1'
-          },
-          {
-            name: 'GE0/0/2'
-          },
-          {
-            name: 'GE0/0/3'
-          }
         ]
       } else {
         this.$message({ type: 'warning', message: '请先选择设备！' })

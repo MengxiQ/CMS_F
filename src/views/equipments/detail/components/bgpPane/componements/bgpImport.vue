@@ -6,22 +6,22 @@
         <bgp-import-protocol :ip="ip" />
       </keep-alive>
     </el-tab-pane>
-    <el-tab-pane label="实例引入">
-      <span slot="label"><i class="el-icon-s-claim"></i>实例</span>
-      <keep-alive>
-        <bgp-import-instance :ip="ip" />
-      </keep-alive>
-    </el-tab-pane>
+<!--    <el-tab-pane label="实例引入">-->
+<!--      <span slot="label"><i class="el-icon-s-claim"></i>实例</span>-->
+<!--      <keep-alive>-->
+<!--        <bgp-import-instance :ip="ip" />-->
+<!--      </keep-alive>-->
+<!--    </el-tab-pane>-->
   </el-tabs>
 </template>
 
 <script>
 import BgpImportProtocol from '@/views/equipments/detail/components/bgpPane/componements/bgpImportProtocol'
-import BgpImportInstance from '@/views/equipments/detail/components/bgpPane/componements/bgpImportInstance'
+// import BgpImportInstance from '@/views/equipments/detail/components/bgpPane/componements/bgpImportInstance'
 
 export default {
   name: 'BgpImport',
-  components: { BgpImportInstance, BgpImportProtocol },
+  components: { BgpImportProtocol },
   props: {
     ip: {
       type: String

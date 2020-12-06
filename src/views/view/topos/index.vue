@@ -6,13 +6,9 @@
           <h3 class="menu-title">
 <!--            <el-button size="mini" type="" @click="addTopo">添加</el-button>-->
             <el-button-group>
-            <el-button
-              size="mini"
-              type=""
-              @click="isManage = !isManage"
-            >管理
-            </el-button>
-            <el-button icon="el-icon-refresh" type="success" size="mini" @click="getList"></el-button>
+              <el-button size="mini" type="" @click="isManage = !isManage">管理</el-button>
+              <el-button icon="el-icon-refresh" type="success" size="mini" @click="getList"></el-button>
+              <el-button size="mini" type="primary" @click="detailKey += 1">RS</el-button>
               </el-button-group>
           </h3>
           <ul class="menu">
@@ -35,10 +31,11 @@
 <!--            icon="el-icon-delete"-->
 <!--          >删除-->
 <!--          </el-button>-->
-          <el-button style="transform: scale(0.8) " icon="el-icon-refresh" size="mini" type="primary" @click="detailKey += 1">ReSize</el-button>
           <p style="font-size:12px; color: #6f7180; line-height: 18px; padding: 4px; font-family: '微软雅黑'">
             tips:<br>
-            如果更新窗口后渲染异常，请尝试[ReSize]重新渲染topology。</p>
+            如果更新窗口后渲染异常，请尝试[RS]重新渲染topology。<br>
+            选中多个设备ping只会ping第一选中的节点。
+          </p>
         </div>
       </el-col>
       <el-col :span="rightSpan">
@@ -168,6 +165,8 @@ export default {
           }
         })
         // this.activeTopo = this.toppsList[0]
+        // 重新渲染topo
+        this.detailKey += 1
         this.loadingInit = false
       }).catch(error => this.getListError(error))
     },
@@ -252,7 +251,7 @@ ul, li {
 
 .menu {
   width: 100%;
-  height: 100px;
+  /*height: 100px;*/
 
 }
 

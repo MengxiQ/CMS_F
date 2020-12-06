@@ -1,6 +1,6 @@
 <template>
-  <div v-loading="loadingInit">
-    <div class="pane">
+  <div>
+    <div v-loading="loadingInit" class="pane">
       <h5 class="label-h5">进程信息
         <el-link style="margin-left: 10px" type="primary" @click="handleUpdate">编辑</el-link>
           <el-button style="float: right" size="mini" type="success" @click="getList">刷新</el-button>
@@ -32,7 +32,7 @@
           <el-button size="mini" type="" @click="dialogEditShow = false ">取消</el-button>
         </el-col>
       </el-row>
-      <el-row>
+      <el-row v-if="list.bgpEnable === 'true'">
         <el-col :span="24">
           <h5 class="label-h5">基本配置</h5>
           <el-tabs>
@@ -75,45 +75,43 @@ export default {
   },
   computed: {
     peerList() {
-      if (this.bgpVrfs && this.bgpVrfs.bgpVrf) {
-        if (this.bgpVrfs.bgpVrf.bgpPeers && this.bgpVrfs.bgpVrf.bgpPeers.bgpPeer) {
-          return isArray(this.bgpVrfs.bgpVrf.bgpPeers.bgpPeer) ? this.bgpVrfs.bgpVrf.bgpPeers.bgpPeer : Array(this.bgpVrfs.bgpVrf.bgpPeers.bgpPeer)
-        } else {
-          return []
-        }
-      } else {
-        return []
+      const peers = (((this.bgpVrfs || {}).bgpVrf || {}).bgpPeers || {}).bgpPeer
+      if (peers !== undefined) {
+        return isArray(peers) ? peers : Array(peers)
       }
+      else return []
     },
     networkList() {
-      if (this.bgpVrfs && this.bgpVrfs.bgpVrf) {
-        if (this.bgpVrfs.bgpVrf.bgpVrfAFs && this.bgpVrfs.bgpVrf.bgpVrfAFs.bgpVrfAF.networkRoutes.networkRoute) {
-          return isArray(this.bgpVrfs.bgpVrf.bgpVrfAFs.bgpVrfAF.networkRoutes.networkRoute) ? this.bgpVrfs.bgpVrf.bgpVrfAFs.bgpVrfAF.networkRoutes.networkRoute : Array(this.bgpVrfs.bgpVrf.bgpVrfAFs.bgpVrfAF.networkRoutes.networkRoute)
-        } else {
-          return []
-        }
-      } else {
-        return []
-      }
+      const routes = (((((this.bgpVrfs || {}).bgpVrf || {}).bgpVrfAFs || {}).bgpVrfAF || {}).networkRoutes || {}).networkRoute
+      if (routes !== undefined) {
+        return isArray(routes) ? routes : Array(routes)
+      } else return []
     }
   },
   methods: {
     getList() {
       this.loadingInit = true
-      getBgpBase(this.ip).then(res => {
-        console.log(res)
-        this.list = res.data.bgp.bgpcomm.bgpSite
-        this.bgpVrfs = res.data.bgp.bgpcomm.bgpVrfs
+      const promiseArr = [
+        getBgpBase(this.ip).then(res => {
+          // console.log(res)
+          this.list = res.data.bgp.bgpcomm.bgpSite
+          this.bgpVrfs = res.data.bgp.bgpcomm.bgpVrfs
+          // this.loadingInit = false
+        }).catch(error => this.getListError(error)),
+        getBgpPeer(this.ip).then(res => {
+          this.peerParams = res.params
+          // this.loadingInit = false
+        }).catch(error => this.getListError(error)),
+        getNetworkPeer(this.ip).then(res => {
+          this.networkParams = res.params
+          // this.loadingInit = false
+        }).catch(error => this.getListError(error))
+      ]
+      Promise.all(promiseArr).then(
         this.loadingInit = false
-      }).catch(error => this.getListError(error))
-      getBgpPeer(this.ip).then(res => {
-        this.peerParams = res.params
-        this.loadingInit = false
-      }).catch(error => this.getListError(error))
-      getNetworkPeer(this.ip).then(res => {
-        this.networkParams = res.params
-        this.loadingInit = false
-      }).catch(error => this.getListError(error))
+      ).catch(error => {
+        console.log(error)
+      })
     },
     handleUpdate() {
       this.dialogEditShow = true

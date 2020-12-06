@@ -1,6 +1,6 @@
 <template>
   <el-dialog :title="dialogEditStatus" :visible.sync="dialogEditShow" :before-close="beforCloseDialog">
-    <el-form label-position="left" label-width="120px">
+    <el-form label-position="left" label-width="100px">
       <el-form-item
         v-for="(item, key) in params"
         :key="key"
@@ -13,7 +13,6 @@
         <el-select
           v-if="(item.constraint).match('CHIOCE<(?<p>.*)>')"
           v-model="temp[item.name]"
-          :disabled="temp.l2Enable === 'disable' && item.name === 'linkType'"
         >
           <el-option
             v-for="(i, k) in constraint(item.constraint)"
@@ -22,11 +21,19 @@
             :label="i"
           />
         </el-select>
-        <el-input
-          v-if="item.constraint === 'INT' || item.constraint === 'IP' || item.constraint === 'MASK' || item.constraint === 'WILDCARD' || item.constraint === 'STRING'"
-          v-model="temp[item.name]"
+        <el-switch
+          v-if="item.constraint === 'BOOLEAN'"
+          v-model="temp.defRoutEnableFlag"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          :active-value="false"
+          :inactive-value="true"
         />
-<!--        :disabled="temp.l2Enable === 'disable' && (item.name === 'linkType'|| item.name === 'pvid'|| item.name === 'trunkVlans' )"-->
+        <el-input
+          v-if="item.constraint.match('INT<?(?<p>.*)>?') || item.constraint === 'IP' || item.constraint === 'MASK' || item.constraint === 'WILDCARD' || item.constraint === 'STRING'"
+          v-model="temp[item.name]"
+          :disabled="item.name === 'processId'"
+        />
       </el-form-item>
     </el-form>
     <el-row>
@@ -67,6 +74,9 @@ export default {
     }
   },
   methods: {
+    constraint(val) {
+      return val.match('CHIOCE<(?<p>.*)>').groups.p.split(',')
+    },
     beforCloseDialog() {
       this.dialogEditShow = false
     },

@@ -8,9 +8,9 @@
 export default {
   name: 'TemplateEdit',
   props: {
-    template:{},
-    readOnly:{
-      default(){
+    template: {},
+    readOnly: {
+      default() {
         return false
       }
     }
@@ -18,15 +18,14 @@ export default {
   data() {
     return {
       cmOptions: {
-      tabSize: 4,
+        tabSize: 4,
         mode: 'text/xml',
         theme: 'base16-dark',
         lineNumbers: true,
         line: true,
-        readOnly:this.readOnly
-    },
+        readOnly: this.readOnly
+      }
     }
-
   }
 }
 </script>

@@ -25,3 +25,21 @@ export function deleteOspfAdvance(data) {
     data
   })
 }
+
+export function getOspfDefaultAdvise(ip) {
+  return request({
+    url: '/detail/config/ospf/defaultAdvise',
+    method: 'get',
+    params: {
+      ip
+    }
+  })
+}
+
+export function createOspfDefaultAdvise(data) {
+  return request({
+    url: '/detail/config/ospf/defaultAdvise',
+    method: 'post',
+    data
+  })
+}

@@ -18,6 +18,19 @@
               <li>Flash空间：{{ data.mpu.flashSize }}</li>
             </ul>
           </li>
+          <li v-if="data.lpu">
+            <ul class="mpu">
+              <li>角色：
+                <i style="color: green" class="el-icon-success">接口板</i>
+              </li>
+              <li>运行时长：{{ formatSeconds(parseInt(data.lpu.upTime)) }}</li>
+              <li>硬件类型：{{ data.lpu.boardType }}</li>
+              <li>SDRAM空间：{{ data.lpu.sdramSize }}</li>
+              <li>Flash空间：{{ data.lpu.flashSize }}</li>
+              <li>subSlotNum：{{ data.lpu.subSlotNum }}</li>
+              <li>picNum：{{ data.lpu.picNum }}</li>
+            </ul>
+          </li>
           <li class="content-item">
             <span class="name">CPU占用率</span>
             <span class="progress">
@@ -30,9 +43,9 @@
               <el-progress :color="customColors" :text-inside="true" :stroke-width="18"
                            :percentage="parseInt(data.board.memoryUsage)"/>
             </span>
-            <span class="description">{{
-                (parseInt(data.board.memTotalSize) / 1024).toFixed(2)
-              }}M可用，已用{{ parseInt((data.board.memUsedSize) / 1024).toFixed(2) }}M.</span>
+            <span class="description">
+              {{(parseInt(data.board.memTotalSize) / 1024).toFixed(2)}}M可用，
+              已用{{ parseInt((data.board.memUsedSize) / 1024).toFixed(2) }}M.</span>
           </li>
         </ul>
       </div>
@@ -52,7 +65,12 @@ export default {
       type: Boolean
     },
     data: {
-      type: Object
+      type: Object,
+      default() {
+        return {
+          board: { boardPosition: {}}
+        }
+      }
     }
   },
   data() {

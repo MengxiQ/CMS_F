@@ -49,16 +49,12 @@ export const viewBaseMinxin = {
     getListError(error) {
       if (error.response) {
         const data = error.response['data']
-        this.$message({ type: 'error', message: ' 请求失败，尝试刷新!   error:' + data['msg'] })
+        this.$message({ type: 'error', message: ' 请求失败，请尝试刷新!   error:' + data['msg'] })
       } else {
         console.log(error)
         // this.$message({ type: 'error', message: ' 请求失败，尝试刷新!' })
       }
       this.loadingInit = false
-      this.timer = setTimeout(_ => {
-        console.log('try again!')
-        this.getList()
-      }, 5000)
     }
   },
   mounted() {

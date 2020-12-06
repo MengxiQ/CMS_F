@@ -48,8 +48,6 @@
         刷新
       </el-button>
     </div>
-
-    <!--    border-->
     <el-table
       :key="tableKey"
       v-loading="listLoading"
@@ -73,7 +71,7 @@
             </el-form-item>
 
             <el-form-item label="模板功能:">
-              <div>命令：{{ props.row.function ? props.row.function.name : 'null' }}&nbsp; &nbsp; # &nbsp;
+              <div>{{ props.row.function ? props.row.function.name : 'null' }}&nbsp; &nbsp; # &nbsp;
                 &nbsp;{{ props.row.function ? props.row.function.remark : 'null' }}
               </div>
             </el-form-item>
@@ -83,9 +81,9 @@
             <el-form-item label="模板参数:">
               <el-row>
                 <el-col v-for="(item, key) in props.row.params_set" :key="key" :span="24">
-                  <span class="show-param—item">参数{{ key + 1 }}：{{ item.name }}</span>
-                  <span class="show-param—item">描述：{{ item.remark }}</span>
-                  <span class="show-param—item">约束：{{ item.constraint }}</span>
+                  <span class="show-param-item">参数{{ key + 1 }}：{{ item.name }}</span>
+                  <span class="show-param-item">描述：{{ item.remark }}</span>
+                  <span class="show-param-item">约束：{{ item.constraint }}</span>
                 </el-col>
               </el-row>
             </el-form-item>
@@ -119,7 +117,7 @@
       />
       <el-table-column label="最后更新" align="center">
         <template slot-scope="{row}">
-          <span>{{parseTime(new Date(Date.parse(row.updateDate)))}}</span>
+          <span>{{ parseTime(new Date(Date.parse(row.updateDate))) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="模板内容" align="center" class-name="small-padding fixed-width">
@@ -138,7 +136,6 @@
         </template>
       </el-table-column>
     </el-table>
-
     <pagination
       v-show="total>0"
       :total="total"
@@ -146,14 +143,15 @@
       :limit.sync="listQuery.limit"
       @pagination="getList"
     />
-
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="80%" @close="clsotEditDialog">
-      <el-form ref="dataForm" label-position="left" label-width="80px">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="80%" :before-close="clsotEditDialog">
+      <div class="form-content">
+        <el-form ref="dataForm" label-position="left" label-width="80px">
         <el-form-item label="模板名称">
-          <el-input v-model="temp.name" style="width: 250px" />
+          <el-input class="input-item" v-model="temp.name" />
         </el-form-item>
         <el-form-item label="模板类型">
           <el-select
+            class="input-item"
             v-model="temp.tempType"
             filterable
             placeholder="Please select"
@@ -167,8 +165,8 @@
           </el-select>
         </el-form-item>
         <el-form-item label="支持型号">
-          <!--              //支持的模板型号-->
           <el-select
+            class="input-item"
             v-model="temp.support"
             multiple
             filterable
@@ -183,6 +181,7 @@
         </el-form-item>
         <el-form-item label="模板功能">
           <el-select
+            class="input-item"
             v-model="temp.function"
             filterable
             :placeholder="'select'"
@@ -199,10 +198,10 @@
           </el-select>
         </el-form-item>
         <el-form-item label="最后更新">
-          <el-date-picker v-model="temp.updateDate" type="datetime" placeholder="Please pick a date" />
+          <el-date-picker class="input-item" v-model="temp.updateDate" type="datetime" placeholder="Please pick a date" />
         </el-form-item>
         <el-form-item label="模板描述">
-          <el-input v-model="temp.remark" type="textarea" />
+          <el-input class="input-item" v-model="temp.remark" type="textarea" />
         </el-form-item>
         <h4>模板内容：</h4>
         <h4>参数:(动态添加表单) # 核验xml data中是否有$(参数)
@@ -235,6 +234,7 @@
           <template-edit :template="temp" :read-only="false" />
         </div>
       </el-form>
+      </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
           取消
@@ -268,10 +268,13 @@ import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { getTemplatesList, saveTemplate, addTemplate, deleteTemplate, updateTemplate } from '@/api/configManage/templates'
 import TemplateEdit from '@/views/configManage/templates/edit/index'
+import { commonOperationMixin } from '@/views/mixins/commonOperationMixin'
+
 export default {
   name: 'TemplatesList',
   components: { TemplateEdit, Pagination },
   directives: { waves },
+  mixins: [commonOperationMixin],
   data() {
     return {
       // 编辑模板
@@ -334,8 +337,7 @@ export default {
     },
     // 关闭编辑对话框
     clsotEditDialog() {
-      this.resetTemp()
-      this.getList()
+      this.beforeDialogClose(this.resetTemp)
     },
     // 点击新增参数
     handleAddParam() {
@@ -398,6 +400,7 @@ export default {
       this.handleFilter()
     },
     resetTemp() {
+      this.dialogFormVisible = false
       this.temp = {
         name: '',
         tempType: '',
@@ -405,11 +408,32 @@ export default {
         updateDate: new Date(),
         function: null,
         params: [{ name: '', remark: '', constraint: null }],
-        templateData: '<!- 开始编辑你的模板内容-->\n' +
-          '<!-get--> \n\n' +
-          '<!-create-->\n\n' +
-          '<!-update-->\n\n' +
-          '<!-delete-->\n\n'
+        templateData: '<?xml version="1.0" encoding="utf-8" ?>\n' +
+          '<tempalte>\n' +
+          '    <tempalte-get>\n' +
+          '        <filter type="subtree">\n' +
+          '        </filter>\n' +
+          '    </tempalte-get>\n' +
+          '    <tempalte-filter>\n' +
+          '    <filter type="subtree">\n' +
+          '    </filter>\n' +
+          '    </tempalte-filter>\n' +
+          '    \n' +
+          '    <tempalte-create>\n' +
+          '    <config>\n' +
+          '    </config>\n' +
+          '    </tempalte-create>\n' +
+          '    \n' +
+          '    <tempalte-update>\n' +
+          '    <config>\n' +
+          '    </config>\n' +
+          '    </tempalte-update>\n' +
+          '    \n' +
+          '    <tempalte-delete>\n' +
+          '    <config>\n' +
+          '    </config>\n' +
+          '    </tempalte-delete>\n' +
+          '</tempalte>'
       }
     },
     handleCreate() {
@@ -517,13 +541,18 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.form-content {
+  margin: 0 auto;
+}
+.input-item {
+  width: 50%;
+}
 .code-block {
   border: 1px solid rgb(191, 203, 217);
 }
 
-.show-param—item {
+.show-param-item {
   padding: 5px;
-  margin-right: 10px;
 }
 
 .param-item {

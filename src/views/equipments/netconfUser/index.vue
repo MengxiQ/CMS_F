@@ -47,47 +47,50 @@
       </el-table-column>
       <el-table-column label="设备IP" prop="equipment" align="center">
         <template slot-scope="scope">
-          <span v-if="!scope.row.enableEdit">{{ scope.row.equipment }}</span>
-          <el-input v-else v-model="scope.row.equipment" type="" size="mini" />
+          <span v-if="!scope.row.enableEdit">{{ scope.row.networkequipment }}</span>
+          <el-input v-else v-model="scope.row.networkequipment" type="" size="mini" />
         </template>
       </el-table-column>
-      <el-table-column label="设备秘钥" prop="hostkey">
-        <template slot-scope="scope">
-          <!--          el-icon-view-->
-          <!--          el-icon-edit-outline-->
-          <el-button size="mini" type="primary" icon="el-icon-view" @click="showHostKey(scope.row)">查看</el-button>
-          <!--          <span v-if="!scope.row.enableEdit">{{ scope.row.hostkey }}</span>-->
-          <!--          <el-input v-else v-model="scope.row.hostkey" type="textarea" size="mini"></el-input>-->
-        </template>
-      </el-table-column>
+      <!--      <el-table-column label="设备秘钥" prop="hostkey">-->
+      <!--        <template slot-scope="scope">-->
+      <!--          &lt;!&ndash;          el-icon-view&ndash;&gt;-->
+      <!--          &lt;!&ndash;          el-icon-edit-outline&ndash;&gt;-->
+      <!--          <el-button size="mini" type="primary" icon="el-icon-view" @click="showHostKey(scope.row)">查看</el-button>-->
+      <!--          &lt;!&ndash;          <span v-if="!scope.row.enableEdit">{{ scope.row.hostkey }}</span>&ndash;&gt;-->
+      <!--          &lt;!&ndash;          <el-input v-else v-model="scope.row.hostkey" type="textarea" size="mini"></el-input>&ndash;&gt;-->
+      <!--        </template>-->
+      <!--      </el-table-column>-->
       <el-table-column label="操作" width="140" align="center">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.enableEdit" size="mini" type="primary" @click="handleSave(scope.row)">保存
-          </el-button>
-          <el-button
-            v-if="!scope.row.enableEdit"
-            size="mini"
-            style="margin-right: 5px"
-            @click="scope.row.enableEdit = !scope.row.enableEdit"
-          >编辑
-          </el-button>
-          <el-button
-            v-else
-            size="mini"
-            @click="scope.row.enableEdit = !scope.row.enableEdit"
-          >取消
-          </el-button>
-          <el-popconfirm
-            title="这是一段内容确定删除吗？"
-            @onConfirm="handleDelete(scope.row.id)"
-          >
-            <el-button
-              slot="reference"
-              size="mini"
-              type="danger"
-            >删除
+          <el-button-group>
+            <el-button v-if="scope.row.enableEdit" size="mini" type="primary" @click="handleSave(scope.row)">保存
             </el-button>
-          </el-popconfirm>
+            <el-button
+              v-if="!scope.row.enableEdit"
+              size="mini"
+              style="margin-right: 5px"
+              @click="scope.row.enableEdit = !scope.row.enableEdit"
+            >编辑
+            </el-button>
+            <el-button
+              v-else
+              size="mini"
+              @click="scope.row.enableEdit = !scope.row.enableEdit"
+            >取消
+            </el-button>
+            <el-popconfirm
+              v-if="!scope.row.enableEdit"
+              title="确定删除吗？"
+              @onConfirm="handleDelete(scope.row.id)"
+            >
+              <el-button
+                slot="reference"
+                size="mini"
+                type="danger"
+              >删除
+              </el-button>
+            </el-popconfirm>
+          </el-button-group>
 
         </template>
       </el-table-column>
@@ -115,14 +118,17 @@
             <el-option label="思科" value="cisco" />
           </el-select>
         </el-form-item>
-        <el-form-item label="HostKey">
-          <el-input
-            v-model="temp.hostkey"
-            placeholder="请输入HostKey"
-            type="textarea"
-            :autosize="{ minRows: 5, }"
-          />
+        <el-form-item label="设备IP">
+          <el-input v-model="temp.networkequipment" />
         </el-form-item>
+        <!--        <el-form-item label="HostKey">-->
+        <!--          <el-input-->
+        <!--            v-model="temp.hostkey"-->
+        <!--            placeholder="请输入HostKey"-->
+        <!--            type="textarea"-->
+        <!--            :autosize="{ minRows: 5, }"-->
+        <!--          />-->
+        <!--        </el-form-item>-->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="beforeClose">取 消</el-button>
@@ -131,19 +137,19 @@
     </el-dialog>
 
     <!--    编辑HostKey-->
-    <el-dialog title="编辑" :visible="ShowEditHostKey" width="80%" @close="ShowEditHostKey = false">
-      <!--      <h1 style="position:absolute; margin: 0;padding: 0;width: 100%;text-align: left;font-size: 17px;font-weight: normal;height: 20px">{{ativeTemplate.name}}</h1>-->
-      <template slot="title">编辑HostKey: <span style="font-weight: bold; color: #3d7ed5">{{ activeItem.username }}</span></template>
-      <el-input v-model="activeItem.hostkey" placeholder="请输入HostKey" type="textarea" :autosize="{ minRows: 5, }" />
-      <div slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="ShowEditHostKey = false">
-          取消
-        </el-button>
-        <el-button size="mini" type="primary" @click="saveHostKey">
-          保存
-        </el-button>
-      </div>
-    </el-dialog>
+    <!--    <el-dialog title="编辑" :visible="ShowEditHostKey" width="80%" @close="ShowEditHostKey = false">-->
+    <!--      &lt;!&ndash;      <h1 style="position:absolute; margin: 0;padding: 0;width: 100%;text-align: left;font-size: 17px;font-weight: normal;height: 20px">{{ativeTemplate.name}}</h1>&ndash;&gt;-->
+    <!--      <template slot="title">编辑HostKey: <span style="font-weight: bold; color: #3d7ed5">{{ activeItem.username }}</span></template>-->
+    <!--      <el-input v-model="activeItem.hostkey" placeholder="请输入HostKey" type="textarea" :autosize="{ minRows: 5, }" />-->
+    <!--      <div slot="footer" class="dialog-footer">-->
+    <!--        <el-button size="mini" @click="ShowEditHostKey = false">-->
+    <!--          取消-->
+    <!--        </el-button>-->
+    <!--        <el-button size="mini" type="primary" @click="saveHostKey">-->
+    <!--          保存-->
+    <!--        </el-button>-->
+    <!--      </div>-->
+    <!--    </el-dialog>-->
   </div>
 </template>
 
@@ -171,7 +177,7 @@ export default {
         'password': '',
         'port': 22,
         'device_params': 'huawei',
-        'hostkey': null
+        'networkequipment': ''
       }
     }
   },
@@ -195,7 +201,7 @@ export default {
         'password': '',
         'port': 22,
         'device_params': 'huawei',
-        'hostkey': null
+        'networkequipment': ''
       }
     },
     handleAdd() {
@@ -215,13 +221,16 @@ export default {
 
     },
     handleSave(row) {
+      console.log(row)
       updateNetconfuser(row).then(res => {
         this.$message({ type: 'success', message: '保存成功，' })
         this.beforeClose()
         this.getList()
       }).catch(error => {
         console.log(error)
-        this.$message({ type: 'error', message: '保存失败！' })
+        // this.$message({ type: 'error', message: '保存失败！' })
+        const data = error.response['data']
+        this.$message({ type: 'error', message: '保存失败，' + data['msg'] })
         this.getList()
       })
     },

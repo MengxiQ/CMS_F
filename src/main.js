@@ -40,7 +40,6 @@ require('echarts/lib/component/legend')
 
 Vue.prototype.$echarts = echarts
 //
-import '@/icons' // icon
 import '@/permission' // permission control
 
 /**

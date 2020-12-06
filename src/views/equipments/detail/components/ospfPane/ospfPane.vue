@@ -4,11 +4,11 @@
       <el-col :span="24">
         <el-button type="primary" size="mini" @click="dialogEditShow = true">添加进程</el-button>
         <el-button icon="el-icon-refresh" type="success" size="mini" @click="getList">刷新</el-button>
-        <el-button icon="el-icon-view" type="info" size="mini" style="float: right" @click="getList">路由表</el-button>
+        <!--        <el-button icon="el-icon-view" type="info" size="mini" style="float: right" @click="getList">路由表</el-button>-->
         <!--查看路由是弹出对话框或者新建窗口-->
       </el-col>
     </el-row>
-    <el-tabs v-model="activeName" type="border-card" @tab-click="handleClickTab">
+    <el-tabs v-if="JSON.stringify(list) !== '[]'" v-model="activeName" type="border-card" @tab-click="handleClickTab">
       <el-tab-pane
         v-for="(item, key) in list"
         :key="key"
@@ -17,10 +17,11 @@
         :name="item.processId"
       >
 
-        <ospf-process :item="item" :ip="ip" @complete="getList"/>
-        <ospf-area :list="item" :ip="ip" :process-id="item.processId" @complete="getList"/>
+        <ospf-process :item="item" :ip="ip" @complete="getList" />
+        <ospf-area :list="item" :ip="ip" :process-id="item.processId" @complete="getList" />
       </el-tab-pane>
     </el-tabs>
+    <el-table v-else :data="[]"></el-table>
 
     <!-- 编辑进程对话框-->
     <el-dialog title="添加OSPF" :visible.sync="dialogEditShow" :before-close="beforCloseDialog">
@@ -34,7 +35,7 @@
         >
           <div style="position: absolute;z-index: 100;top: -28px; font-size: smaller; color: #5a5e66">{{ item.remark }}
             <span style="margin-left: 5px;color: #3d7ed5">({{ item.constraint }})</span></div>
-          <el-input v-model="temp[item.name]"/>
+          <el-input v-model="temp[item.name]" />
         </el-form-item>
       </el-form>
       <el-row>
@@ -49,15 +50,15 @@
 </template>
 
 <script>
-import {getOspf} from '@/api/detail/ospf/ospf'
-import {createOspfProcess, getOspfProcess} from '@/api/detail/ospf/ospfProcess'
-import {isArray} from '@/utils/isType'
+import { getOspf } from '@/api/detail/ospf/ospf'
+import { createOspfProcess, getOspfProcess } from '@/api/detail/ospf/ospfProcess'
+import { isArray } from '@/utils/isType'
 import OspfProcess from '@/views/equipments/detail/components/ospfPane/componements/ospfProcess'
 import OspfArea from '@/views/equipments/detail/components/ospfPane/componements/ospfArea'
 
 export default {
   name: 'OspfPane',
-  components: {OspfArea, OspfProcess},
+  components: { OspfArea, OspfProcess },
   props: {
     ip: {
       type: String
@@ -88,11 +89,11 @@ export default {
         data: this.temp
       }
       createOspfProcess(data).then(res => {
-        this.$message({type: 'success', message: '配置成功。'})
+        this.$message({ type: 'success', message: '配置成功。' })
         this.getList()
         this.dialogEditShow = false
       }).catch(error => {
-        this.$message({type: 'error', message: error.response.data['msg']})
+        this.$message({ type: 'error', message: error.response.data['msg'] })
       })
     },
     beforCloseDialog() {
@@ -122,7 +123,7 @@ export default {
         }).catch(error => {
           console.log(error.response)
           const data = error.response.data
-          this.$message({type: 'error', message: data['msg']})
+          this.$message({ type: 'error', message: data['msg'] })
         }),
         getOspfProcess(this.ip).then(res => {
           this.params = res.params
@@ -135,7 +136,7 @@ export default {
       }).catch(error => {
         console.log(error)
         this.loadingInit = false
-        this.$message({type: 'error', message: '初始化失败，请尝试刷新！'})
+        this.$message({ type: 'error', message: '初始化失败，请尝试刷新！' })
       })
     }
   }
@@ -143,11 +144,6 @@ export default {
 </script>
 
 <style scoped>
-.form-titem-valus {
-  color: #6f7180;
-  margin-right: 20px;
-
-}
 
 .label-h5 {
   border-left: solid #3d7ed5 4px;

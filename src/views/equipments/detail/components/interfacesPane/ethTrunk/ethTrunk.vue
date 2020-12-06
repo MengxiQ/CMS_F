@@ -2,28 +2,28 @@
   <div v-loading="loadingInit">
     <el-table :data="isArray(list) ? list : Array(list)" highlight-current-row>
       <el-table-column type="expand">
-        <template slot="header"><i class="el-icon-view"></i></template>
+        <template slot="header"><i class="el-icon-view" /></template>
         <template slot-scope="scope">
           <div style="background-color: #f9f9f9; padding: 10px">
             <trunk-member-if
-              @createsuccess="getList"
               :ip="ip"
               :params="menmberParams"
               :if-name="scope.row.ifName"
               :list="scope.row.TrunkMemberIfs ?(isArray(scope.row.TrunkMemberIfs.TrunkMemberIf) ? scope.row.TrunkMemberIfs.TrunkMemberIf : Array(scope.row.TrunkMemberIfs.TrunkMemberIf)):[]"
-            ></trunk-member-if>
+              @createsuccess="getList"
+            />
           </div>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="名称" prop="ifName"></el-table-column>
-      <el-table-column align="center" label="最小活动数" prop="minUpNum"></el-table-column>
-      <el-table-column align="center" label="最大活动数" prop="maxUpNum"></el-table-column>
-      <el-table-column align="center" label="工作模式" prop="workMode"></el-table-column>
-      <el-table-column align="center" label="MAC" prop="ifMac" width="130"></el-table-column>
-      <el-table-column align="center" label="hashType" prop="hashType"></el-table-column>
+      <el-table-column align="center" label="名称" prop="ifName" />
+      <el-table-column align="center" label="最小活动数" prop="minUpNum" />
+      <el-table-column align="center" label="最大活动数" prop="maxUpNum" />
+      <el-table-column align="center" label="工作模式" prop="workMode" />
+      <el-table-column align="center" label="MAC" prop="ifMac" width="130" />
+      <el-table-column align="center" label="hashType" prop="hashType" />
       <el-table-column align="center" label="操作" prop="" width="150">
         <template slot="header">
-           <el-button type="primary" size="mini" @click="handleCreate">添加</el-button>
+          <el-button type="primary" size="mini" @click="handleCreate">添加</el-button>
           <el-button type="success" size="mini" @click="getList">刷新</el-button>
         </template>
         <template slot-scope="scope">
@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import {baseMinxin} from '@/views/equipments/detail/components/Mixin/baseMixin'
+import { baseMinxin } from '@/views/equipments/detail/components/Mixin/baseMixin'
 import {
   getEthTrunkInterfaces,
   createEthTrunkInterface,
@@ -83,7 +83,7 @@ import TrunkMemberIf from '@/views/equipments/detail/components/interfacesPane/e
 
 export default {
   name: 'EthTrunk',
-  components: {TrunkMemberIf},
+  components: { TrunkMemberIf },
   mixins: [baseMinxin],
   data() {
     return {

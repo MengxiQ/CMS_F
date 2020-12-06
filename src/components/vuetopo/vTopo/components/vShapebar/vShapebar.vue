@@ -1,8 +1,8 @@
 <!--
  * @Author: caojing
  * @Date: 2018-11-23 10:28:53
- * @LastEditors: caojing
- * @LastEditTime: 2018-11-27 10:12:26
+ * @LastEditors: weilixing
+ * @LastEditTime: 2020-11-27 10:12:26
  -->
 <template>
   <div class="shapebarWrap">
@@ -130,7 +130,7 @@ export default {
           num: 1,
           classType: 'T2',
           ip: item.ip,
-          netype: item.type,
+          netype: item.type.name,
           status: 'health'
           // status: 'alarm'
         }

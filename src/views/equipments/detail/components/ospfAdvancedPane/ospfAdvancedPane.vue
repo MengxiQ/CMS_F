@@ -13,9 +13,10 @@
       <el-table-column type="expand">
         <template slot-scope="props">
           <div class="inner-table">
-            <h5 class="label-h5">路由引入（import）
-              <el-link type="primary" @click="handleCreate(props.row)">添加引入</el-link>
-            </h5>
+<!--            <h5 class="label-h5">路由引入-->
+<!--              <el-link type="primary" @click="handleCreate(props.row)">添加引入</el-link>-->
+<!--            </h5>-->
+            <el-divider content-position="left">路由引入 <el-link type="primary" @click="handleCreate(props.row)">添加引入</el-link></el-divider>
             <el-table
               :data="props.row.ProcessTopologys.ProcessTopology.importRouteMTs ? (isArray(props.row.ProcessTopologys.ProcessTopology.importRouteMTs.importRouteMT) ? props.row.ProcessTopologys.ProcessTopology.importRouteMTs.importRouteMT : Array(props.row.ProcessTopologys.ProcessTopology.importRouteMTs.importRouteMT) ) : []"
             >
@@ -32,34 +33,9 @@
                 </template>
               </el-table-column>
             </el-table>
-            <h5 class="label-h5">其他配置:</h5>
-            发布默认路由:
-            <el-switch
-              v-model="temp.defRoutEnableFlag"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-              :active-value="false"
-              :inactive-value="true">
-            </el-switch>
-            <el-form inline :disabled="temp.defRoutEnableFlag">
-              <el-form-item label="flag">
-                <el-select size="mini" value="always" v-model="temp.flag">
-                  <el-option label="always" value="Always"></el-option>
-                  <el-option label="permit-calculate-other" value="DefRtAdv"></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="cost">
-                <el-input size="mini"></el-input>
-              </el-form-item>
-              <el-form-item label="type">
-                <el-select size="mini" value="Type1">
-                  <el-option label="Type1" value="Type1"></el-option>
-                  <el-option label="Type2" value="Type2"></el-option>
-                </el-select>
-                <span style="font-size: smaller;color: #6f7180">tips: cost值和type值只能选填一个 </span>
-              </el-form-item>
-            </el-form>
-            <el-button size="mini" type="primary" style="float: right">保存</el-button>
+<!--            <h5 class="label-h5">其他配置:</h5>-->
+            <el-divider content-position="left">其他配置</el-divider>
+            <default-advisement @success="updateAdvisementSuccess" :processId="props.row.processId" :ip="ip" :list="Array((((props.row.ProcessTopologys || {}).ProcessTopology || {}).defaultRouteMTs || {}).defaultRouteMT)"></default-advisement>
           </div>
         </template>
       </el-table-column>
@@ -69,8 +45,8 @@
       <el-table-column label="topo名称" prop="ProcessTopologys.ProcessTopology.topoName"/>
     </el-table>
     <!--    编辑框-->
-    <el-dialog :title="dialogEditStatus" :visible.sync="dialogEditShow" :before-close="beforCloseDialog">
-      <el-form label-position="left" label-width="100px">
+    <el-dialog :title="dialogEditStatus" :visible.sync="dialogEditShow" :before-close="beforCloseDialog" width="50%">
+      <el-form label-position="left" label-width="150px">
         <el-form-item
           v-for="(item, key) in params"
           :key="key"
@@ -80,7 +56,22 @@
         >
           <div style="position: absolute;z-index: 100;top: -28px; font-size: smaller; color: #5a5e66">{{ item.remark }}
             <span style="margin-left: 5px;color: #3d7ed5">({{ item.constraint }})</span></div>
-          <el-input v-model="temp[item.name]" :disabled="item.name === 'processId'"/>
+          <el-select
+            v-if="(item.constraint).match('CHIOCE<(?<p>.*)>')"
+            v-model="temp[item.name]"
+          >
+            <el-option
+              v-for="(i, k) in constraint(item.constraint)"
+              :key="k"
+              :value="i"
+              :label="i"
+            />
+          </el-select>
+          <el-input
+            v-if="item.constraint.match('INT<(?<p>.*)>') || item.constraint === 'IP' || item.constraint === 'MASK' || item.constraint === 'WILDCARD' || item.constraint === 'STRING'"
+            v-model="temp[item.name]"
+            :disabled="item.name === 'processId'"
+          />
         </el-form-item>
       </el-form>
       <el-row>
@@ -96,9 +87,11 @@
 <script>
 import { getOspfAdvance, createOspfAdvance, deleteOspfAdvance } from '@/api/detail/ospf/ospfAdvance'
 import { baseMinxin } from '@/views/equipments/detail/components/Mixin/baseMixin'
+import DefaultAdvisement from '@/views/equipments/detail/components/ospfAdvancedPane/defaultAdvisement'
 
 export default {
   name: 'OspfAdvancedPane',
+  components: { DefaultAdvisement },
   mixins: [baseMinxin],
   props: {
     ip: {
@@ -109,6 +102,9 @@ export default {
     return {}
   },
   methods: {
+    updateAdvisementSuccess() {
+      this.getList()
+    },
     handleCreate(row) {
       this.temp = {}
       this.temp.processId = row.processId
@@ -155,7 +151,6 @@ export default {
         this.params = res.params
         this.loadingInit = false
       }).catch(error => this.getListError(error))
-
     }
   }
 }
