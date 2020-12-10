@@ -1,10 +1,7 @@
 <template>
   <section class="app-main">
-    <transition name="fade-transform" mode="out-in">
-<!--      :include="cachedViews"-->
-      <keep-alive>
-        <router-view :key="key" />
-      </keep-alive>
+    <transition name="fade-transform" mode="out-in" :css="!isAnimate">
+      <router-view :key="key" />
     </transition>
   </section>
 </template>
@@ -13,11 +10,18 @@
 export default {
   name: 'AppMain',
   computed: {
-    cachedViews() {
-      return this.$store.state.tagsView.cachedViews
+    // cachedViews() {
+    //   return this.$store.state.tagsView.cachedViews
+    // },
+    isAnimate() {
+      return this.$route.meta.showZj
     },
     key() {
-      return this.$route.path
+      if (this.isAnimate) {
+        return 'NotFresh'
+      } else {
+        return this.$route.path
+      }
     }
   }
 }

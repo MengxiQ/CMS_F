@@ -1,12 +1,10 @@
 import request from '@/utils/request'
 
-export function getSatic_route(ip) {
+export function getSatic_route(query) {
   return request({
     url: '/detail/config/static_route',
     method: 'get',
-    params: {
-      ip
-    }
+    params: query
   })
 }
 

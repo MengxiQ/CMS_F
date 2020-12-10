@@ -1020,7 +1020,7 @@ export const methods = {
     handleConfig() {
       const ip = this.isAcitveNode.ip
       if (this.isAcitveNode.status === '在线') {
-        this.$router.push({ path: '/equipments/detail/' + ip })
+        this.$router.push({ path: '/equipmentsManage/detail/' + ip })
       } else {
         this.$message({ type: 'info', message: '无法配置：' + ip + '  ，状态：[' + this.isAcitveNode.status + '].' })
       }

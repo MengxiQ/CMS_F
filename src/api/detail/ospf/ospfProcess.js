@@ -1,12 +1,10 @@
 import request from '@/utils/request'
 
-export function getOspfProcess(ip) {
+export function getOspfProcess(query) {
   return request({
     url: '/detail/config/ospf/process',
     method: 'get',
-    params: {
-      ip
-    }
+    params: query
   })
 }
 

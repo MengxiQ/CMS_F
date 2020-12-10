@@ -1,12 +1,10 @@
 import request from '@/utils/request'
 
-export function getOspfAdvance(ip) {
+export function getOspfAdvance(query) {
   return request({
     url: '/detail/config/ospf/advance',
     method: 'get',
-    params: {
-      ip
-    }
+    params: query
   })
 }
 
@@ -26,13 +24,11 @@ export function deleteOspfAdvance(data) {
   })
 }
 
-export function getOspfDefaultAdvise(ip) {
+export function getOspfDefaultAdvise(query) {
   return request({
     url: '/detail/config/ospf/defaultAdvise',
     method: 'get',
-    params: {
-      ip
-    }
+    params: query
   })
 }
 

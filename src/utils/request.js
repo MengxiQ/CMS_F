@@ -1,6 +1,6 @@
 import axios from 'axios'
 // eslint-disable-next-line no-unused-vars
-import { MessageBox, Message } from 'element-ui'
+import { Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
@@ -43,8 +43,7 @@ service.interceptors.response.use(
    * You can also judge the status by HTTP Status Code
    */
   response => {
-    const res = response.data
-    return res
+    return response.data
     // if the custom code is not 20000, it is judged as an error.
     // if (res.code !== 20000) {
     //   Message({
@@ -73,8 +72,8 @@ service.interceptors.response.use(
   },
   error => {
     // Authentication failed
-    console.log(error) // for debug
-    if (error.response.data.msg === "AuthenticationException('Authentication failed.')") {
+    // console.log(error) // for debug
+    if (((error.response || {}).data || {}).msg === "AuthenticationException('Authentication failed.')") {
       Message({
         message: '认证失败：用户名或者密码错误.',
         type: 'error',

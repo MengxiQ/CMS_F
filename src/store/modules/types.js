@@ -1,4 +1,4 @@
-import {getTemplateTypesList, getUnitTypesList, getFunctionsList, getNeTypesList, getVendorTypesList} from '@/api/typesManage'
+import { getTemplateTypesList, getUnitTypesList, getFunctionsList, getNeTypesList, getVendorTypesList} from '@/api/typesManage'
 
 const state = {
   templateTypes: [],

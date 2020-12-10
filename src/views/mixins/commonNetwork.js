@@ -16,16 +16,20 @@ export const commonNetworkMixin = {
     },
     opsError(error, ops, fun) {
       // ops: string ，操作名称字符串
-      const data = error.response['data']
-      this.$message({ type: 'error', message: ops + '失败! ' + data['msg'] })
+      if (((error.response || {}).data || {}).msg) {
+        const data = error.response['data']
+        this.$message({ type: 'error', message: ops + '失败! ' + data['msg'] })
+      } else {
+        this.$message({ type: 'error', message: ops + '失败! ' })
+      }
       this.loadingInit = false
       if (fun) fun()
     },
     getListError(error) {
-      console.log(error)
-      if (error.response) {
+      // console.log(error)
+      if (((error.response || {}).data || {}).msg) {
         const data = error.response['data']
-        this.$message({ dangerouslyUseHTMLString: true, type: 'error', message: ' 请求失败，请尝试刷新! <br>  错误信息:' + data['msg'] })
+        this.$message({ type: 'error', message: data['msg'] })
       } else {
         this.$message({ type: 'error', message: ' 请求失败，请尝试刷新!' })
       }

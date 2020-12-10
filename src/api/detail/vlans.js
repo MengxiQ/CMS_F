@@ -1,12 +1,10 @@
 import request from '@/utils/request'
 
-export function getVlans(ip) {
+export function getVlans(qurey) {
   return request({
     url: '/detail/config/vlans',
     method: 'get',
-    params: {
-      ip
-    }
+    params: qurey
   })
 }
 

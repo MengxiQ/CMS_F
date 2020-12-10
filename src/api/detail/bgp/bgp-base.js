@@ -1,12 +1,10 @@
 import request from '@/utils/request'
 
-export function getBgpBase(ip) {
+export function getBgpBase(query) {
   return request({
     url: '/detail/config/bgp',
     method: 'get',
-    params: {
-      ip
-    }
+    params: query
   })
 }
 
@@ -26,13 +24,11 @@ export function deleteBgpBase(data) {
   })
 }
 
-export function getBgpPeer(ip) {
+export function getBgpPeer(query) {
   return request({
     url: '/detail/config/bgp/peer',
     method: 'get',
-    params: {
-      ip
-    }
+    params: query
   })
 }
 
@@ -52,13 +48,11 @@ export function deleteBgpPeer(data) {
   })
 }
 
-export function getNetworkPeer(ip) {
+export function getNetworkPeer(query) {
   return request({
     url: '/detail/config/bgp/network',
     method: 'get',
-    params: {
-      ip
-    }
+    params: query
   })
 }
 
@@ -78,13 +72,11 @@ export function deleteBgpNetwork(data) {
   })
 }
 
-export function getBgpImportProtocol(ip) {
+export function getBgpImportProtocol(query) {
   return request({
     url: '/detail/config/bgp/import/protocol',
     method: 'get',
-    params: {
-      ip
-    }
+    params: query
   })
 }
 
@@ -104,13 +96,11 @@ export function deleteBgpImportProtocol(data) {
   })
 }
 
-export function getBgpImportInstance(ip) {
+export function getBgpImportInstance(query) {
   return request({
     url: '/detail/config/bgp/import/instance',
     method: 'get',
-    params: {
-      ip
-    }
+    params: query
   })
 }
 

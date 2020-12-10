@@ -33,6 +33,8 @@ Vue.use(VueCodemirror /* {
 const echarts = require('echarts/lib/echarts')
 // 引入所需的图组件
 require('echarts/lib/chart/pie')
+require('echarts/lib/chart/bar')
+require('echarts/lib/chart/line')
 // 引入提示框和title组件，图例
 require('echarts/lib/component/tooltip')
 require('echarts/lib/component/title')

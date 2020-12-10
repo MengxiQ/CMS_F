@@ -19,6 +19,7 @@ router.beforeEach(async(to, from, next) => {
 
   // determine whether the user has logged in
   const hasToken = getToken()
+  // console.log('hasToken', hasToken)
 
   if (hasToken) {
     if (to.path === '/login') {
@@ -32,6 +33,7 @@ router.beforeEach(async(to, from, next) => {
       } else {
         try {
           // get user info
+          // await store.dispatch('user/getInfo')
           await store.dispatch('user/getInfo')
 
           next()

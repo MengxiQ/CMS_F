@@ -1,5 +1,25 @@
 <template>
   <div class="app-container">
+    <el-button-group style="float: left">
+      <el-button
+        size="small"
+        class="filter-item"
+        type="primary"
+        icon="el-icon-edit"
+        @click="handleCreate"
+      >
+        添加
+      </el-button>
+      <el-button
+        size="small"
+        class="filter-item"
+        type="success"
+        icon="el-icon-refresh"
+        @click="handlerefresh"
+      >
+        刷新
+      </el-button>
+    </el-button-group>
     <div class="filter-container">
       <el-input
         v-model="listQuery.name"
@@ -7,15 +27,14 @@
         placeholder="模板名称"
         style="width: 200px;"
         class="filter-item"
-        @keyup.enter.native="handleFilter"
       />
       <el-select
         v-model="listQuery.tempType"
+        clearable
         size="small"
         placeholder="模板类型"
-        clearable
         class="filter-item"
-        style="width: 130px"
+        style="width: 160px"
       >
         <el-option
           v-for="(item, key) in this.$store.getters.templateTypes"
@@ -26,26 +45,6 @@
       </el-select>
       <el-button v-waves size="small" class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
-      </el-button>
-      <el-button
-        size="small"
-        class="filter-item"
-        style="margin-left: 10px;"
-        type="primary"
-        icon="el-icon-edit"
-        @click="handleCreate"
-      >
-        添加
-      </el-button>
-      <el-button
-        size="small"
-        class="filter-item"
-        style="margin-left: 10px;"
-        type="success"
-        icon="el-icon-refresh"
-        @click="handlerefresh"
-      >
-        刷新
       </el-button>
     </div>
     <el-table
@@ -127,12 +126,14 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="info" size="mini" @click="handleUpdate(row)">
-            编辑
-          </el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(row,$index)">
-            删除
-          </el-button>
+          <el-button-group>
+            <el-button type="" size="mini" @click="handleUpdate(row)">
+              编辑
+            </el-button>
+            <el-button size="mini" type="danger" @click="handleDelete(row,$index)">
+              删除
+            </el-button>
+          </el-button-group>
         </template>
       </el-table-column>
     </el-table>
@@ -146,94 +147,94 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="80%" :before-close="clsotEditDialog">
       <div class="form-content">
         <el-form ref="dataForm" label-position="left" label-width="80px">
-        <el-form-item label="模板名称">
-          <el-input class="input-item" v-model="temp.name" />
-        </el-form-item>
-        <el-form-item label="模板类型">
-          <el-select
-            class="input-item"
-            v-model="temp.tempType"
-            filterable
-            placeholder="Please select"
-          >
-            <el-option
-              v-for="(item, key) in this.$store.getters.templateTypes"
-              :key="key"
-              :label="item.name"
-              :value="item.name"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="支持型号">
-          <el-select
-            class="input-item"
-            v-model="temp.support"
-            multiple
-            filterable
-          >
-            <el-option
-              v-for="(item, key) in this.$store.getters.unitTypes"
-              :key="key"
-              :label="item.name"
-              :value="item.name"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="模板功能">
-          <el-select
-            class="input-item"
-            v-model="temp.function"
-            filterable
-            :placeholder="'select'"
-          >
-            <el-option
-              v-for="(item, key) in this.$store.getters.functionTypes"
-              :key="key"
-              :label="item.name"
-              :value="item.name"
+          <el-form-item label="模板名称">
+            <el-input v-model="temp.name" class="input-item" />
+          </el-form-item>
+          <el-form-item label="模板类型">
+            <el-select
+              v-model="temp.tempType"
+              class="input-item"
+              filterable
+              placeholder="Please select"
             >
-              <span style="float: left; margin-right: 20px"> {{ item.name }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px ">{{ item.remark }}</span>
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="最后更新">
-          <el-date-picker class="input-item" v-model="temp.updateDate" type="datetime" placeholder="Please pick a date" />
-        </el-form-item>
-        <el-form-item label="模板描述">
-          <el-input class="input-item" v-model="temp.remark" type="textarea" />
-        </el-form-item>
-        <h4>模板内容：</h4>
-        <h4>参数:(动态添加表单) # 核验xml data中是否有$(参数)
-          <el-button
-            title="添加模板参数"
-            style="transform: scale(0.8)"
-            size="mini"
-            type=""
-            icon="el-icon-plus"
-            @click="handleAddParam"
-          />
-        </h4>
-        <el-row>
-          <el-col v-for="(item, key) in temp.params" :key="key" :span="24" style="font-weight: 700">
-            参数{{ key }}：
-            <label style="font-weight: normal" class="param-item">名称
-              <el-input v-model="item.name" class="param-item-input" size="mini" />
-            </label>
-            <label style="font-weight: normal" class="param-item">描述
-              <el-input v-model="item.remark" class="param-item-input" size="mini" placeholder="可选" />
-            </label>
-            <label style="font-weight: normal" class="param-item">约束
-              <el-input v-model="item.constraint" class="param-item-input" size="mini" placeholder="参数约束" />
-            </label>
-            <label><el-button type="danger" size="mini" @click="deleteParam(key)">删除</el-button></label>
-          </el-col>
-        </el-row>
+              <el-option
+                v-for="(item, key) in this.$store.getters.templateTypes"
+                :key="key"
+                :label="item.name"
+                :value="item.name"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="支持型号">
+            <el-select
+              v-model="temp.support"
+              class="input-item"
+              multiple
+              filterable
+            >
+              <el-option
+                v-for="(item, key) in this.$store.getters.unitTypes"
+                :key="key"
+                :label="item.name"
+                :value="item.name"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="模板功能">
+            <el-select
+              v-model="temp.function"
+              class="input-item"
+              filterable
+              :placeholder="'select'"
+            >
+              <el-option
+                v-for="(item, key) in this.$store.getters.functionTypes"
+                :key="key"
+                :label="item.name"
+                :value="item.name"
+              >
+                <span style="float: left; margin-right: 20px"> {{ item.name }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px ">{{ item.remark }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="最后更新">
+            <el-date-picker v-model="temp.updateDate" class="input-item" type="datetime" placeholder="Please pick a date" />
+          </el-form-item>
+          <el-form-item label="模板描述">
+            <el-input v-model="temp.remark" class="input-item" type="textarea" />
+          </el-form-item>
+          <h4>模板内容：</h4>
+          <h4>参数:(动态添加表单) # 核验xml data中是否有$(参数)
+            <el-button
+              title="添加模板参数"
+              style="transform: scale(0.8)"
+              size="mini"
+              type=""
+              icon="el-icon-plus"
+              @click="handleAddParam"
+            />
+          </h4>
+          <el-row>
+            <el-col v-for="(item, key) in temp.params" :key="key" :span="24" style="font-weight: 700">
+              参数{{ key }}：
+              <label style="font-weight: normal" class="param-item">名称
+                <el-input v-model="item.name" class="param-item-input" size="mini" />
+              </label>
+              <label style="font-weight: normal" class="param-item">描述
+                <el-input v-model="item.remark" class="param-item-input" size="mini" placeholder="可选" />
+              </label>
+              <label style="font-weight: normal" class="param-item">约束
+                <el-input v-model="item.constraint" class="param-item-input" size="mini" placeholder="参数约束" />
+              </label>
+              <label><el-button type="danger" size="mini" @click="deleteParam(key)">删除</el-button></label>
+            </el-col>
+          </el-row>
 
-        <div style="border:1px solid #bfcbd9">
-          <template-edit :template="temp" :read-only="false" />
-        </div>
-      </el-form>
+          <div style="border:1px solid #bfcbd9">
+            <template-edit :template="temp" :read-only="false" />
+          </div>
+        </el-form>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -362,7 +363,7 @@ export default {
     },
     gotoDetail(row) {
       this.$router.push({
-        path: '/equipments/detail/' + row.ip
+        path: '/equipmentsManage/detail/' + row.ip
         // query: {
         //   ip: ,
         //   mac: row.mac
@@ -451,7 +452,7 @@ export default {
         this.handlerefresh()
         this.$notify({
           title: 'Success',
-          message: 'Created Successfully',
+          message: '创建成功',
           type: 'success',
           duration: 2000
         })
@@ -459,7 +460,7 @@ export default {
         console.log(reason)
         this.$notify({
           title: 'Fault',
-          message: 'Created Faults',
+          message: '创建失败',
           type: 'danger',
           duration: 2000
         })
@@ -494,8 +495,16 @@ export default {
         this.dialogFormVisible = false
         this.$notify({
           title: 'Success',
-          message: 'Update Successfully',
+          message: '更新成功',
           type: 'success',
+          duration: 2000
+        })
+      }).catch(error => {
+        console.log(error)
+        this.$notify({
+          title: 'Faults',
+          message: '更新失败',
+          type: 'danger',
           duration: 2000
         })
       })
@@ -504,7 +513,7 @@ export default {
       deleteTemplate(row.id).then(reason => {
         this.$notify({
           title: 'Success',
-          message: 'Delete Successfully',
+          message: '删除成功',
           type: 'success',
           duration: 2000
         })
@@ -512,7 +521,7 @@ export default {
       }).catch(reason => {
         this.$notify({
           title: 'Faults',
-          message: 'Delete Faults',
+          message: '删除失败',
           type: 'danger',
           duration: 2000
         })
@@ -567,7 +576,8 @@ export default {
 }
 
 .filter-container {
-  padding: 10px;
+  //padding: 10px;
+  float: right;
 }
 
 .filter-item {

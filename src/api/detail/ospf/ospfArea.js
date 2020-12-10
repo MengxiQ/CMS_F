@@ -1,12 +1,10 @@
 import request from '@/utils/request'
 
-export function getOspfArea(ip) {
+export function getOspfArea(query) {
   return request({
     url: '/detail/config/ospf/area',
     method: 'get',
-    params: {
-      ip
-    }
+    params: query
   })
 }
 

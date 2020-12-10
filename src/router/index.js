@@ -30,7 +30,7 @@ import Layout from '@/layout'
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
-export const constantRoutes = [
+const constantRoutes = [
   { // tagView刷新单个页面
     path: '/redirect',
     component: Layout,
@@ -65,36 +65,178 @@ export const constantRoutes = [
   },
 
   {
-    path: '/equipments',
+    path: '/equipmentsManage',
     component: Layout,
-    redirect: '/equipments/list',
+    redirect: '/equipmentsManage/list',
     name: 'Equipment',
     meta: { title: '设备管理', icon: 'el-icon-s-help' },
     children: [
       {
         path: 'list',
         name: 'EquipmentList',
-        component: () => import('@/views/equipments/list/index'),
+        component: () => import('@/views/equipmentsManage/list/index'),
         meta: { title: '设备列表', icon: 'el-icon-help' }
       },
       {
-        path: 'netconfUser',
+        path: 'users',
         name: 'NetconfUser',
-        component: () => import('@/views/equipments/netconfUser/index'),
+        component: () => import('@/views/equipmentsManage/users/index'),
         meta: { title: '设备用户', icon: 'el-icon-s-custom' }
       },
       {
         path: 'batchUsers',
         name: 'BatchUsers',
-        component: () => import('@/views/equipments/batchUsers/index'),
+        component: () => import('@/views/equipmentsManage/batch/users/index'),
         meta: { title: '批量用户', icon: 'el-icon-user-solid' }
       },
       {
         path: 'detail/:ip',
         name: 'Detail',
+        redirect: 'detail/:ip/monitoring',
         hidden: true,
-        component: () => import('@/views/equipments/detail/index'),
-        meta: { title: '配置' }
+        component: () => import('@/views/equipmentsManage/detail/index'),
+        meta: { title: '设备详情', showZj: true },
+        children: [
+          {
+            path: 'monitoring',
+            name: 'Monitoring',
+            redirect: 'monitoring/base',
+            component: () => import('@/views/equipmentsManage/detail/components/monitoring/monitoringBase'),
+            meta: { title: '监控', showZj: true },
+            children: [
+              {
+                path: 'base',
+                name: 'base',
+                component: () => import('@/views/equipmentsManage/detail/components/monitoring/components/basePane/basePane'),
+                meta: { title: '基本信息', showZj: true }
+              },
+              {
+                path: 'syslog',
+                name: 'Syslog',
+                component: () => import('@/views/equipmentsManage/detail/components/monitoring/components/syslog/sysLog'),
+                meta: { title: '设备日志', showZj: true }
+              }]
+          },
+          {
+            path: 'configuration',
+            name: 'Configuration',
+            redirect: 'configuration/manage',
+            component: () => import('@/views/equipmentsManage/detail/components/configuration/configuration'),
+            meta: { title: '配置', showZj: true },
+            children: [
+              {
+                path: 'vlan',
+                name: 'Vlan',
+                redirect: 'vlan/list',
+                component: () => import('@/views/equipmentsManage/detail/components/configuration/components/vlanPane/index'),
+                meta: { title: 'VLAN配置', showZj: true },
+                children: [
+                  {
+                    path: 'list',
+                    name: 'List',
+                    component: () => import('@/views/equipmentsManage/detail/components/configuration/components/vlanPane/vlanPane'),
+                    meta: { title: '通用接口', showZj: true }
+                  }]
+              },
+              {
+                path: 'interface',
+                name: 'Interface',
+                redirect: 'interface/common',
+                component: () => import('@/views/equipmentsManage/detail/components/configuration/components/interfacesPane/index'),
+                meta: { title: '接口配置', showZj: true },
+                children: [
+                  {
+                    path: 'common',
+                    name: 'Common',
+                    component: () => import('@/views/equipmentsManage/detail/components/configuration/components/interfacesPane/commonInterfaces'),
+                    meta: { title: '通用接口', showZj: true }
+                  },
+                  {
+                    path: 'ethernet',
+                    name: 'Ethernet',
+                    component: () => import('@/views/equipmentsManage/detail/components/configuration/components/interfacesPane/ethernetInterfaces'),
+                    meta: { title: '以太接口', showZj: true }
+                  },
+                  {
+                    path: 'eth-trunk',
+                    name: 'Eth-Trunk',
+                    component: () => import('@/views/equipmentsManage/detail/components/configuration/components/interfacesPane/ethTrunk/ethTrunk'),
+                    meta: { title: 'Eth-Trunk', showZj: true }
+                  }
+                ]
+              },
+              {
+                path: 'route',
+                name: 'Route',
+                redirect: 'route/ospf',
+                component: () => import('@/views/equipmentsManage/detail/components/configuration/components/route/index'),
+                meta: { title: 'IP路由', showZj: true },
+                children: [
+                  {
+                    path: 'table',
+                    name: 'RouteTable',
+                    component: () => import('@/views/equipmentsManage/detail/components/configuration/components/route/table/table'),
+                    meta: { title: '基本路由表', showZj: true }
+                  },
+                  {
+                    path: 'ospf',
+                    name: 'Ospf',
+                    component: () => import('@/views/equipmentsManage/detail/components/configuration/components/route/ospf/index'),
+                    meta: { title: 'OSPF路由', showZj: true }
+                  },
+                  {
+                    path: 'bgp',
+                    name: 'Bgp',
+                    component: () => import('@/views/equipmentsManage/detail/components/configuration/components/route/bgpPane/bgpPane'),
+                    meta: { title: 'BGP路由', showZj: true }
+                  },
+                  {
+                    path: 'static',
+                    name: 'bgp-base',
+                    component: () => import('@/views/equipmentsManage/detail/components/configuration/components/route/staticRoutePane/staticRoutePane'),
+                    meta: { title: '静态路由', showZj: true }
+                  }
+                ]
+              },
+              {
+                path: 'manage',
+                name: 'Manage',
+                redirect: 'manage/setting',
+                component: () => import('@/views/equipmentsManage/detail/components/configuration/components/manage/index'),
+                meta: { title: '配置管理', showZj: true },
+                children: [
+                  {
+                    path: 'setting',
+                    name: 'setting',
+                    component: () => import('@/views/equipmentsManage/detail/components/configuration/components/manage/settings/index'),
+                    meta: { title: '配置设置', showZj: true }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            path: 'maintain',
+            name: 'Maintain',
+            component: () => import('@/views/equipmentsManage/detail/components/maintain/maintain'),
+            meta: { title: '维护', showZj: true }
+          },
+          {
+            path: 'test',
+            name: 'Test',
+            redirect: 'test/network',
+            component: () => import('@/views/equipmentsManage/detail/components/test/test'),
+            meta: { title: '测试', showZj: true },
+            children: [
+              {
+                path: 'network',
+                name: 'Test-network',
+                component: () => import('@/views/equipmentsManage/detail/components/test/networkTest/index'),
+                meta: { title: '网络测试', showZj: true }
+              }
+            ]
+          }
+        ]
       }
     ]
   },
@@ -228,15 +370,14 @@ export const constantRoutes = [
     hidden: true
   }
 ]
-
 const createRouter = () => new Router({
-  mode: 'history', // require service support
+  // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })
 
 const router = createRouter()
-export const asyncRoutes = []
+export const asyncRoutes = constantRoutes
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
   const newRouter = createRouter()

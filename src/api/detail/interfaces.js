@@ -22,13 +22,11 @@ import request from '@/utils/request'
 /**
  * 通用接口
  * **/
-export function getCommonInterfaces(ip) {
+export function getCommonInterfaces(query) {
   return request({
     url: 'detail/config/interfaces/common',
     method: 'get',
-    params: {
-      ip
-    }
+    params: query
   })
 }
 export function updateCommonInterface(data) {
@@ -55,13 +53,11 @@ export function deleteCommonInterface(data) {
 /**
  * 以太接口
  * **/
-export function getEthernetInterfaces(ip) {
+export function getEthernetInterfaces(query) {
   return request({
     url: 'detail/config/interfaces/ethernet',
     method: 'get',
-    params: {
-      ip
-    }
+    params: query
   })
 }
 export function createEthernetInterface(data) {
@@ -81,13 +77,11 @@ export function deleteEthernetInterface(data) {
 /**
  * Eth-trunk接口
  * **/
-export function getEthTrunkInterfaces(ip) {
+export function getEthTrunkInterfaces(query) {
   return request({
     url: 'detail/config/interfaces/eth_trunk',
     method: 'get',
-    params: {
-      ip
-    }
+    params: query
   })
 }
 export function createEthTrunkInterface(data) {

@@ -1,12 +1,10 @@
 import request from '@/utils/request'
 
-export function getAlarmList(ip) {
+export function getAlarmList(query) {
   return request({
     url: '/detail/config/monitoring/alarm',
     method: 'get',
-    params: {
-      ip
-    }
+    params: query
   })
 }
 
@@ -38,3 +36,10 @@ export function updateSystemInfo(data) {
   })
 }
 
+export function getSysLog(query) {
+  return request({
+    url: '/detail/config/monitoring/syslog',
+    method: 'get',
+    params: query
+  })
+}

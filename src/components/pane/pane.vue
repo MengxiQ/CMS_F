@@ -39,7 +39,7 @@ export default {
     overflow: hidden;
     color: #666;
     background: #fff;
-    box-shadow: 4px 4px 40px rgba(0, 0, 0, .05);
+    box-shadow: 4px 4px 40px rgba(0, 0, 0, .08);
     border-color: rgba(0, 0, 0, .05);
 
   }
