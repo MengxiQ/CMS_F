@@ -1,10 +1,10 @@
 <template>
-  <div style="position: relative">
-    <el-steps :active="active" finish-status="success" simple>
-      <el-step title="1:选择模板" />
-      <el-step title="2:配置模板" />
-      <el-step title="3:选择设备" />
-      <el-step title="4:配置结果" />
+  <div>
+    <el-steps style="padding: 15px" :active="active" finish-status="success">
+      <el-step title="1:选择模板" description="选择系统的模板或者自定模板。"/>
+      <el-step title="2:配置模板" description="给配置模板的参数赋值，点击生成配置后保存进入下一步。" />
+      <el-step title="3:选择设备" description="选择需要配置的设备。" />
+      <el-step title="4:配置结果" description="批量配置的报告。"/>
     </el-steps>
     <div v-show="active === 0" id="0" class="step-contend">
       <chioce-ttempalte @selectedtemplate="selectedtemplate" @diyconfig="diyconfig" />
@@ -32,10 +32,10 @@
 </template>
 
 <script>
-import ChioceTtempalte from '@/views/configManage/batchConfig/compments/chioceTempalte'
-import ChioceEquipments from '@/views/configManage/batchConfig/compments/chioceEquipments'
-import Result from '@/views/configManage/batchConfig/compments/result'
-import ConfigTemplate from '@/views/configManage/batchConfig/compments/configTemplate'
+import ChioceTtempalte from '@/views/equipmentsManage/batchConfig/compments/chioceTempalte'
+import ChioceEquipments from '@/views/equipmentsManage/batchConfig/compments/chioceEquipments'
+import Result from '@/views/equipmentsManage/batchConfig/compments/result'
+import ConfigTemplate from '@/views/equipmentsManage/batchConfig/compments/configTemplate'
 import { sendXmlConfig } from '@/api/configManage/tools'
 
 export default {
@@ -197,7 +197,7 @@ export default {
 <style scoped>
 .button-content {
   position: absolute;
-  top: 50px;
+  top: 100px;
   right: 10px;
 }
 </style>

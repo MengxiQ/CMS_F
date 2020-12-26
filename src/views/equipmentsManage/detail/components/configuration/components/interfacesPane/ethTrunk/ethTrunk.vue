@@ -1,6 +1,10 @@
 <template>
   <div v-loading="loadingInit">
-     <divider-info :data-source="dataSource"></divider-info>
+    <el-button-group>
+      <el-button type="primary" size="mini" @click="handleCreate">添加</el-button>
+      <el-button type="success" size="mini" @click="getList">刷新</el-button>
+    </el-button-group>
+    <divider-info :data-source="dataSource" />
     <el-table :data="isArray(list) ? list : Array(list)" highlight-current-row>
       <el-table-column type="expand">
         <template slot="header"><i class="el-icon-view" /></template>
@@ -23,10 +27,6 @@
       <el-table-column align="center" label="MAC" prop="ifMac" width="130" />
       <el-table-column align="center" label="hashType" prop="hashType" />
       <el-table-column align="center" label="操作" prop="" width="150">
-        <template slot="header">
-          <el-button type="primary" size="mini" @click="handleCreate">添加</el-button>
-          <el-button type="success" size="mini" @click="getList">刷新</el-button>
-        </template>
         <template slot-scope="scope">
           <el-button size="mini" type="" @click="handleUpdate(scope.row)">编辑</el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>

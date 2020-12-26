@@ -127,11 +127,11 @@
               label="名称"
             />
             <el-table-column
-              prop="type"
+              prop="type.name"
               label="类型"
             />
             <el-table-column
-              prop="unittype"
+              prop="unittype.name"
               label="型号"
             />
           </el-table>

@@ -26,6 +26,10 @@ export const baseMixinProps = {
         limit: 5,
         type: this.type,
         sort: '+id'
+      },
+      textMap: { // 重写这个以达到显示创建和编辑框的显示标题
+        update: '编辑',
+        create: '创建'
       }
     }
   },

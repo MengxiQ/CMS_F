@@ -6,12 +6,6 @@
         <bgp-import-protocol :ip="ip" />
       </keep-alive>
     </el-tab-pane>
-<!--    <el-tab-pane label="实例引入">-->
-<!--      <span slot="label"><i class="el-icon-s-claim"></i>实例</span>-->
-<!--      <keep-alive>-->
-<!--        <bgp-import-instance :ip="ip" />-->
-<!--      </keep-alive>-->
-<!--    </el-tab-pane>-->
   </el-tabs>
 </template>
 

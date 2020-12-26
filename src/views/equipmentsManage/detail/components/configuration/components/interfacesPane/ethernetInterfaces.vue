@@ -1,9 +1,11 @@
 <template>
   <div v-loading="loadingInit">
+    <el-button-group>
+      <el-button type="success" size="mini" @click="getList">刷新</el-button>
+    </el-button-group>
     <divider-info :data-source="dataSource"></divider-info>
     <el-table
       :data="list"
-      height="400"
     >
       <el-table-column
         type="index"
@@ -49,10 +51,6 @@
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="150">
-        <template slot="header">
-          <!--           <el-button type="primary" size="mini" @click="handleCreate">添加</el-button>-->
-          <el-button type="success" size="mini" @click="getList">刷新</el-button>
-        </template>
         <template slot-scope="scope">
           <el-button type="" size="mini" @click="handleUpdate(scope.row)">
             编辑

@@ -1,9 +1,11 @@
 <template>
   <div class="content">
-    <div class="heard-tool">
-      <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleAdd">添加</el-button>
-    </div>
-    <el-table :data="list">
+    <button-group @add="handleAdd" @refresh="getList"></button-group>
+<!--    <el-button-group class="heard-tool">-->
+<!--      <el-button size="mini" type="primary" @click="handleAdd">添加</el-button>-->
+<!--      <el-button size="mini" type="success" @click="getList">刷新</el-button>-->
+<!--    </el-button-group>-->
+    <el-table v-loading="loading" :data="list">
       <el-table-column type="index" width="50"></el-table-column>
       <el-table-column label="类型名称" prop="name">
         <template slot-scope="scope">
@@ -70,10 +72,12 @@
 </template>
 
 <script>
-import { addNeType, deleteNeType, getNeTypesList, updateNeType } from '@/api/typesManage'
+import { addNeType, deleteNeType, updateNeType } from '@/api/typesManage'
 import { typeMixin } from '@/views/typesManage/mixin/typeMixin'
+import ButtonGroup from '@/views/typesManage/componments/buttonGroup'
 export default {
   name: 'NeTypes',
+  components: { ButtonGroup },
   mixins: [typeMixin],
   data() {
     return {
@@ -152,9 +156,6 @@ export default {
 </script>
 
 <style scoped>
-  .heard-tool {
-    /*padding: 10px;*/
-  }
   .content {
     padding: 20px;
   }

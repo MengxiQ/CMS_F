@@ -1,8 +1,6 @@
 <template>
   <div class="content">
-    <div class="heard-tool">
-      <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleAdd">添加</el-button>
-    </div>
+    <button-group @add="handleAdd" @refresh="getList"></button-group>
     <el-table :data="list">
       <el-table-column type="index" width="50" />
       <el-table-column label="名称" prop="name">
@@ -84,9 +82,11 @@
 <script>
 import { addVendorType, updateVendorType, deleteVendorType } from '@/api/typesManage'
 import { typeMixin } from '@/views/typesManage/mixin/typeMixin'
+import ButtonGroup from '@/views/typesManage/componments/buttonGroup'
 
 export default {
   name: 'VendorTypes',
+  components: { ButtonGroup },
   mixins: [typeMixin],
   data() {
     return {

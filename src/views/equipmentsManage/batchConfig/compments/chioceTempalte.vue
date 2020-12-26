@@ -199,7 +199,7 @@
 <script>
 import { getTemplatesList } from '@/api/configManage/templates'
 import { parseTime } from '@/utils'
-import TemplateEdit from '@/views/configManage/templates/edit/index'
+import TemplateEdit from '@/views/templateManage/templates/edit/index'
 
 export default {
   name: 'ChioceTtempalte',

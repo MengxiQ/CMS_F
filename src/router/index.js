@@ -30,7 +30,7 @@ import Layout from '@/layout'
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
-const constantRoutes = [
+export const constantRoutes = [
   { // tagView刷新单个页面
     path: '/redirect',
     component: Layout,
@@ -86,7 +86,7 @@ const constantRoutes = [
       {
         path: 'batchUsers',
         name: 'BatchUsers',
-        component: () => import('@/views/equipmentsManage/batch/users/index'),
+        component: () => import('@/views/equipmentsManage/batchUser/index'),
         meta: { title: '批量用户', icon: 'el-icon-user-solid' }
       },
       {
@@ -237,6 +237,24 @@ const constantRoutes = [
             ]
           }
         ]
+      },
+      // {
+      //   path: 'yangTool',
+      //   component: () => import('@/views/configManage/yangTool/index'), // Parent router-view
+      //   name: 'yangTool',
+      //   meta: { title: 'Yang工具', icon: 'nested' }
+      // },
+      {
+        path: 'xmlTool',
+        component: () => import('@/views/equipmentsManage/xmlTool/index'), // Parent router-view
+        name: 'xmlTool',
+        meta: { title: 'XML工具', icon: 'el-icon-s-tools' }
+      },
+      {
+        path: 'batchConfig',
+        component: () => import('@/views/equipmentsManage/batchConfig/batchConfig'), // Parent router-view
+        name: 'batchConfig',
+        meta: { title: '批量配置', icon: 'el-icon-s-open' }
       }
     ]
   },
@@ -270,36 +288,18 @@ const constantRoutes = [
     ]
   },
   {
-    path: '/configManage',
+    path: '/templates',
     component: Layout,
-    redirect: '/configManage/templates',
-    name: 'ConfigManage',
+    redirect: '/templates/list',
+    name: 'Templates',
     alwaysShow: true,
-    meta: { title: '配置管理', icon: 'el-icon-s-finance' },
+    meta: { title: '模板管理', icon: 'el-icon-s-finance' },
     children: [
       {
-        path: 'templates',
-        component: () => import('@/views/configManage/templates/list/index'), // Parent router-view
-        name: 'Templates',
+        path: 'list',
+        component: () => import('@/views/templateManage/templates/list/index'), // Parent router-view
+        name: 'Templates-list',
         meta: { title: '模板列表', icon: 'el-icon-s-check' }
-      },
-      // {
-      //   path: 'yangTool',
-      //   component: () => import('@/views/configManage/yangTool/index'), // Parent router-view
-      //   name: 'yangTool',
-      //   meta: { title: 'Yang工具', icon: 'nested' }
-      // },
-      {
-        path: 'xmlTool',
-        component: () => import('@/views/configManage/xmlTool/index'), // Parent router-view
-        name: 'xmlTool',
-        meta: { title: 'XML工具', icon: 'el-icon-s-tools' }
-      },
-      {
-        path: 'batchConfig',
-        component: () => import('@/views/configManage/batchConfig/batchConfig'), // Parent router-view
-        name: 'batchConfig',
-        meta: { title: '批量配置', icon: 'el-icon-s-open' }
       }
       // {
       //   path: 'guideConfig',
@@ -370,6 +370,7 @@ const constantRoutes = [
     hidden: true
   }
 ]
+
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
@@ -377,7 +378,7 @@ const createRouter = () => new Router({
 })
 
 const router = createRouter()
-export const asyncRoutes = constantRoutes
+export const asyncRoutes = []
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
   const newRouter = createRouter()

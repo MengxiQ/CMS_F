@@ -8,6 +8,7 @@
             <el-button size="mini" type="primary" @click="handleCreate">新建</el-button>
             <el-button size="mini" type="success" @click="getList">刷新</el-button>
           </el-button-group>
+          <span style="font-size: 12px; color: #bfcbd9">（只能在Schema模式下使用）</span>
         </el-col>
       </el-row>
       <el-table v-loading="loadingInit" :data="isArray(list) ? list : Array(list)">

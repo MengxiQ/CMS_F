@@ -20,7 +20,7 @@
       </el-table-column>
     </el-table>
     <!--编辑框-->
-    <el-dialog :title="dialogEditStatus" :visible.sync="dialogEditShow" :before-close="beforCloseDialog">
+    <el-dialog :title="textMap[dialogEditStatus]" :visible.sync="dialogEditShow" :before-close="beforCloseDialog">
       <el-form label-position="left" label-width="140px">
         <el-form-item
           v-for="(item, key) in params"

@@ -1,16 +1,16 @@
 <template>
   <div class="app-container">
     <el-button-group style="float: left">
-        <el-button size="small" class="filter-item" style="" type="primary" icon="el-icon-edit" @click="handleCreate">
-          添加
-        </el-button>
-        <!--      <el-button v-waves size="small" :loading="downloadLoading" class="filter-item" type="primary"-->
-        <!--                 icon="el-icon-download" @click="handleDownload">-->
-        <!--        导出-->
-        <!--      </el-button>-->
-        <el-button size="small" class="filter-item" style="" type="success" icon="el-icon-refresh" @click="getList">刷新
-        </el-button>
-      </el-button-group>
+      <el-button size="small" class="filter-item" style="" type="primary" icon="el-icon-edit" @click="handleCreate">
+        添加
+      </el-button>
+      <!--      <el-button v-waves size="small" :loading="downloadLoading" class="filter-item" type="primary"-->
+      <!--                 icon="el-icon-download" @click="handleDownload">-->
+      <!--        导出-->
+      <!--      </el-button>-->
+      <el-button size="small" class="filter-item" style="" type="success" icon="el-icon-refresh" @click="getList">刷新
+      </el-button>
+    </el-button-group>
     <div style="float: right">
       <el-input
         v-model="listQuery.name"
@@ -125,7 +125,7 @@
     >
       <el-form label-position="left" label-width="80px">
         <el-form-item label="设备IP">
-         <el-input v-model="user_temp.networkequipment" disabled/>
+          <el-input v-model="user_temp.networkequipment" disabled />
         </el-form-item>
         <el-form-item label="用户名">
           <el-input v-model="user_temp.username" />
@@ -233,14 +233,17 @@ export default {
   },
   methods: {
     gotoDetail(row) {
-      console.log(row)
       const statusType = ((row.status || {}).type || {}).name
       if (statusType === '离线' || statusType === undefined) {
         this.$message({ type: 'error', message: '该设备不在线！' })
       } else {
-        this.$router.push({
+        const URL = this.$router.resolve({
           path: 'detail/' + row.ip + '/'
         })
+        window.open(URL.href, '_blank')
+        // this.$router.push({
+        //   path: 'detail/' + row.ip + '/'
+        // })
       }
     },
     getList() {
@@ -256,6 +259,7 @@ export default {
         this.loadingInit = false
       }).catch(error => {
         console.log(error)
+        this.loadingInit = false
         this.$message({ type: 'error', message: '请求失败！' })
       })
     },

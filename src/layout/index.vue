@@ -1,13 +1,18 @@
 <template>
-  <div :class="classObj" class="app-wrapper">
-    <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
-    <sidebar class="sidebar-container" />
-    <div class="main-container">
-      <div :class="{'fixed-header':fixedHeader}">
-        <navbar />
-<!--        <tags-view/>-->
+  <div>
+    <div v-if="isShowSidebar" :class="classObj" class="app-wrapper">
+      <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
+      <sidebar class="sidebar-container" />
+      <div class="main-container">
+        <div :class="{'fixed-header':fixedHeader}">
+          <navbar />
+          <tags-view/>
+        </div>
+        <app-main />
       </div>
-      <app-main />
+    </div>
+    <div v-else>
+      <app-main/>
     </div>
   </div>
 </template>
@@ -26,6 +31,12 @@ export default {
   },
   mixins: [ResizeMixin],
   computed: {
+    isShowSidebar() {
+      const ip = this.$route.params.ip
+      if (ip !== undefined && ip !== null) {
+        return false
+      } else return true
+    },
     sidebar() {
       return this.$store.state.app.sidebar
     },

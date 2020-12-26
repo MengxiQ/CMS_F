@@ -18,12 +18,29 @@ export const baseMinxin = {
       params: [],
       temp: {},
       loadingInit: true,
-      timer: 0
+      textMap: { // 重写这个以达到显示创建和编辑框的显示标题
+        update: '编辑',
+        create: '创建'
+      }
     }
   },
   methods: {
     constraint(val) {
       return val.match('CHIOCE<(?<p>.*)>').groups.p.split(',')
+    },
+    defaultTemp() {
+      // 不要计算属性，因为缓存不需要动态改变
+      // 确定给edit组件传什么默认值
+      if (this.dialogEditStatus === 'update') {
+        return this.temp
+      } else return {}
+    },
+    disparams() {
+      // // 不要计算属性，因为缓存不需要动态改变
+      // if (this.dialogEditStatus === 'update') {
+      //   // 如果为编辑模式，则下列字段为不可修改
+      //   return ['prefix', 'maskLength', 'ifName', 'nexthop']
+      // } else return []
     },
     beforCloseDialog() {
       this.dialogEditShow = false

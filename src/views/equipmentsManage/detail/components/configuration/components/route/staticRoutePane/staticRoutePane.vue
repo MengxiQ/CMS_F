@@ -26,29 +26,8 @@
       </el-table-column>
     </el-table>
     <!--    编辑框-->
-    <el-dialog :title="dialogEditStatus" :visible.sync="dialogEditShow" :before-close="beforCloseDialog">
-      <el-form label-position="left" label-width="100px">
-        <el-form-item
-          v-for="(item, key) in params"
-          :key="key"
-          style="position: relative; padding: 10px 0 20px 0"
-          :label="item.name"
-          size="medium"
-        >
-          <div style="position: absolute;z-index: 100;top: -28px; font-size: smaller; color: #5a5e66">{{ item.remark }}
-            <span style="margin-left: 5px;color: #3d7ed5">({{ item.constraint }})</span></div>
-          <el-input v-model="temp[item.name]" :disabled="!(item.name === 'description') && dialogEditStatus === 'update'" />
-        </el-form-item>
-        <!--        <el-form-item v-if="dialogEditStatus === 'update'">-->
-        <!--          <span>tips: 更改IP、掩码长度，出接口等参数为新增静态路由。如需更改请删除指定路由。</span>-->
-        <!--        </el-form-item>-->
-      </el-form>
-      <el-row>
-        <el-col :span="24" style="text-align: right">
-          <el-button type="primary" size="medium" @click="handleSave()">保存</el-button>
-          <el-button type="" size="medium" @click="dialogEditShow = !dialogEditShow">取消</el-button>
-        </el-col>
-      </el-row>
+    <el-dialog :title="textMap[dialogEditStatus]" :visible.sync="dialogEditShow">
+      <edit :params="params" :default_temp="defaultTemp()" :disparams="disparams()" @save="handleSave" @cancel="dialogEditShow = false"></edit>
     </el-dialog>
   </div>
 </template>
@@ -57,19 +36,32 @@
 import { baseMinxin } from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/baseMixin'
 import { getSatic_route, createSatic_route, deleteSatic_route } from '@/api/detail/static_route'
 import DividerInfo from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/divider-info'
+import Edit from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/edit'
 
 export default {
   name: 'StaticRoutePane',
-  components: { DividerInfo },
+  components: { Edit, DividerInfo },
   mixins: [baseMinxin],
   data() {
     return {
-      temp: {
-        ifName: 'Invalid0'
-      }
+      temp: {}
     }
   },
   methods: {
+    defaultTemp() {
+      // 不要计算属性，因为缓存不需要动态改变
+      // 确定给edit组件传什么默认值
+      if (this.dialogEditStatus === 'update') {
+        return this.temp
+      } else return {}
+    },
+    disparams() {
+      // 不要计算属性，因为缓存不需要动态改变
+      if (this.dialogEditStatus === 'update') {
+        // 如果为编辑模式，则下列字段为不可修改
+        return ['prefix', 'maskLength', 'ifName', 'nexthop']
+      } else return []
+    },
     getList() {
       this.loadingInit = true
       const query = {
@@ -86,11 +78,12 @@ export default {
         this.getListSuccess(res, query)
       }).catch(error => this.getListError(error))
     },
-    handleSave() {
+    handleSave(temp) {
+      // 子组件返回 temp
       this.loadingInit = true
       const data = {
         ip: this.ip,
-        data: this.temp,
+        data: temp,
         source: this.$store.getters.source
       }
       createSatic_route(data).then(res => this.createSuccess()).catch(error => this.createError(error))

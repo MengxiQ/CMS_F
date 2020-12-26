@@ -30,6 +30,7 @@
       />
       <el-select
         v-model="listQuery.tempType"
+        filterable
         clearable
         size="small"
         placeholder="模板类型"
@@ -70,8 +71,7 @@
             </el-form-item>
 
             <el-form-item label="模板功能:">
-              <div>{{ props.row.function ? props.row.function.name : 'null' }}&nbsp; &nbsp; # &nbsp;
-                &nbsp;{{ props.row.function ? props.row.function.remark : 'null' }}
+              <div>{{ props.row.function ? props.row.function.name : 'null' }}
               </div>
             </el-form-item>
             <el-form-item label="模板描述:">
@@ -88,9 +88,6 @@
             </el-form-item>
           </el-form>
           <h4>模板内容：</h4>
-          <!--          <pre class="code">-->
-          <!--              {{props.row.templateData.trim()}}-->
-          <!--          </pre>-->
           <template-edit class="code-block" :template="props.row" :read-only="true" />
 
         </template>
@@ -205,7 +202,8 @@
             <el-input v-model="temp.remark" class="input-item" type="textarea" />
           </el-form-item>
           <h4>模板内容：</h4>
-          <h4>参数:(动态添加表单) # 核验xml data中是否有$(参数)
+<!--          :(动态添加表单) # 核验xml data中是否有$(参数)-->
+          <h4>参数：
             <el-button
               title="添加模板参数"
               style="transform: scale(0.8)"
@@ -268,7 +266,7 @@ import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { getTemplatesList, saveTemplate, addTemplate, deleteTemplate, updateTemplate } from '@/api/configManage/templates'
-import TemplateEdit from '@/views/configManage/templates/edit/index'
+import TemplateEdit from '@/views/templateManage/templates/edit/index'
 import { commonOperationMixin } from '@/views/mixins/commonOperationMixin'
 
 export default {
@@ -310,8 +308,8 @@ export default {
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
-        update: 'Edit',
-        create: 'Create'
+        update: '更新模板信息',
+        create: '创建模板'
       },
       dialogPvVisible: false,
       pvData: [],
@@ -415,20 +413,11 @@ export default {
           '        <filter type="subtree">\n' +
           '        </filter>\n' +
           '    </tempalte-get>\n' +
-          '    <tempalte-filter>\n' +
-          '    <filter type="subtree">\n' +
-          '    </filter>\n' +
-          '    </tempalte-filter>\n' +
           '    \n' +
-          '    <tempalte-create>\n' +
+          '    <tempalte-merge>\n' +
           '    <config>\n' +
           '    </config>\n' +
-          '    </tempalte-create>\n' +
-          '    \n' +
-          '    <tempalte-update>\n' +
-          '    <config>\n' +
-          '    </config>\n' +
-          '    </tempalte-update>\n' +
+          '    </tempalte-merge>\n' +
           '    \n' +
           '    <tempalte-delete>\n' +
           '    <config>\n' +

@@ -170,18 +170,18 @@ export default {
     handleSave() {
       const data = Object.assign({}, this.temp)
       if (data.password === '') {
-        console.log(66)
+        // console.log(66)
         delete data.password
       }
-      console.log(data)
+      // console.log(data)
       updateUser(data).then(res => {
         this.$message({ type: 'success', message: '保存成功，' })
         this.flags.addDialogVisible = false
         this.temp = {}
         this.getList()
       }).catch(error => {
-        console.log(error)
-        this.$message({ type: 'error', message: '保存失败！' })
+        console.log(error.response)
+        this.$message({ type: 'error', message: '必须输入密码.' })
       })
     },
     handleDelete(id) {
@@ -196,7 +196,7 @@ export default {
       this.loading = true
       getList().then(res => {
         // enableEdit~
-        console.log(res)
+        // console.log(res)
         const data = res.map(item => {
           item.enableEdit = false
           return item

@@ -114,7 +114,7 @@ export default {
         this.loading = false
       }).catch(error => {
         console.log(error)
-        this.$message({ type: 'error', message: '用户名或者密码错误' })
+        this.$message({ type: 'error', message: '无法使用提供的凭证登录。' })
         this.loading = false
       })
       // } else {

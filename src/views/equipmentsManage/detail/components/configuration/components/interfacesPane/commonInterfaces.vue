@@ -1,25 +1,14 @@
 <template>
   <div v-loading="loadingInit">
-    <divider-info :data-source="dataSource"></divider-info>
+    <el-button-group>
+      <el-button type="primary" size="mini" @click="handleCreate">添加</el-button>
+      <el-button type="success" size="mini" @click="getList">刷新</el-button>
+    </el-button-group>
+    <divider-info :data-source="dataSource" />
     <el-table
-      :data="list"
-      height="400"
       v-loading="loadingInit"
+      :data="list"
     >
-<!--      <el-table-column type="expand">-->
-<!--        <template slot="header"><i class="el-icon-view"></i></template>-->
-<!--        <template slot-scope="scope">-->
-<!--          <div class="expand">-->
-<!--            <h3 class="label-h5">IPv4配置:</h3>-->
-<!--            <el-form v-if="scope.row.ipv4Config.am4CfgAddrs" inline>-->
-<!--              <el-form-item label="IP地址:"><span>{{ scope.row.ipv4Config.am4CfgAddrs.am4CfgAddr.ifIpAddr }}</span>-->
-<!--              </el-form-item>-->
-<!--              <el-form-item label="掩码:"><span>{{ scope.row.ipv4Config.am4CfgAddrs.am4CfgAddr.subnetMask }}</span>-->
-<!--              </el-form-item>-->
-<!--            </el-form>-->
-<!--          </div>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
       <el-table-column label="状态" width="100" prop="ifAdminStatus" align="center">
         <template slot-scope="scope">
           <span v-if="scope.row.ifAdminStatus === 'up'" class="el-icon-success" style="color: #67C23A" />
@@ -48,12 +37,12 @@
       </el-table-column>
       <el-table-column label="IPv4" align="center">
         <template slot-scope="props">
-          <span>{{props.row.ipv4Config.am4CfgAddrs ? props.row.ipv4Config.am4CfgAddrs.am4CfgAddr.ifIpAddr : ''}}</span>
+          <span>{{ props.row.ipv4Config.am4CfgAddrs ? props.row.ipv4Config.am4CfgAddrs.am4CfgAddr.ifIpAddr : '' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Mask" align="center">
         <template slot-scope="props">
-          <span>{{props.row.ipv4Config.am4CfgAddrs ? props.row.ipv4Config.am4CfgAddrs.am4CfgAddr.subnetMask : ''}}</span>
+          <span>{{ props.row.ipv4Config.am4CfgAddrs ? props.row.ipv4Config.am4CfgAddrs.am4CfgAddr.subnetMask : '' }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -62,10 +51,6 @@
         align="center"
       />
       <el-table-column label="操作" align="center" width="150">
-        <template slot="header">
-           <el-button type="primary" size="mini" @click="handleCreate">添加</el-button>
-          <el-button type="success" size="mini" @click="getList">刷新</el-button>
-        </template>
         <template slot-scope="scope">
           <!--          <el-button v-if="scope.row.ifAdminStatus === 'down'" type="primary" size="mini">-->
           <!--            打开-->
@@ -94,14 +79,14 @@
         >
           <div style="position: absolute;z-index: 100;top: -28px; font-size: smaller; color: #5a5e66">{{ item.remark }}
             <span style="margin-left: 5px;color: #3d7ed5">({{ item.constraint }})</span></div>
-          <el-select v-if="(item.constraint).match('CHIOCE<(?<p>.*)>')" v-model="temp[item.name]">
-            <el-option
+          <el-radio-group size="mini" v-if="(item.constraint).match('CHIOCE<(?<p>.*)>')" v-model="temp[item.name]">
+            <el-radio-button
               v-for="(i, k) in constraint(item.constraint)"
               :key="k"
               :value="i"
               :label="i"
             />
-          </el-select>
+          </el-radio-group>
           <el-input
             v-if="item.constraint === 'INT' || item.constraint === 'IP' || item.constraint === 'MASK' || item.constraint === 'WILDCARD' || item.constraint === 'STRING'"
             v-model="temp[item.name]"

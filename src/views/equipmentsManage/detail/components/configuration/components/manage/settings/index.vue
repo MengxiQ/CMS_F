@@ -17,6 +17,10 @@
     </el-form>
     <div v-if="this.$store.getters.source === 'candidate'">
       <el-divider content-position="left"><i class="el-icon-s-tools" style="margin-right: 5px" />candidate管理</el-divider>
+      <el-radio-group v-model="configMode" size="mini" style="margin: 10px">
+        <el-radio-button label="Schema" value="Schema"></el-radio-button>
+        <el-radio-button label="Yang" value="Yang"></el-radio-button>
+      </el-radio-group>
       <el-form size="mini" label-position="right" label-width="100px">
         <el-form-item label="Candidate：">
           <el-button size="mini" type="primary" @click="createCandidate">创建</el-button>
@@ -30,12 +34,12 @@
             <el-form-item label="">
               超时时间：<el-input v-model="temp.timeout" placeholder="默认值：600秒" style="width: 120px" />
               <span style="margin-left: 5px; margin-right: 50px">(60 to 65535)s</span>
-              令牌：<el-input v-model="temp.persist " placeholder="可选" style="width: 120px" disabled />
+              <label v-if="configMode !== 'Schema'" style="font-weight: normal">令牌：<el-input v-model="temp.persist " placeholder="可选, 请牢记" style="width: 200px" /></label>
             </el-form-item>
           </el-form>
         </el-form-item>
         <el-form-item label="提交：">
-          令牌：<el-input v-model="temp.persist_id" placeholder="可选" style="width: 120px;margin-right: 50px;" disabled />
+          <label v-if="configMode !== 'Schema'" style="font-weight: normal">令牌：<el-input v-model="temp.persist_id" placeholder="可选，已存在的试运行令牌" style="width: 200px;margin-right: 50px;" :disabled="temp.attempt" /></label>
           <el-popconfirm
             title="是否提交选项和配置？"
             @onConfirm="commitConfig"
@@ -48,8 +52,9 @@
           <ul class="log">
             <li v-for="(item, key) in queues" :key="key" class="log-item" :class="{'log-item-timeout': !item.flag}">
               <span class="log-item-param"><i class="el-icon-s-flag" style="margin-right: 5px" />{{ key }}</span>
-              <span class="log-item-param">令牌：{{ item.persist }}</span>
+              <span v-if="configMode !== 'Schema'" class="log-item-param">令牌：{{ item.persist }}</span>
               <span class="log-item-param"><i class="el-icon-timer" />秒表：{{ item.timer }}s</span>
+              <i v-if="item.flag" class="el-icon-loading"></i>
             </li>
           </ul>
         </el-form-item>
@@ -64,6 +69,7 @@ import { createVlans } from '@/api/detail/vlans'
 export default {
   data() {
     return {
+      configMode: 'Schema',
       source: this.$store.getters.source,
       loading: false,
       temp: {

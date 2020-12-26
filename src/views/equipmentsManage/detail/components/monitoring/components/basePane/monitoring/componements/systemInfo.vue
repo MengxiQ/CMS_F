@@ -63,7 +63,7 @@ export default {
         this.$message({ type: 'success', message: '更新成功.' })
         this.isEdit = false
         this.getList()
-      }).catch(error => {
+      }).catch(_ => {
         this.$message({ type: 'error', message: '更新失败.' })
       })
     },

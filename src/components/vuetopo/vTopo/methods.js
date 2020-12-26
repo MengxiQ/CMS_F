@@ -903,14 +903,13 @@ export const methods = {
       }
       if (data.name === undefined || data.name === '') {
         this.$message({ type: 'error', message: '请输入topo名称。' })
-      }
-      else {
+      } else {
         createTopology(data).then(res => {
-          this.$message({type: 'success', message: '保存成功。'})
+          this.$message({ type: 'success', message: '保存成功。' })
           this.$emit('savesuccess')
         }).catch(error => {
           console.log(error)
-          this.$message({type: 'error', message: '保存失败。'})
+          this.$message({ type: 'error', message: '保存失败。' })
         })
       }
       // console.log(JSON.stringify(this.topoData))
@@ -1020,7 +1019,11 @@ export const methods = {
     handleConfig() {
       const ip = this.isAcitveNode.ip
       if (this.isAcitveNode.status === '在线') {
-        this.$router.push({ path: '/equipmentsManage/detail/' + ip })
+        const URL = this.$router.resolve({
+          path: '/equipmentsManage/detail/' + ip
+        })
+        window.open(URL.href, '_blank')
+        // this.$router.push({ path: '/equipmentsManage/detail/' + ip })
       } else {
         this.$message({ type: 'info', message: '无法配置：' + ip + '  ，状态：[' + this.isAcitveNode.status + '].' })
       }

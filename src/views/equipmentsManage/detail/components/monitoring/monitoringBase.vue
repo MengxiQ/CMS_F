@@ -1,10 +1,10 @@
 <template>
   <el-container>
     <el-aside class="aside" :width="asideWidth">
-      <el-button-group style="position: absolute; z-index: 1000; left: 0; top: 30px">
-        <el-button v-show="isCollapse" size="mini" icon="el-icon-s-unfold" @click="unfold" />
-        <el-button v-show="!isCollapse" size="mini" icon="el-icon-s-fold" @click="fold" />
-      </el-button-group>
+      <div class="fold-tool">
+        <span v-show="isCollapse" class="el-icon-s-unfold" @click="unfold" />
+        <span v-show="!isCollapse" class="el-icon-s-fold" @click="fold" />
+      </div>
       <el-menu router default-active="base" class="el-menu-vertical-demo" :collapse="isCollapse">
         <el-menu-item index="base">
           <i class="el-icon-menu" />
@@ -63,6 +63,17 @@ export default {
 }
 </script>
 <style scoped>
+.fold-tool {
+  position: absolute; z-index: 1000; left: 22px; top: 22px; transition: all 0.2s;
+  /*background-color: red;*/
+}
+.fold-tool:hover {
+  cursor: pointer;
+  color: rgb(64,158,255);
+}
+.fold-tool>span {
+  font-size: 22px;
+}
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 150px;
 }

@@ -1,9 +1,7 @@
 <template>
   <div class="content">
-    <div class="heard-tool">
-      <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleAdd">添加</el-button>
-    </div>
-    <el-table :data="list">
+    <button-group @add="handleAdd" @refresh="getList"></button-group>
+    <el-table v-loading="loading" :data="list">
       <el-table-column type="index" width="50"></el-table-column>
       <el-table-column label="类型名称" prop="name">
         <template slot-scope="scope">
@@ -25,7 +23,7 @@
               v-for="(item, key) in $store.getters.vendorTypes"
               :key="key"
               :label="item.name"
-              :value="item.name"
+              :value="item.id"
             ></el-option>
           </el-select>
         </template>
@@ -79,7 +77,7 @@
               v-for="(item, key) in this.$store.getters.vendorTypes"
               :key="key"
               :label="item.name"
-              :value="item.name"
+              :value="item.id"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -93,19 +91,16 @@
 </template>
 
 <script>
-import { addUnitType, deleteUnitType, getUnitTypesList, updateUnitType } from '@/api/typesManage'
-import {typeMixin} from "@/views/typesManage/mixin/typeMixin";
+import { addUnitType, deleteUnitType, updateUnitType } from '@/api/typesManage'
+import { typeMixin } from '@/views/typesManage/mixin/typeMixin';
+import ButtonGroup from '@/views/typesManage/componments/buttonGroup'
 
 export default {
   name: 'UnitTypes',
+  components: { ButtonGroup },
   mixins: [typeMixin],
   data() {
     return {
-      list: [],
-      temp: {},
-      flags: {
-        addDialogVisible: false
-      },
       typeTemp: {
         name: '',
         remark: '',
@@ -128,11 +123,14 @@ export default {
       this.flags.addDialogVisible = true
     },
     commitAddData() {
+      this.loading = true
       addUnitType(this.typeTemp).then(res => {
+        this.loading = false
         this.$message({ type: 'success', message: '添加成功，' })
         this.beforeClose()
         this.getList()
       }).catch(error => {
+        this.loading = false
         console.log(error)
         this.$message({ type: 'error', message: '添加失败！' })
       })
@@ -141,25 +139,31 @@ export default {
 
     },
     handleSave(row) {
+      this.loading = true
       updateUnitType(row).then(res => {
         this.$message({ type: 'success', message: '保存成功，' })
         this.beforeClose()
         this.getList()
       }).catch(error => {
         console.log(error)
+        this.loading = false
         this.$message({ type: 'error', message: '保存失败！' })
         this.getList()
       })
     },
     handleDelete(id) {
+      this.loading = true
       deleteUnitType(id).then(res => {
+        this.loading = false
         this.$message({ type: 'success', message: '删除成功！' })
         this.getList()
       }).catch(erro => {
+        this.loading = false
         this.$message({ type: 'error', message: '删除失败！' })
       })
     },
     getList() {
+      this.loading = true
       this.updateType('unitTypes')
       // getUnitTypesList().then(res => {
       //   // enableEdit
@@ -177,9 +181,6 @@ export default {
 </script>
 
 <style scoped>
-  .heard-tool {
-    /*padding: 10px;*/
-  }
   .content {
     padding: 20px;
   }

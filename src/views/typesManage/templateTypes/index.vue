@@ -1,64 +1,70 @@
 <template>
   <div class="content">
-    <div class="heard-tool">
-      <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleAdd">添加</el-button>
-    </div>
-    <el-table :data="list">
-     <el-table-column type="index" width="50"></el-table-column>
+    <button-group @add="handleAdd" @refresh="getList"></button-group>
+<!--    <el-button-group class="heard-tool">-->
+<!--      <el-button size="mini" type="primary" @click="handleAdd">添加</el-button>-->
+<!--      <el-button size="mini" type="success" @click="getList">刷新</el-button>-->
+<!--    </el-button-group>-->
+    <el-table v-loading="loading" :data="list">
+      <el-table-column type="index" width="50" />
       <el-table-column label="类型名称" prop="name">
         <template slot-scope="scope">
           <span v-if="!scope.row.enableEdit">{{ scope.row.name }}</span>
-          <el-input v-else v-model="scope.row.name" size="mini"></el-input>
+          <el-input v-else v-model="scope.row.name" size="mini" />
         </template>
       </el-table-column>
       <el-table-column label="类型描述" prop="remark">
         <template slot-scope="scope">
           <span v-if="!scope.row.enableEdit">{{ scope.row.remark }}</span>
-          <el-input v-else v-model="scope.row.remark" type="textarea" size="mini"></el-input>
+          <el-input v-else v-model="scope.row.remark" type="textarea" size="mini" />
         </template>
       </el-table-column>
       <el-table-column label="操作" width="250">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="handleSave(scope.row)" v-if="scope.row.enableEdit">保存
+          <el-button v-if="scope.row.enableEdit" size="mini" type="primary" @click="handleSave(scope.row)">保存
           </el-button>
           <el-button
-            size="mini"
             v-if="!scope.row.enableEdit"
+            size="mini"
             style="margin-right: 5px"
-            @click="scope.row.enableEdit = !scope.row.enableEdit">编辑
+            @click="scope.row.enableEdit = !scope.row.enableEdit"
+          >编辑
           </el-button>
           <el-button
-            size="mini"
             v-else
-            @click="scope.row.enableEdit = !scope.row.enableEdit">取消
+            size="mini"
+            @click="scope.row.enableEdit = !scope.row.enableEdit"
+          >取消
           </el-button>
           <el-popconfirm
             title="这是一段内容确定删除吗？"
             @onConfirm="handleDelete(scope.row.id)"
           >
             <el-button
-            size="mini"
-            type="danger"
-             slot="reference"
+              slot="reference"
+              size="mini"
+              type="danger"
             >删除
-          </el-button>
+            </el-button>
           </el-popconfirm>
 
         </template>
       </el-table-column>
     </el-table>
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
     <!--    添加弹出框-->
     <el-dialog
       title="添加模板类型"
       :visible.sync="flags.addDialogVisible"
       width="50%"
-      :before-close="beforeClose">
+      :before-close="beforeClose"
+    >
       <el-form>
         <el-form-item label="类型名称">
-          <el-input v-model="typeTemp.name"></el-input>
+          <el-input v-model="typeTemp.name" />
         </el-form-item>
         <el-form-item label="类型描述">
-          <el-input v-model="typeTemp.remark"></el-input>
+          <el-input v-model="typeTemp.remark" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -70,24 +76,25 @@
 </template>
 
 <script>
-import { getTemplateTypesList, addTemplateTypes, updateTemplateTypes, deleteTemplateTypes } from '@/api/typesManage'
-import {typeMixin} from "@/views/typesManage/mixin/typeMixin";
+import { addTemplateTypes, updateTemplateTypes, deleteTemplateTypes } from '@/api/typesManage'
+import { commonPagination } from '@/views/mixins/commonPagination'
+import { typeMixin } from '@/views/typesManage/mixin/typeMixin'
+import ButtonGroup from '@/views/typesManage/componments/buttonGroup'
 
 export default {
   name: 'TemplateTypes',
-  mixins: [typeMixin],
+  components: { ButtonGroup },
+  mixins: [typeMixin, commonPagination],
   data() {
     return {
-      list: [],
-      temp: {},
-      flags: {
-        addDialogVisible: false
-      },
       typeTemp: {
         name: '',
         remark: ''
       }
     }
+  },
+  mounted() {
+    this.getList()
   },
   methods: {
     beforeClose() {
@@ -146,17 +153,11 @@ export default {
       //   this.$message({ type: 'error', message: '获取列表失败！' })
       // })
     }
-  },
-  mounted() {
-    this.getList()
   }
 }
 </script>
 
 <style scoped>
-  .heard-tool {
-    /*padding: 10px;*/
-  }
   .content {
     padding: 20px;
   }

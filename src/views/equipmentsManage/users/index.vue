@@ -47,19 +47,9 @@
       </el-table-column>
       <el-table-column label="设备IP" prop="equipment" align="center">
         <template slot-scope="scope">
-          <span v-if="!scope.row.enableEdit">{{ scope.row.networkequipment }}</span>
-          <el-input v-else v-model="scope.row.networkequipment" type="" size="mini" />
+          <span>{{ scope.row.networkequipment }}</span>
         </template>
       </el-table-column>
-      <!--      <el-table-column label="设备秘钥" prop="hostkey">-->
-      <!--        <template slot-scope="scope">-->
-      <!--          &lt;!&ndash;          el-icon-view&ndash;&gt;-->
-      <!--          &lt;!&ndash;          el-icon-edit-outline&ndash;&gt;-->
-      <!--          <el-button size="mini" type="primary" icon="el-icon-view" @click="showHostKey(scope.row)">查看</el-button>-->
-      <!--          &lt;!&ndash;          <span v-if="!scope.row.enableEdit">{{ scope.row.hostkey }}</span>&ndash;&gt;-->
-      <!--          &lt;!&ndash;          <el-input v-else v-model="scope.row.hostkey" type="textarea" size="mini"></el-input>&ndash;&gt;-->
-      <!--        </template>-->
-      <!--      </el-table-column>-->
       <el-table-column label="操作" width="140" align="center">
         <template slot-scope="scope">
           <el-button-group>
@@ -161,7 +151,7 @@ export default {
   data() {
     return {
       query: { // 查询的过滤条件
-        name: ''
+        // name: ''
       },
       loading: true,
       list: [],

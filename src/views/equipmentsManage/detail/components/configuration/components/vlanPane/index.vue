@@ -1,6 +1,6 @@
 <template>
   <div class="page-content">
-    <keep-alive><router-view/></keep-alive>
+    <keep-alive><router-view /></keep-alive>
   </div>
 </template>
 

@@ -55,7 +55,7 @@ export default {
             this.initChart()
           })
         }).catch(error => this.getListError(error))
-      }, 100)
+      }, 2000)
     },
     initChart() {
       this.chart = this.$echarts.init(this.$refs.chart, 'macarons')
@@ -67,7 +67,7 @@ export default {
         },
         legend: {
           left: 'center',
-          bottom: '10',
+          bottom: '1',
           data: ['紧急', '重要', '次要', '提示']
         },
         series: [

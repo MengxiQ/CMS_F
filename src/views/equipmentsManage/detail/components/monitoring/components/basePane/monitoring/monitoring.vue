@@ -1,17 +1,17 @@
 <template>
   <div>
     <div>
-      <el-row :gutter="20">
+      <el-row>
         <el-col class="col" :md="12" :xs="24">
           <system-info :ip="ip" />
         </el-col>
         <el-col class="col" :md="12" :xs="24">
           <alarm :ip="ip" />
         </el-col>
-        <el-col class="col" v-if="JSON.stringify(list) === '[]'" :md="12" :xs="24">
-          <pane :title="'单板'" :loading="loadingInit" @reload="getList"></pane>
+        <el-col v-if="JSON.stringify(list) === '[]'" class="col" :md="12" :xs="24">
+          <pane :title="'单板'" :loading="loadingInit" @reload="getList" />
         </el-col>
-        <el-col class="col" v-for="(item, key) in list" :key="key" :md="12" :xs="24">
+        <el-col v-for="(item, key) in list" :key="key" class="col" :md="12" :xs="24">
           <board-res-states :loading="loadingInit" :data="item" @reload="getList" />
         </el-col>
       </el-row>

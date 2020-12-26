@@ -41,7 +41,7 @@ export default {
     background: #fff;
     box-shadow: 4px 4px 40px rgba(0, 0, 0, .08);
     border-color: rgba(0, 0, 0, .05);
-
+    margin: auto;
   }
   .title {
     padding: 5px;

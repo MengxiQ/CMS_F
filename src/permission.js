@@ -15,7 +15,11 @@ router.beforeEach(async(to, from, next) => {
   NProgress.start()
 
   // set page title
-  document.title = getPageTitle(to.meta.title)
+  // console.log(to)
+  const ip = to.params.ip
+  if (ip !== null && ip !== undefined) {
+    document.title = getPageTitle(ip + '-' + to.meta.title)
+  } else document.title = getPageTitle(to.meta.title)
 
   // determine whether the user has logged in
   const hasToken = getToken()
@@ -29,13 +33,32 @@ router.beforeEach(async(to, from, next) => {
     } else {
       const hasGetUserInfo = store.getters.avatar
       if (hasGetUserInfo) {
-        next()
+        const hasRoles = store.getters.roles && store.getters.roles.length > 0
+        // console.log('hasRoles', hasRoles)
+        if (hasRoles) {
+          next()
+          // .then(() => { // 生成可访问的路由表
+          // router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
+          // next({ ...to, replace: true }) // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
+          // })
+        } else {
+          // get user info
+          // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
+          const { avatar } = await store.dispatch('user/getInfo')
+          const roles = Array(avatar)
+          // console.log('roles', roles)
+
+          // generate accessible routes map based on roles
+          const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
+
+          // dynamically add accessible routes
+          router.addRoutes(accessRoutes)
+          next()
+        }
       } else {
         try {
           // get user info
-          // await store.dispatch('user/getInfo')
           await store.dispatch('user/getInfo')
-
           next()
         } catch (error) {
           // remove token and go to login page to re-login

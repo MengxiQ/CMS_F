@@ -1,8 +1,6 @@
 <template>
   <div class="content">
-    <div class="heard-tool">
-      <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleAdd">添加</el-button>
-    </div>
+    <button-group @add="handleAdd" @refresh="getList"></button-group>
     <el-table :data="list">
       <el-table-column type="index" width="50" />
       <el-table-column label="类型名称" prop="name">
@@ -75,9 +73,11 @@
 <script>
 import { addFunction, updateFunction, deleteFunction } from '@/api/typesManage'
 import { typeMixin } from '@/views/typesManage/mixin/typeMixin'
+import ButtonGroup from '@/views/typesManage/componments/buttonGroup'
 
 export default {
   name: 'FunctionTypes',
+  components: { ButtonGroup },
   mixins: [typeMixin],
   data() {
     return {
@@ -158,9 +158,7 @@ export default {
 </script>
 
 <style scoped>
-  .heard-tool {
-    /*padding: 10px;*/
-  }
+
   .content {
     padding: 20px;
   }
