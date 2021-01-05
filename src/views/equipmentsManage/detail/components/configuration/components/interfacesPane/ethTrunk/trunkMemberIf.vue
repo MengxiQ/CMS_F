@@ -2,13 +2,16 @@
   <div>
     <el-row>
       <el-col :span="24">
-        <el-button size="mini" type="primary" @click="handleCreate">添加</el-button>
-<!--        <el-button size="mini" type="primary" @click="6">批量</el-button>-->
+        <el-button-group>
+          <el-button title="创建" size="mini" type="primary" icon="el-icon-plus" @click="handleCreate"></el-button>
+          <el-button title="刷新" size="mini" type="success" icon="el-icon-refresh" @click="getList"></el-button>
+        </el-button-group>
       </el-col>
     </el-row>
     <el-table
       :data="list"
       max-height="200px"
+      v-loading="loadingInit"
     >
       <el-table-column
         type="index"
@@ -17,52 +20,65 @@
         <template slot="header"><i class="el-icon-view"></i>
         </template>
       </el-table-column>
-<!--      <el-table-column type="selection"></el-table-column>-->
-      <el-table-column label="接口名称" prop="memberIfName"></el-table-column>
-      <el-table-column label="接口带宽" prop="weight"></el-table-column>
+      <el-table-column label="接口名称" align="center" prop="memberIfName"></el-table-column>
+      <el-table-column label="带宽" align="center" prop="weight"></el-table-column>
+      <el-table-column label="状态" align="center" prop="memberIfState">
+        <template scope="props">
+          <el-tag style="min-width: 50px" size="mini" :type="props.row.memberIfState === 'Up' ? 'success' : 'warning'">{{ props.row.memberIfState }}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="操作" prop="" width="150">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="handleUpdate(scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
+          <el-button-group>
+            <el-button icon="el-icon-edit" size="mini" type="" @click="handleUpdate(scope.row)"></el-button>
+            <el-button icon="el-icon-delete" size="mini" type="danger" @click="handleDelete(scope.row)"></el-button>
+          </el-button-group>
         </template>
       </el-table-column>
     </el-table>
-     <el-dialog :title="dialogEditStatus" :visible.sync="dialogEditShow" :before-close="beforCloseDialog">
-      <el-form label-position="left" label-width="100px">
-        <el-form-item
-          style="position: relative; padding: 10px 0 20px 0"
-          v-for="(item, key) in params"
-          :key="key"
-          :label="item.name"
-          size="medium">
-          <div style="position: absolute;z-index: 100;top: -28px; font-size: smaller; color: #5a5e66">{{ item.remark }}
-            <span style="margin-left: 5px;color: #3d7ed5">({{ item.constraint }})</span></div>
-          <el-input v-model="temp[item.name]" :disabled="item.name === 'ifName'"></el-input>
-        </el-form-item>
-      </el-form>
-      <el-row>
-        <el-col :span="24" style="text-align: right">
-          <el-button type="primary" size="mini" @click="handleSave()">保存</el-button>
-          <el-button type="" size="mini" @click="dialogEditShow = !dialogEditShow">取消</el-button>
-        </el-col>
-      </el-row>
+    <el-dialog :title="textMap[dialogEditStatus]" :visible.sync="dialogEditShow">
+      <edit :params="params" :default_temp="defaultTemp()" :disparams="['ifName']" @save="handleSave" @cancel="dialogEditShow = false"/>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { baseMixinProps } from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/baseMixinProps'
-import { createTrunkMember, deleteTrunkMember } from '@/api/detail/interfaces'
+import { baseMinxin } from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/baseMixin'
+import { createTrunkMember, deleteTrunkMember, getEthTrunkMember } from '@/api/detail/interfaces'
+import Edit from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/edit'
 
 export default {
   name: 'TrunkMemberIf',
-  mixins: [baseMixinProps],
+  components: { Edit },
+  mixins: [baseMinxin],
   props: {
     ifName: {
       type: String
     }
   },
   methods: {
+    defaultTemp() {
+      // 不要计算属性，因为缓存不需要动态改变
+      // 确定给edit组件传什么默认值
+      if (this.dialogEditStatus === 'update') {
+        return this.temp
+      } else return { ifName: this.ifName }
+    },
+    getList() {
+      this.loadingInit = true
+      const query = {
+        ip: this.ip,
+        data: {
+          ifName: this.ifName
+        }
+      }
+      getEthTrunkMember(query).then(res => {
+        this.params = res.params
+        const list = (((((res.data || {}).ifmtrunk || {}).TrunkIfs || {}).TrunkIf || {}).TrunkMemberIfs || {}).TrunkMemberIf
+        this.list = list === undefined ? [] : (this.isArray(list) ? list : Array(list))
+        this.loadingInit = false
+      }).catch(error => this.getListError(error))
+    },
     handleUpdate(row) {
       this.temp = Object.assign({}, row)
       this.temp.ifName = this.ifName
@@ -74,11 +90,11 @@ export default {
       this.dialogEditStatus = 'create'
       this.dialogEditShow = true
     },
-    handleSave() {
+    handleSave(temp) {
       this.loadingInit = true
       const data = {
         ip: this.ip,
-        data: this.temp,
+        data: temp,
         source: this.$store.getters.source
       }
       createTrunkMember(data).then(res => this.createSuccess()).catch(error => this.createError(error))
@@ -92,13 +108,8 @@ export default {
       }
       data.data.ifName = this.ifName
       deleteTrunkMember(data).then(res => this.createSuccess()).catch(error => this.createError(error))
-    },
-    createSuccess() {
-      this.$message({ type: 'success', message: '配置成功。' })
-      this.dialogEditShow = false
-      this.loadingInit = false
-      this.$emit('createsuccess')
     }
+
   }
 }
 </script>

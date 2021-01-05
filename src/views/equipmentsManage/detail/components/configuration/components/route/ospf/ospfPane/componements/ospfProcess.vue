@@ -1,34 +1,23 @@
 <template>
-  <div>
-    <el-popconfirm
-      :title="'确定要删除ospf进程（' + item.processId+ '）吗？'"
-      @onConfirm="handleDelete()"
-    >
-      <el-button slot="reference" size="mini" type="danger">删除</el-button>
-    </el-popconfirm>
-    <!--    <h5 class="label-h5">进程信息：-->
-    <!--&lt;!&ndash;      <el-link type="primary">编辑</el-link>&ndash;&gt;-->
-    <!--      </h5>-->
-    <el-divider content-position="left">进程信息</el-divider>
-    <el-form label-position="left" inline>
-      <el-form-item label="processId:">
-        <span class="form-titem-valus">{{ item.processId }}</span>
-      </el-form-item>
-      <el-form-item label="routerId:">
-        <span class="form-titem-valus">{{ item.routerId }}</span>
-      </el-form-item>
-      <el-form-item label="description:">
-        <span class="form-titem-valus">{{ item.description }}</span>
-      </el-form-item>
-      <el-form-item label="vrfName:">
-        <span class="form-titem-valus">{{ item.vrfName }}</span>
-      </el-form-item>
-    </el-form>
+  <div class="content">
+    <el-row>
+      <el-col :span="12" class="col">
+        <span class="title">进程ID</span>
+        <span class="form-titem-valus">{{ item.processId }}</span></el-col>
+      <el-col :span="12" class="col">
+        <span class="title">路由ID</span>
+        <span class="form-titem-valus">{{ item.routerId === null ? 'NULL' : item.routerId }}</span></el-col>
+      <el-col :span="12" class="col">
+        <span class="title">描述</span>
+        <span class="form-titem-valus">{{ item.description === null ? 'NULL' : item.description }}</span></el-col>
+      <el-col :span="12" class="col">
+        <span class="title">vrfName</span>
+        <span class="form-titem-valus">{{ item.vrfName }}</span></el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
-import { deleteOspfProcess } from '@/api/detail/ospf/ospfProcess'
 
 export default {
   name: 'OspfProcess',
@@ -46,26 +35,22 @@ export default {
     }
   },
   methods: {
-    handleDelete() {
-      const data = {
-        ip: this.ip,
-        data: this.item,
-        source: this.$store.getters.source
-      }
-      deleteOspfProcess(data).then(res => {
-        this.$message({ type: 'success', message: '配置成功。' })
-        this.$emit('complete')
-      }).catch(error => {
-        this.$message({ type: 'error', message: error.response.data['msg'] })
-      })
-    }
   }
 }
 </script>
 
 <style scoped>
-.form-titem-valus {
+.col {
+  padding: 10px;
+}
+.content {
+  font-size: smaller;
+}
+.title {
   color: #6f7180;
+  margin-right: 10px;
+}
+.form-titem-valus {
   margin-right: 20px;
 
 }

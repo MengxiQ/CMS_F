@@ -19,6 +19,15 @@ import request from '@/utils/request'
 //     }
 //   })
 // }
+// 接口监控信息
+export function getInterfaceMonitoring(query) {
+  return request({
+    url: 'detail/config/interfaces/monitoring',
+    method: 'get',
+    params: query
+  })
+}
+
 /**
  * 通用接口
  * **/
@@ -101,13 +110,11 @@ export function deleteEthTrunkInterface(data) {
 /**
  * TrunkMemberIf接口成员
  * **/
-export function getEthTrunkMember(ip) {
+export function getEthTrunkMember(query) {
   return request({
     url: 'detail/config/interfaces/eth_trunk/trunk_member',
     method: 'get',
-    params: {
-      ip
-    }
+    params: query
   })
 }
 export function createTrunkMember(data) {

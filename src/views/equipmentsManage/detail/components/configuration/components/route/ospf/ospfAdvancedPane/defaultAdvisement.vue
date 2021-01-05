@@ -1,175 +1,79 @@
 <template>
   <div>
-    缺省路由发布:
-    <el-table :data="list">
+    <el-divider content-position="left">
+      缺省路由发布
+      <el-link title="刷新" type="success" style="margin-left: 10px" size="mini" icon="el-icon-refresh" @click="getList"></el-link></el-divider>
+    <el-table :data="list" v-loading="loadingInit">
       <el-table-column label="开启" prop="defRoutEnableFlag">
         <template slot-scope="props">
-          <el-switch
-            v-model="(props.row || {}).defRoutEnableFlag"
-            disabled
-            active-color="#13ce66"
-            inactive-color="#ff4949"
-            :active-value="'true'"
-            :inactive-value="'false'"
-          />
+          <el-tag :type="props.row.defRoutEnableFlag === 'true' ? 'success' : 'danger'">{{ props.row.defRoutEnableFlag }}</el-tag>
         </template>
       </el-table-column>
-      <!--      <el-table-column label="开销锁" prop="configCost"></el-table-column>-->
-      <el-table-column label="开销" prop="cost" />
-      <!--      <el-table-column label="路由类型锁" prop="configType" width="100"></el-table-column>-->
-      <el-table-column label="路由类型" prop="type" />
-      <el-table-column label="计算方式" prop="flag" />
-      <el-table-column label="计算其他" prop="permitCalculateOther" />
-      <el-table-column label="策略" prop="routePolicyName" />
-      <el-table-column label="延迟" prop="delayTimer" />
+      <el-table-column label="方式" prop="flag" />
+<!--      <el-table-column label="计算其他" prop="permitCalculateOther" />-->
+      <el-table-column label="延迟时间" prop="delayTimer" />
       <el-table-column label="操作">
         <template slot-scope="props">
-          <el-button size="mini" type="primary" :disabled="false" @click="handleUpdate(props.row)">编辑</el-button>
+          <el-button size="mini" type="" @click="handleUpdate(props.row)">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <!--    <el-form size="mini" inline>-->
-    <!--      <el-form-item v-for="(item,key) in data" :key="key" :label="key" style="width: 50%" >{{item}}</el-form-item>-->
-    <!--    </el-form>-->
-    <!--    <el-switch-->
-    <!--      v-model="temp.defRoutEnableFlag"-->
-    <!--      active-color="#13ce66"-->
-    <!--      inactive-color="#ff4949"-->
-    <!--      :active-value="false"-->
-    <!--      :inactive-value="true"-->
-    <!--    />-->
-    <!--    <el-form inline :disabled="temp.defRoutEnableFlag">-->
-    <!--      <el-form-item label="flag">-->
-    <!--        <el-select v-model="temp.flag" size="mini" value="always">-->
-    <!--          <el-option label="always" value="Always" />-->
-    <!--          <el-option label="permit-calculate-other" value="DefRtAdv" />-->
-    <!--        </el-select>-->
-    <!--      </el-form-item>-->
-    <!--      <el-form-item label="cost">-->
-    <!--        <el-input size="mini" />-->
-    <!--      </el-form-item>-->
-    <!--      <el-form-item label="type">-->
-    <!--        <el-select size="mini" value="Type1">-->
-    <!--          <el-option label="Type1" value="Type1" />-->
-    <!--          <el-option label="Type2" value="Type2" />-->
-    <!--        </el-select>-->
-    <!--        <span style="font-size: smaller;color: #6f7180">tips: cost值和type值只能选填一个 </span>-->
-    <!--      </el-form-item>-->
-    <!--    </el-form>-->
-    <!--    <el-button size="mini" type="primary" style="float: right">保存</el-button>-->
-    <el-dialog :title="dialogEditStatus" :visible.sync="dialogEditShow" :before-close="beforCloseDialog">
-      <el-form label-position="left" label-width="100px">
-        <el-form-item
-          v-for="(item, key) in params"
-          :key="key"
-          style="position: relative; padding: 10px 0 20px 0"
-          :label="item.name"
-          size="medium"
-        >
-          <div style="position: absolute;z-index: 100;top: -28px; font-size: smaller; color: #5a5e66">{{ item.remark }}
-            <span style="margin-left: 5px;color: #3d7ed5">({{ item.constraint }})</span></div>
-          <el-select
-            v-if="(item.constraint).match('CHIOCE<(?<p>.*)>')"
-            v-model="temp[item.name]"
-          >
-            <el-option
-              v-for="(i, k) in constraint(item.constraint)"
-              :key="k"
-              :value="i"
-              :label="i"
-            />
-          </el-select>
-          <el-switch
-            v-if="item.constraint === 'BOOLEAN'"
-            v-model="temp[item.name]"
-            active-color="#13ce66"
-            inactive-color="#ff4949"
-            :active-value="'true'"
-            :inactive-value="'false'"
-          />
-          <el-input
-            v-if="item.constraint.match('INT<?(?<p>.*)>?') || item.constraint === 'IP' || item.constraint === 'MASK' || item.constraint === 'WILDCARD' || item.constraint === 'STRING'"
-            v-model="temp[item.name]"
-            :disabled="item.name === 'processId'"
-          />
-        </el-form-item>
-      </el-form>
-      <el-row>
-        <el-col :span="24" style="text-align: right">
-          <el-button type="primary" size="mini" @click="handleSave()">保存</el-button>
-          <el-button type="" size="mini" @click="dialogEditShow = !dialogEditShow">取消</el-button>
-        </el-col>
-      </el-row>
+    <el-dialog :title="dialogEditStatus" :visible.sync="dialogEditShow" >
+      <edit :params="params" :default_temp="defaultTemp()" :disparams="['processId']" @save="handleSave" @cancel="dialogEditShow = false"></edit>
     </el-dialog>
   </div>
 </template>
 <script>
-import { getOspfDefaultAdvise, createOspfDefaultAdvise } from '@/api/detail/ospf/ospfAdvance'
-import { commonNetworkMixin } from '@/views/mixins/commonNetwork'
-import { commonOperationMixin } from '@/views/mixins/commonOperationMixin'
+import { getOspfDefaultAdvise, createOspfDefaultAdvise } from '@/api/detail/route/ospf/ospfAdvance/ospfAdvance'
+import Edit from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/edit'
+import { baseMinxin } from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/baseMixin'
 
 export default {
   name: 'DefaultAdvisement',
-  mixins: [commonNetworkMixin, commonOperationMixin],
+  components: { Edit },
+  mixins: [baseMinxin],
   props: {
-    list: {
-      type: Array,
-      default() {
-        return []
-      }
-    },
-    processId: {}
-  },
-  data() {
-    return {
-      params: {},
-      temp: {}
-    }
-  },
-  computed: {
-    ip() {
-      return this.$route.params.ip
-    }
-  },
-  created() {
-    this.getList()
+    processId: { type: String }
   },
   methods: {
-    constraint(val) {
-      return val.match('CHIOCE<(?<p>.*)>').groups.p.split(',')
-    },
-    handleUpdate(row) {
-      this.temp = Object.assign({}, row)
-      this.dialogEditStatus = 'update'
-      this.dialogEditShow = true
-      this.temp.processId = this.processId
+    defaultTemp() {
+      // 不要计算属性，因为缓存不需要动态改变
+      // 确定给edit组件传什么默认值
+      if (this.dialogEditStatus === 'update') {
+        this.temp.processId = this.processId
+        return this.temp
+      } else return { processId: this.processId }
     },
     getList() {
+      this.loadingInit = true
       const query = {
         ip: this.ip,
-        source: this.$store.getters.source
+        source: this.$store.getters.source,
+        data: {
+          processId: this.processId
+        }
       }
       getOspfDefaultAdvise(query).then(res => {
-        // console.log(res)
         this.params = res.params
-        this.dataSource = query.source
+        if (res.data) {
+          const list = res.data.ospfv2.ospfv2comm.ospfSites.ospfSite.ProcessTopologys.ProcessTopology.defaultRouteMTs.defaultRouteMT
+          this.list = this.isArray(list) ? list : Array(list)
+        }
+        if (res.data === null) {
+          // 没有开启缺省路由发布
+          this.list = [{ processId: this.processId, defRoutEnableFlag: 'false' }]
+        }
         this.loadingInit = false
       }).catch(error => this.getListError(error))
     },
-    beforCloseDialog() {
-      this.dialogEditShow = false
-      this.temp = {}
-    },
-    handleSave() {
+    handleSave(temp) {
+      this.loadingInit = true
       const data = {
         ip: this.ip,
-        data: this.temp,
+        data: temp,
         source: this.$store.getters.source
       }
-      createOspfDefaultAdvise(data).then(res => {
-        this.opsSuccess('更新')
-        this.$emit('success')
-      }).catch(error => this.opsError(error, '更新'))
+      createOspfDefaultAdvise(data).then(res => this.createSuccess()).catch(error => this.createError(error))
     }
   }
 }

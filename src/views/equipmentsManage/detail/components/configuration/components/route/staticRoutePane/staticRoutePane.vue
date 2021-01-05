@@ -34,7 +34,7 @@
 
 <script>
 import { baseMinxin } from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/baseMixin'
-import { getSatic_route, createSatic_route, deleteSatic_route } from '@/api/detail/static_route'
+import { getSatic_route, createSatic_route, deleteSatic_route } from '@/api/detail/route/static_route'
 import DividerInfo from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/divider-info'
 import Edit from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/edit'
 

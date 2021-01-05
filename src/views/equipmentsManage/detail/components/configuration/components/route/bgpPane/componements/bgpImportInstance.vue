@@ -62,7 +62,7 @@
 
 <script>
 import { baseMinxin } from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/baseMixin'
-import { getBgpImportInstance, createBgpImportInstance, deleteBgpImportInstance } from '@/api/detail/bgp/bgp-base'
+import { getBgpImportInstance, createBgpImportInstance, deleteBgpImportInstance } from '@/api/detail/route/bgp/bgp-base'
 import DividerInfo from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/divider-info'
 
 export default {

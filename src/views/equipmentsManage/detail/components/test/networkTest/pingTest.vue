@@ -54,45 +54,46 @@
         </el-table-column>
       </el-table>
       <el-dialog :title="textMap[dialogEditStatus]" :visible.sync="dialogEditShow" width="70%" :before-close="beforCloseDialog">
-        <el-form style="width: 500px; margin: auto" label-position="right" label-width="120px" size="mini">
-          <el-form-item
-            v-for="(item, key) in params"
-            :key="key"
-            style="position: relative; padding: 0px 0 20px 0"
-            :label="item.name"
-            size="medium"
-          >
-            <div style="position: absolute;z-index: 100;top: -28px; font-size: smaller; color: #5a5e66">{{ item.remark }}
-              <span style="margin-left: 5px;color: #3d7ed5">({{ item.constraint }})</span></div>
-            <el-select
-              v-if="(item.constraint).match('CHIOCE<(?<p>.*)>')"
-              v-model="temp[item.name]"
-            >
-              <el-option
-                v-for="(i, k) in constraint(item.constraint)"
-                :key="k"
-                :value="i"
-                :label="i"
-              />
-            </el-select>
-            <el-switch
-              v-if="item.constraint === 'BOOLEAN'"
-              v-model="temp[item.name]"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-              :active-value="false"
-              :inactive-value="true"
-            />
-            <el-input
-              v-if="item.constraint.match('INT<?(?<p>.*)>?') || item.constraint === 'IP' || item.constraint === 'MASK' || item.constraint === 'WILDCARD' || item.constraint === 'STRING'"
-              v-model="temp[item.name]"
-              :disabled="item.name === 'processId'"
-            />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" size="mini" @click="handleSave">新建</el-button>
-          </el-form-item>
-        </el-form>
+        <edit :params="params" @cancel="dialogEditShow = false" @save="handleSave"></edit>
+        <!--        <el-form style="width: 500px; margin: auto" label-position="right" label-width="120px" size="mini">-->
+<!--          <el-form-item-->
+<!--            v-for="(item, key) in params"-->
+<!--            :key="key"-->
+<!--            style="position: relative; padding: 0px 0 20px 0"-->
+<!--            :label="item.name"-->
+<!--            size="medium"-->
+<!--          >-->
+<!--            <div style="position: absolute;z-index: 100;top: -28px; font-size: smaller; color: #5a5e66">{{ item.remark }}-->
+<!--              <span style="margin-left: 5px;color: #3d7ed5">({{ item.constraint }})</span></div>-->
+<!--            <el-select-->
+<!--              v-if="(item.constraint).match('CHIOCE<(?<p>.*)>')"-->
+<!--              v-model="temp[item.name]"-->
+<!--            >-->
+<!--              <el-option-->
+<!--                v-for="(i, k) in constraint(item.constraint)"-->
+<!--                :key="k"-->
+<!--                :value="i"-->
+<!--                :label="i"-->
+<!--              />-->
+<!--            </el-select>-->
+<!--            <el-switch-->
+<!--              v-if="item.constraint === 'BOOLEAN'"-->
+<!--              v-model="temp[item.name]"-->
+<!--              active-color="#13ce66"-->
+<!--              inactive-color="#ff4949"-->
+<!--              :active-value="false"-->
+<!--              :inactive-value="true"-->
+<!--            />-->
+<!--            <el-input-->
+<!--              v-if="item.constraint.match('INT<?(?<p>.*)>?') || item.constraint === 'IP' || item.constraint === 'MASK' || item.constraint === 'WILDCARD' || item.constraint === 'STRING'"-->
+<!--              v-model="temp[item.name]"-->
+<!--              :disabled="item.name === 'processId'"-->
+<!--            />-->
+<!--          </el-form-item>-->
+<!--          <el-form-item>-->
+<!--            <el-button type="primary" size="mini" @click="handleSave">新建</el-button>-->
+<!--          </el-form-item>-->
+<!--        </el-form>-->
       </el-dialog>
     </div>
   </div>
@@ -104,9 +105,10 @@ import { getNext } from '@/api/detail/common/getNext'
 import { baseMinxin } from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/baseMixin'
 import Pingchart from '@/views/equipmentsManage/detail/components/test/networkTest/pingchart'
 import { isArray } from '@/utils/validate'
+import Edit from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/edit'
 export default {
   name: 'PingTest',
-  components: { Pingchart },
+  components: { Edit, Pingchart },
   mixins: [baseMinxin],
   data() {
     return {
@@ -221,11 +223,11 @@ export default {
         }
       }).catch(error => this.getListError(error))
     },
-    handleSave() {
+    handleSave(temp) {
       this.loadingInit = true
       const data = {
         ip: this.ip,
-        data: this.temp,
+        data: temp,
         source: this.$store.getters.source
       }
       creataPingTest(data).then(res => this.createSuccess()).catch(error => this.createError(error))

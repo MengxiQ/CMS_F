@@ -4,7 +4,7 @@
       <el-link style="margin-left: 10px" type="primary" @click="handleUpdate">编辑</el-link>
       <el-button style="float: right" size="mini" type="success" @click="getList">刷新</el-button>
     </h5>
-     <divider-info :data-source="dataSource"></divider-info>
+    <divider-info :data-source="dataSource" />
     <el-row>
       <el-col :span="12"><span class="label">自治系统编号</span>
         <el-input v-if="dialogEditShow" v-model="temp.asNumber" size="mini" class="input-inline" />
@@ -37,13 +37,13 @@
         <h5 class="label-h5">基本配置</h5>
         <el-tabs>
           <el-tab-pane lazy label="邻居列表">
-            <bgp-peer :as-number="list.asNumber" :list="peerList" :ip="ip" :params="peerParams" @createsuccess="getList" />
+            <bgp-peer :as-number="list.asNumber" />
           </el-tab-pane>
           <el-tab-pane lazy label="网络列表">
-            <bgp-network :as-number="list.asNumber" :list="networkList" :ip="ip" :params="networkParams" @createsuccess="getList" />
+            <bgp-network :as-number="list.asNumber" />
           </el-tab-pane>
           <el-tab-pane lazy label="路由引入">
-            <bgp-import :ip="ip" :params="networkParams" @createsuccess="getList" />
+            <bgp-import :ip="ip" />
           </el-tab-pane>
         </el-tabs>
       </el-col>
@@ -53,9 +53,8 @@
 
 <script>
 import { baseMinxin } from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/baseMixin'
-import { getBgpBase, createBgpBase, getBgpPeer, getNetworkPeer } from '@/api/detail/bgp/bgp-base'
+import { getBgpBase, createBgpBase} from '@/api/detail/route/bgp/bgp-base'
 import BgpPeer from '@/views/equipmentsManage/detail/components/configuration/components/route/bgpPane/componements/bgpPeer'
-import { isArray } from '@/utils/isType'
 import BgpNetwork from '@/views/equipmentsManage/detail/components/configuration/components/route/bgpPane/componements/bgpNetwork'
 import BgpImport from '@/views/equipmentsManage/detail/components/configuration/components/route/bgpPane/componements/bgpImport'
 import DividerInfo from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/divider-info'
@@ -66,25 +65,10 @@ export default {
   mixins: [baseMinxin],
   data() {
     return {
-      bgpVrfs: [],
-      peerParams: [],
-      networkParams: [],
       importMethod: 1
     }
   },
   computed: {
-    peerList() {
-      const peers = (((this.bgpVrfs || {}).bgpVrf || {}).bgpPeers || {}).bgpPeer
-      if (peers !== undefined) {
-        return isArray(peers) ? peers : Array(peers)
-      } else return []
-    },
-    networkList() {
-      const routes = (((((this.bgpVrfs || {}).bgpVrf || {}).bgpVrfAFs || {}).bgpVrfAF || {}).networkRoutes || {}).networkRoute
-      if (routes !== undefined) {
-        return isArray(routes) ? routes : Array(routes)
-      } else return []
-    }
   },
   methods: {
     getList() {
@@ -93,29 +77,11 @@ export default {
         ip: this.ip,
         source: this.$store.getters.source
       }
-      const promiseArr = [
-        getBgpBase(query).then(res => {
-          // console.log(res)
-          this.list = res.data.bgp.bgpcomm.bgpSite
-          this.bgpVrfs = res.data.bgp.bgpcomm.bgpVrfs
-          // this.loadingInit = false
-        }).catch(error => this.getListError(error)),
-        getBgpPeer(query).then(res => {
-          this.peerParams = res.params
-          // this.loadingInit = false
-        }).catch(error => this.getListError(error)),
-        getNetworkPeer(query).then(res => {
-          this.networkParams = res.params
-          // this.loadingInit = false
-        }).catch(error => this.getListError(error))
-      ]
-      Promise.all(promiseArr).then(res => {
+      getBgpBase(query).then(res => {
+        this.list = res.data.bgp.bgpcomm.bgpSite
+        this.bgpVrfs = res.data.bgp.bgpcomm.bgpVrfs
         this.loadingInit = false
-        this.dataSource = query.source
-      }
-      ).catch(error => {
-        console.log(error)
-      })
+      }).catch(error => this.getListError(error))
     },
     handleUpdate() {
       this.dialogEditShow = true

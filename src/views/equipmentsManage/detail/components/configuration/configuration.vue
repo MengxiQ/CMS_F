@@ -18,6 +18,7 @@
             <i class="el-icon-s-management" />
             <span>接口管理</span>
           </template>
+          <el-menu-item index="monitoring">接口监控</el-menu-item>
           <el-menu-item index="common">通用接口</el-menu-item>
           <el-menu-item index="ethernet">以太接口</el-menu-item>
           <el-menu-item index="eth-trunk">Eth-Trunk</el-menu-item>

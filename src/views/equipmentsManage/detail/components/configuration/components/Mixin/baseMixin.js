@@ -56,8 +56,23 @@ export const baseMinxin = {
       this.dialogEditShow = false
       this.loadingInit = false
     },
+    deleteSuccess() {
+      this.$message({ type: 'success', message: '配置成功。' })
+      this.getList()
+      this.dialogEditShow = false
+      this.loadingInit = false
+    },
     createError(error) {
-      // The interface is not a L2 interface
+      if (((error.response || {}).data || {}).msg) {
+        const data = error.response['data']
+        this.$message({ type: 'error', message: data['msg'] })
+      } else {
+        // 获取不到后台报错信息
+        this.$message({ type: 'error', message: ' 创建失败.' })
+      }
+      this.loadingInit = false
+    },
+    deleteError(error) {
       if (((error.response || {}).data || {}).msg) {
         const data = error.response['data']
         this.$message({ type: 'error', message: data['msg'] })

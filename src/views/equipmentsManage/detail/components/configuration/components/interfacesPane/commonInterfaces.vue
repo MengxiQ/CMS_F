@@ -68,7 +68,7 @@
       </el-table-column>
     </el-table>
     <!--    编辑框-->
-    <el-dialog :title="dialogEditStatus" :visible="dialogEditShow" :before-close="beforCloseDialog">
+    <el-dialog :title="textMap[dialogEditStatus]" :visible="dialogEditShow" :before-close="beforCloseDialog">
       <el-form label-position="left" label-width="120px">
         <el-form-item
           v-for="(item, key) in params"
@@ -127,9 +127,13 @@ export default {
         ifDescr: '',
         l2Enable: '',
         isL2SwitchPort: '',
-        ifAdminStatus: ''
+        ifAdminStatus: '',
       },
-      odltemp: {}
+      odltemp: {},
+      textMap: { // 重写这个以达到显示创建和编辑框的显示标题
+        update: '编辑接口',
+        create: '创建接口'
+      }
     }
   },
   methods: {

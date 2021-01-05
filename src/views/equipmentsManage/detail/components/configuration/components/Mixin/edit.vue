@@ -5,7 +5,7 @@
       style="position: absolute; top: 55px; right: 20px"
       @click="temp = Object.assign({}, default_temp)"
     ><i class="el-icon-refresh-left">重置</i></el-link>
-    <el-form v-model="temp" label-position="left" label-width="100px">
+    <el-form v-model="temp" label-position="left" label-width="120px">
       <el-form-item
         v-for="(item, key) in params"
         :key="key"
@@ -13,7 +13,8 @@
         :label="item.name"
       >
         <div style="position: absolute;z-index: 100;top: -28px; font-size: smaller; color: #5a5e66">{{ item.remark }}
-          <span style="margin-left: 5px;color: #3d7ed5">({{ item.constraint }})</span></div>
+<!--          <span style="margin-left: 5px;color: #3d7ed5">({{ item.constraint }})</span>-->
+        </div>
         <!--自动补全 提供默认选项-->
         <el-autocomplete
           v-if="item.constraint.match('DEFAULT<?(?<p>.*)>?')"
@@ -24,7 +25,7 @@
         />
         <!--选项少的是时候使用radio-->
         <el-radio-group
-          v-if="(item.constraint).match('CHIOCE<(?<p>.*)>') && constraint(item.constraint).length <= 2"
+          v-if="(item.constraint).match('CHIOCE<(?<p>.*)>') && constraint(item.constraint).length <= 4"
           v-model="temp[item.name]"
           size="mini">
           <el-radio-button
@@ -35,7 +36,7 @@
         </el-radio-group>
         <!--选项多的时候使用select-->
         <el-select
-          v-if="(item.constraint).match('CHIOCE<(?<p>.*)>') && constraint(item.constraint).length > 2"
+          v-if="(item.constraint).match('CHIOCE<(?<p>.*)>') && constraint(item.constraint).length > 4"
           v-model="temp[item.name]"
           :disabled="isDisable(item.name)"
         >
@@ -51,8 +52,8 @@
           v-model="temp[item.name]"
           active-color="#13ce66"
           inactive-color="#ff4949"
-          :active-value="false"
-          :inactive-value="true"
+          :active-value="'true'"
+          :inactive-value="'false'"
           :disabled="isDisable(item.name)"
         />
         <el-input

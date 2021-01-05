@@ -146,6 +146,12 @@ export const constantRoutes = [
                 meta: { title: '接口配置', showZj: true },
                 children: [
                   {
+                    path: 'monitoring',
+                    name: 'interface-monitoring',
+                    component: () => import('@/views/equipmentsManage/detail/components/configuration/components/interfacesPane/interfaceMonitoring/list'),
+                    meta: { title: '接口监控', showZj: true }
+                  },
+                  {
                     path: 'common',
                     name: 'Common',
                     component: () => import('@/views/equipmentsManage/detail/components/configuration/components/interfacesPane/commonInterfaces'),

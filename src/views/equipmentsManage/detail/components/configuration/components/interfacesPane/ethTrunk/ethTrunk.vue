@@ -1,4 +1,4 @@
-<template>
+<template xmlns:edit="http://www.w3.org/1999/html">
   <div v-loading="loadingInit">
     <el-button-group>
       <el-button type="primary" size="mini" @click="handleCreate">添加</el-button>
@@ -9,14 +9,12 @@
       <el-table-column type="expand">
         <template slot="header"><i class="el-icon-view" /></template>
         <template slot-scope="scope">
+<!--          :params="menmberParams"-->
+<!--              -->
+<!--              :list="scope.row.TrunkMemberIfs ?(isArray(scope.row.TrunkMemberIfs.TrunkMemberIf) ? scope.row.TrunkMemberIfs.TrunkMemberIf : Array(scope.row.TrunkMemberIfs.TrunkMemberIf)):[]"-->
+<!--              @createsuccess="getList"-->
           <div style="background-color: #f9f9f9; padding: 10px">
-            <trunk-member-if
-              :ip="ip"
-              :params="menmberParams"
-              :if-name="scope.row.ifName"
-              :list="scope.row.TrunkMemberIfs ?(isArray(scope.row.TrunkMemberIfs.TrunkMemberIf) ? scope.row.TrunkMemberIfs.TrunkMemberIf : Array(scope.row.TrunkMemberIfs.TrunkMemberIf)):[]"
-              @createsuccess="getList"
-            />
+            <trunk-member-if :ip="ip" :if-name="scope.row.ifName" />
           </div>
         </template>
       </el-table-column>
@@ -24,50 +22,20 @@
       <el-table-column align="center" label="最小活动数" prop="minUpNum" />
       <el-table-column align="center" label="最大活动数" prop="maxUpNum" />
       <el-table-column align="center" label="工作模式" prop="workMode" />
-      <el-table-column align="center" label="MAC" prop="ifMac" width="130" />
-      <el-table-column align="center" label="hashType" prop="hashType" />
+<!--      <el-table-column align="center" label="MAC" prop="ifMac" width="130" />-->
+      <el-table-column align="center" label="接口类型" prop="trunkType" />
       <el-table-column align="center" label="操作" prop="" width="150">
         <template slot-scope="scope">
-          <el-button size="mini" type="" @click="handleUpdate(scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
+          <el-button-group>
+            <el-button size="mini" type="" @click="handleUpdate(scope.row)">编辑</el-button>
+            <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
+          </el-button-group>
         </template>
       </el-table-column>
     </el-table>
     <!-- 编辑框-->
-    <el-dialog :title="dialogEditStatus" :visible.sync="dialogEditShow" :before-close="beforCloseDialog">
-      <el-form label-position="left" label-width="120px">
-        <el-form-item
-          v-for="(item, key) in params"
-          :key="key"
-          style="position: relative; padding: 10px 0 20px 0"
-          :label="item.name"
-          size="medium"
-        >
-          <div style="position: absolute;z-index: 100;top: -28px; font-size: smaller; color: #5a5e66">{{ item.remark }}
-            <span style="margin-left: 5px;color: #3d7ed5">({{ item.constraint }})</span></div>
-          <el-select
-            v-if="item.constraint ? (item.constraint).match('CHIOCE<(?<p>.*)>') : false"
-            v-model="temp[item.name]"
-          >
-            <el-option
-              v-for="(i, k) in constraint(item.constraint)"
-              :key="k"
-              :value="i"
-              :label="i"
-            />
-          </el-select>
-          <el-input
-            v-if="item.constraint === 'INT' || item.constraint === 'IP' || item.constraint === 'MASK' || item.constraint === 'WILDCARD' || item.constraint === 'STRING'"
-            v-model="temp[item.name]"
-          />
-        </el-form-item>
-      </el-form>
-      <el-row>
-        <el-col :span="24" style="text-align: right">
-          <el-button type="primary" size="mini" @click="handleSave()">保存</el-button>
-          <el-button type="" size="mini" @click="dialogEditShow = !dialogEditShow">取消</el-button>
-        </el-col>
-      </el-row>
+    <el-dialog :title="textMap[dialogEditStatus]" :visible.sync="dialogEditShow" :before-close="beforCloseDialog">
+      <edit :params="params" :default_temp="temp" @save="handleSave" @cancel="dialogEditShow = false"></edit>
     </el-dialog>
   </div>
 </template>
@@ -77,15 +45,15 @@ import { baseMinxin } from '@/views/equipmentsManage/detail/components/configura
 import {
   getEthTrunkInterfaces,
   createEthTrunkInterface,
-  deleteEthTrunkInterface,
-  getEthTrunkMember
+  deleteEthTrunkInterface
 } from '@/api/detail/interfaces'
 import TrunkMemberIf from '@/views/equipmentsManage/detail/components/configuration/components/interfacesPane/ethTrunk/trunkMemberIf'
 import DividerInfo from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/divider-info'
+import Edit from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/edit'
 
 export default {
   name: 'EthTrunk',
-  components: { DividerInfo, TrunkMemberIf },
+  components: { Edit, DividerInfo, TrunkMemberIf },
   mixins: [baseMinxin],
   data() {
     return {
@@ -103,15 +71,12 @@ export default {
         this.list = ((((res.data || {}).ifmtrunk || {}).TrunkIfs || {}).TrunkIf) || []
         this.getListSuccess(res, query)
       }).catch(error => this.getListError(error))
-      getEthTrunkMember(this.ip).then(res => {
-        this.menmberParams = res.params
-      }).catch(error => this.getListError(error))
     },
-    handleSave() {
+    handleSave(temp) {
       this.loadingInit = true
       const data = {
         ip: this.ip,
-        data: this.temp,
+        data: temp,
         source: this.$store.getters.source
       }
       createEthTrunkInterface(data).then(res => this.createSuccess()).catch(error => this.createError(error))

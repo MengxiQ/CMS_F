@@ -1,4 +1,4 @@
-// config/route/table
+// config/route/route/table
 import request from '@/utils/request'
 
 export function getRouteTable(ip) {

@@ -27,8 +27,10 @@
           </el-table-column>
           <el-table-column label="操作" prop="adminStatus" width="150">
             <template slot-scope="scope">
-              <el-button size="mini" type="primay" @click="handleUpdate(scope.row)">编辑</el-button>
-              <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
+              <el-button-group>
+                <el-button size="mini" type="primay" @click="handleUpdate(scope.row)">编辑</el-button>
+                <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
+              </el-button-group>
             </template>
           </el-table-column>
         </el-table>
@@ -36,7 +38,7 @@
     </el-row>
     <!--    编辑框-->
     <el-dialog :title="textMap[dialogEditStatus]" :visible.sync="dialogEditShow">
-      <edit :params="params" :default_temp="defaultTemp()" @save="handleSave" :disparams="disparams()" @cancel="dialogEditShow = false"></edit>
+      <edit :params="params" :default_temp="defaultTemp()" :disparams="disparams()" @save="handleSave" @cancel="dialogEditShow = false" />
     </el-dialog>
   </div>
 </template>

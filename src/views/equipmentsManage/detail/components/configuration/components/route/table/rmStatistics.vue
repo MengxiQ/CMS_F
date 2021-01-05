@@ -5,13 +5,17 @@
 </template>
 
 <script>
-import '@/views/equipmentsManage/detail/components/configuration/components/route/table/echat-theme.js'
 import { isArray } from '@/utils/validate'
 export default {
   name: 'RmStatistics',
   props: {
     rmStatistics: {
       type: Array
+    }
+  },
+  computed: {
+    ip() {
+      return this.$route.params.ip
     }
   },
   mounted() {
@@ -40,7 +44,14 @@ export default {
       this.chart = this.$echarts.init(this.$refs.chart, 'walden')
 
       this.chart.setOption({
-        legend: {},
+        title: {
+          text: '路由统计信息',
+          subtext: this.ip,
+          left: 'center'
+        },
+        legend: {
+          right: 10
+        },
         tooltip: {},
         dataset: {
           source: source
