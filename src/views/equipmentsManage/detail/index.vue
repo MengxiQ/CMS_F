@@ -67,7 +67,7 @@ export default {
       this.loadingInit = false
     }).catch(error => {
       console.log(error.response)
-      this.$message({ type: 'error', message: '连接失败' })
+      this.$message({ type: 'error', message: '连接失败', duration: 0 })
     })
   },
   methods: {
