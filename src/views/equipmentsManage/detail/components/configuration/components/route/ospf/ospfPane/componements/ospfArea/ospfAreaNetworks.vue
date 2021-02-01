@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="loadingInit">
     <el-divider content-position="left">
       Network
       <el-link title="新建" size="mini" type="primary" class="el-icon-edit" style="margin-left: 10px" @click="handleCreate"></el-link>

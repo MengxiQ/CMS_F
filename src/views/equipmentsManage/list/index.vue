@@ -138,8 +138,10 @@
         <el-form-item label="厂商">
           <el-select v-model="user_temp.device_params" style="">
             <el-option label="华为" value="huawei" />
+            <el-option label="huaweiyang" value="huaweiyang" />
             <el-option label="锐捷" value="ruijie" />
             <el-option label="思科" value="cisco" />
+            <el-option label="default" value="default" />
           </el-select>
         </el-form-item>
       </el-form>

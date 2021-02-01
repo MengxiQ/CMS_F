@@ -1,20 +1,23 @@
 <template>
   <div>
+    <el-radio-group title="选择显示表头的名称" v-model="showLabel" size="mini" style="transform: scale(0.9);position: absolute; top: 55px; left: 15px">
+      <el-radio-button label="标签" />
+      <el-radio-button label="名称" />
+    </el-radio-group>
     <el-link
       type="primary"
       style="position: absolute; top: 55px; right: 20px"
       @click="temp = Object.assign({}, default_temp)"
     ><i class="el-icon-refresh-left">重置</i></el-link>
-    <el-form v-model="temp" label-position="left" label-width="120px">
+    <el-form v-model="temp" label-width="100px" style="padding-right: 20px">
       <el-form-item
         v-for="(item, key) in params"
         :key="key"
-        style="position: relative; padding: 10px 0 20px 0"
-        :label="item.name"
+        :label="item[LabelMap[showLabel]]"
       >
-        <div style="position: absolute;z-index: 100;top: -28px; font-size: smaller; color: #5a5e66">{{ item.remark }}
-<!--          <span style="margin-left: 5px;color: #3d7ed5">({{ item.constraint }})</span>-->
-        </div>
+        <!--        <div style="position: absolute;z-index: 100;top: -28px; font-size: smaller; color: #5a5e66">{{ item.remark }}-->
+        <!--&lt;!&ndash;          <span style="margin-left: 5px;color: #3d7ed5">({{ item.constraint }})</span>&ndash;&gt;-->
+        <!--        </div>-->
         <!--自动补全 提供默认选项-->
         <el-autocomplete
           v-if="item.constraint.match('DEFAULT<?(?<p>.*)>?')"
@@ -27,7 +30,8 @@
         <el-radio-group
           v-if="(item.constraint).match('CHIOCE<(?<p>.*)>') && constraint(item.constraint).length <= 4"
           v-model="temp[item.name]"
-          size="mini">
+          size="mini"
+        >
           <el-radio-button
             v-for="(i, k) in constraint(item.constraint)"
             :key="k"
@@ -61,11 +65,20 @@
           v-model="temp[item.name]"
           :disabled="isDisable(item.name)"
         />
+        <el-popover
+          placement="bottom"
+          :title="item[LabelMap[showLabel]]"
+          width="200"
+          trigger="hover"
+          :content="item.remark"
+        >
+          <i v-if="item.remark !== null && item.remark !== ''" slot="reference" class="el-icon-question question" />
+        </el-popover>
       </el-form-item>
     </el-form>
     <el-row>
       <el-col :span="24" style="text-align: right">
-        <el-button type="primary" @click="handleSave()">保存</el-button>
+        <el-button type="primary" @click="handleSave()">配置</el-button>
         <el-button type="" @click="handleCancel">取消</el-button>
       </el-col>
     </el-row>
@@ -100,7 +113,12 @@ export default {
   },
   data() {
     return {
-      temp: {}
+      temp: {},
+      showLabel: '标签',
+      LabelMap: {
+        '标签': 'label',
+        '名称': 'name'
+      }
     }
   },
   watch: {
@@ -156,5 +174,14 @@ export default {
 </script>
 
 <style scoped>
-
+ .question {
+   color: #34bfa3;
+   position: absolute;
+   top: 12px;
+   right: -20px;
+   font-size: larger;
+ }
+ .question:hover {
+   cursor: pointer;
+ }
 </style>

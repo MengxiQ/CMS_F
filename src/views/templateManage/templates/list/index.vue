@@ -58,40 +58,40 @@
       @sort-change="sortChange"
     >
       <!--      展开行-->
-      <el-table-column type="expand">
-        <div slot="header" slot-scope=""><i class="el-icon-view" /></div>
-        <template slot-scope="props">
-          <el-form label-position="left" class="demo-table-expand">
-            <el-form-item label="支持设备:">
-              <span
-                v-for="(item , key) in props.row.support"
-                :key="key"
-                class="support-item"
-              >{{ item }}</span>
-            </el-form-item>
+<!--      <el-table-column type="expand">-->
+<!--        <div slot="header" slot-scope=""><i class="el-icon-view" /></div>-->
+<!--        <template slot-scope="props">-->
+<!--          <el-form label-position="left" class="demo-table-expand">-->
+<!--            <el-form-item label="支持设备:">-->
+<!--              <span-->
+<!--                v-for="(item , key) in props.row.support"-->
+<!--                :key="key"-->
+<!--                class="support-item"-->
+<!--              >{{ item }}</span>-->
+<!--            </el-form-item>-->
 
-            <el-form-item label="模板功能:">
-              <div>{{ props.row.function ? props.row.function.name : 'null' }}
-              </div>
-            </el-form-item>
-            <el-form-item label="模板描述:">
-              <div>{{ props.row.remark }}</div>
-            </el-form-item>
-            <el-form-item label="模板参数:">
-              <el-row>
-                <el-col v-for="(item, key) in props.row.params_set" :key="key" :span="24">
-                  <span class="show-param-item">参数{{ key + 1 }}：{{ item.name }}</span>
-                  <span class="show-param-item">描述：{{ item.remark }}</span>
-                  <span class="show-param-item">约束：{{ item.constraint }}</span>
-                </el-col>
-              </el-row>
-            </el-form-item>
-          </el-form>
-          <h4>模板内容：</h4>
-          <template-edit class="code-block" :template="props.row" :read-only="true" />
+<!--            <el-form-item label="模板功能:">-->
+<!--              <div>{{ props.row.function ? props.row.function.name : 'null' }}-->
+<!--              </div>-->
+<!--            </el-form-item>-->
+<!--            <el-form-item label="模板描述:">-->
+<!--              <div>{{ props.row.remark }}</div>-->
+<!--            </el-form-item>-->
+<!--            <el-form-item label="模板参数:">-->
+<!--              <el-row>-->
+<!--                <el-col v-for="(item, key) in props.row.params_set" :key="key" :span="24">-->
+<!--                  <span class="show-param-item">参数{{ key + 1 }}：{{ item.name }}</span>-->
+<!--                  <span class="show-param-item">描述：{{ item.remark }}</span>-->
+<!--                  <span class="show-param-item">约束：{{ item.constraint }}</span>-->
+<!--                </el-col>-->
+<!--              </el-row>-->
+<!--            </el-form-item>-->
+<!--          </el-form>-->
+<!--          <h4>模板内容：</h4>-->
+<!--          <template-edit class="code-block" :template="props.row" :read-only="true" />-->
 
-        </template>
-      </el-table-column>
+<!--        </template>-->
+<!--      </el-table-column>-->
       <!--      -->
       <el-table-column
         label="模板名称"
@@ -218,6 +218,9 @@
               参数{{ key }}：
               <label style="font-weight: normal" class="param-item">名称
                 <el-input v-model="item.name" class="param-item-input" size="mini" />
+              </label>
+              <label style="font-weight: normal" class="param-item">标签
+                <el-input v-model="item.label" class="param-item-input" size="mini" />
               </label>
               <label style="font-weight: normal" class="param-item">描述
                 <el-input v-model="item.remark" class="param-item-input" size="mini" placeholder="可选" />

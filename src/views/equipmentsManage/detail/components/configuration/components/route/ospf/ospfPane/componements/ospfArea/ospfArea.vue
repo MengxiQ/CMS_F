@@ -120,6 +120,7 @@ export default {
           processId: this.processId
         }
       }
+      this.loadingInit = true
       getOspfArea(query).then(res => {
         this.params = res.params
         const list = (((((((res || {}).data || {}).ospfv2 || {}).ospfv2comm || {}).ospfSites || {}).ospfSite || {}).areas || {}).area

@@ -14,17 +14,18 @@
           <el-table-column type="index">
             <template slot="header"><i class="el-icon-view" /></template>
           </el-table-column>
-          <el-table-column label="vlanId" prop="vlanId" />
-          <el-table-column label="名称" prop="vlanName" />
-          <el-table-column label="描述" prop="vlanDesc" />
-          <el-table-column label="类型" prop="vlanType" />
-          <el-table-column label="管理" prop="adminStatus">
-            <template slot-scope="scope">
-              <el-tag size="mini" :type="scope.row.adminStatus === 'up'?'success':'danger'">
-                {{ scope.row.adminStatus }}
-              </el-tag>
-            </template>
-          </el-table-column>
+          <config-table :params="params"></config-table>
+<!--          <el-table-column label="vlanId" prop="vlanId" />-->
+<!--          <el-table-column label="名称" prop="vlanName" />-->
+<!--          <el-table-column label="描述" prop="vlanDesc" />-->
+<!--          <el-table-column label="类型" prop="vlanType" />-->
+<!--          <el-table-column label="管理" prop="adminStatus">-->
+<!--            <template slot-scope="scope">-->
+<!--              <el-tag size="mini" :type="scope.row.adminStatus === 'up'?'success':'danger'">-->
+<!--                {{ scope.row.adminStatus }}-->
+<!--              </el-tag>-->
+<!--            </template>-->
+<!--          </el-table-column>-->
           <el-table-column label="操作" prop="adminStatus" width="150">
             <template slot-scope="scope">
               <el-button-group>
@@ -49,9 +50,10 @@ import { isArray } from '@/utils/isType'
 import DividerInfo from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/divider-info'
 import Edit from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/edit'
 import { baseMinxin } from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/baseMixin'
+import ConfigTable from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/config-table'
 export default {
   name: 'VlanPane',
-  components: { Edit, DividerInfo },
+  components: { ConfigTable, Edit, DividerInfo },
   mixins: [baseMinxin],
   props: {
   },
