@@ -16,9 +16,10 @@
           <ospf-area-interfaces :list="areainterfas(props.row)"></ospf-area-interfaces>
         </template>
       </el-table-column>
-      <el-table-column label="区域ID" prop="areaId" />
-      <el-table-column label="区域类型" prop="areaType" />
-      <el-table-column label="区域描述" prop="descriptionArea" />
+      <config-table :params="params"></config-table>
+<!--      <el-table-column label="区域ID" prop="areaId" />-->
+<!--      <el-table-column label="区域类型" prop="areaType" />-->
+<!--      <el-table-column label="区域描述" prop="descriptionArea" />-->
 <!--      <el-table-column label="认证模式" prop="authenticationMode" />-->
 <!--      <el-table-column label="网络数">-->
 <!--        <template slot-scope="scope">-->
@@ -54,9 +55,11 @@ import OspfAreaNetworks
   from '@/views/equipmentsManage/detail/components/configuration/components/route/ospf/ospfPane/componements/ospfArea/ospfAreaNetworks'
 import OspfAreaInterfaces
   from '@/views/equipmentsManage/detail/components/configuration/components/route/ospf/ospfPane/componements/ospfArea/ospfAreaInterfaces'
+import { isArray } from '@/utils/isType'
+import ConfigTable from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/config-table'
 export default {
   name: 'OspfArea',
-  components: { OspfAreaInterfaces, OspfAreaNetworks, Edit },
+  components: { ConfigTable, OspfAreaInterfaces, OspfAreaNetworks, Edit },
   mixins: [baseMinxin],
   props: {
     processId: {
@@ -122,12 +125,17 @@ export default {
       }
       this.loadingInit = true
       getOspfArea(query).then(res => {
+        const data = res.data ? res.data : []
+        this.list = isArray(data) ? data : Array(data)
         this.params = res.params
-        const list = (((((((res || {}).data || {}).ospfv2 || {}).ospfv2comm || {}).ospfSites || {}).ospfSite || {}).areas || {}).area
-        if (list !== undefined) {
-          this.list = this.isArray(list) ? list : Array(list)
-        } else this.list = []
+        this.dataSource = query.source
         this.loadingInit = false
+        // this.params = res.params
+        // const list = (((((((res || {}).data || {}).ospfv2 || {}).ospfv2comm || {}).ospfSites || {}).ospfSite || {}).areas || {}).area
+        // if (list !== undefined) {
+        //   this.list = this.isArray(list) ? list : Array(list)
+        // } else this.list = []
+        // this.loadingInit = false
       }).catch(error => this.getListError(error))
     }
   }

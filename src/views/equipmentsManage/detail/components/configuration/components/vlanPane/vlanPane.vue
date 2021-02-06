@@ -127,11 +127,13 @@ export default {
         source: this.$store.getters.source
       }
       getVlans(query).then(res => {
-        if (isArray(res.data.vlan.vlans.vlan)) {
-          this.list = res.data.vlan.vlans.vlan
-        } else {
-          this.list = Array(res.data.vlan.vlans.vlan)
-        }
+        // if (isArray(res.data.vlan.vlans.vlan)) {
+        //   this.list = res.data.vlan.vlans.vlan
+        // } else {
+        //   this.list = Array(res.data.vlan.vlans.vlan)
+        // }
+        const data = res.data ? res.data : []
+        this.list = isArray(data) ? data : Array(data)
         this.params = res.params
         this.dataSource = query.source
         this.loadingInit = false

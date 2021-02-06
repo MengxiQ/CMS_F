@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-table-column v-for="(item, key) in params" :key="key" :label="item.label" :prop="item.name" />
+    <el-table-column v-for="(item, key) in params" v-if="item.role !== 'key'" :key="key" :label="item.label" :prop="item.name" />
   </div>
 </template>
 

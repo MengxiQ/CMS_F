@@ -58,40 +58,40 @@
       @sort-change="sortChange"
     >
       <!--      展开行-->
-<!--      <el-table-column type="expand">-->
-<!--        <div slot="header" slot-scope=""><i class="el-icon-view" /></div>-->
-<!--        <template slot-scope="props">-->
-<!--          <el-form label-position="left" class="demo-table-expand">-->
-<!--            <el-form-item label="支持设备:">-->
-<!--              <span-->
-<!--                v-for="(item , key) in props.row.support"-->
-<!--                :key="key"-->
-<!--                class="support-item"-->
-<!--              >{{ item }}</span>-->
-<!--            </el-form-item>-->
+      <!--      <el-table-column type="expand">-->
+      <!--        <div slot="header" slot-scope=""><i class="el-icon-view" /></div>-->
+      <!--        <template slot-scope="props">-->
+      <!--          <el-form label-position="left" class="demo-table-expand">-->
+      <!--            <el-form-item label="支持设备:">-->
+      <!--              <span-->
+      <!--                v-for="(item , key) in props.row.support"-->
+      <!--                :key="key"-->
+      <!--                class="support-item"-->
+      <!--              >{{ item }}</span>-->
+      <!--            </el-form-item>-->
 
-<!--            <el-form-item label="模板功能:">-->
-<!--              <div>{{ props.row.function ? props.row.function.name : 'null' }}-->
-<!--              </div>-->
-<!--            </el-form-item>-->
-<!--            <el-form-item label="模板描述:">-->
-<!--              <div>{{ props.row.remark }}</div>-->
-<!--            </el-form-item>-->
-<!--            <el-form-item label="模板参数:">-->
-<!--              <el-row>-->
-<!--                <el-col v-for="(item, key) in props.row.params_set" :key="key" :span="24">-->
-<!--                  <span class="show-param-item">参数{{ key + 1 }}：{{ item.name }}</span>-->
-<!--                  <span class="show-param-item">描述：{{ item.remark }}</span>-->
-<!--                  <span class="show-param-item">约束：{{ item.constraint }}</span>-->
-<!--                </el-col>-->
-<!--              </el-row>-->
-<!--            </el-form-item>-->
-<!--          </el-form>-->
-<!--          <h4>模板内容：</h4>-->
-<!--          <template-edit class="code-block" :template="props.row" :read-only="true" />-->
+      <!--            <el-form-item label="模板功能:">-->
+      <!--              <div>{{ props.row.function ? props.row.function.name : 'null' }}-->
+      <!--              </div>-->
+      <!--            </el-form-item>-->
+      <!--            <el-form-item label="模板描述:">-->
+      <!--              <div>{{ props.row.remark }}</div>-->
+      <!--            </el-form-item>-->
+      <!--            <el-form-item label="模板参数:">-->
+      <!--              <el-row>-->
+      <!--                <el-col v-for="(item, key) in props.row.params_set" :key="key" :span="24">-->
+      <!--                  <span class="show-param-item">参数{{ key + 1 }}：{{ item.name }}</span>-->
+      <!--                  <span class="show-param-item">描述：{{ item.remark }}</span>-->
+      <!--                  <span class="show-param-item">约束：{{ item.constraint }}</span>-->
+      <!--                </el-col>-->
+      <!--              </el-row>-->
+      <!--            </el-form-item>-->
+      <!--          </el-form>-->
+      <!--          <h4>模板内容：</h4>-->
+      <!--          <template-edit class="code-block" :template="props.row" :read-only="true" />-->
 
-<!--        </template>-->
-<!--      </el-table-column>-->
+      <!--        </template>-->
+      <!--      </el-table-column>-->
       <!--      -->
       <el-table-column
         label="模板名称"
@@ -141,7 +141,7 @@
       :limit.sync="listQuery.limit"
       @pagination="getList"
     />
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="80%" :before-close="clsotEditDialog">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="60%" :before-close="clsotEditDialog">
       <div class="form-content">
         <el-form ref="dataForm" label-position="left" label-width="80px">
           <el-form-item label="模板名称">
@@ -201,37 +201,51 @@
           <el-form-item label="模板描述">
             <el-input v-model="temp.remark" class="input-item" type="textarea" />
           </el-form-item>
-          <h4>模板内容：</h4>
-<!--          :(动态添加表单) # 核验xml data中是否有$(参数)-->
-          <h4>参数：
-            <el-button
-              title="添加模板参数"
-              style="transform: scale(0.8)"
-              size="mini"
-              type=""
-              icon="el-icon-plus"
-              @click="handleAddParam"
-            />
-          </h4>
-          <el-row>
-            <el-col v-for="(item, key) in temp.params" :key="key" :span="24" style="font-weight: 700">
-              参数{{ key }}：
-              <label style="font-weight: normal" class="param-item">名称
+          <!--          :(动态添加表单) # 核验xml data中是否有$(参数)-->
+          <h4>模板参数</h4>
+          <el-row v-for="(item, key) in temp.params" :key="key" class="param-content">
+            <el-col :span="24">
+              <i>P</i>参数{{ key + 1 }}
+              <el-dropdown trigger="click" style="margin-left: 10px;">
+                <span class="el-dropdown-link">
+                  {{ item.role === null ? 'left' : item.role }}<i class="el-icon-arrow-down el-icon--right" />
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item @click.native="changeRole(key,'key')">Key</el-dropdown-item>
+                  <el-dropdown-item @click.native="changeRole(key,'left')">Leaf</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+              <i class="el-icon-delete-solid param-item-delete" />
+            </el-col>
+            <el-col :span="24">
+              <label class="param-item">名称
                 <el-input v-model="item.name" class="param-item-input" size="mini" />
               </label>
-              <label style="font-weight: normal" class="param-item">标签
+              <label class="param-item">标签
                 <el-input v-model="item.label" class="param-item-input" size="mini" />
               </label>
-              <label style="font-weight: normal" class="param-item">描述
+            </el-col>
+            <el-col :span="24">
+              <label class="param-item">描述
                 <el-input v-model="item.remark" class="param-item-input" size="mini" placeholder="可选" />
               </label>
-              <label style="font-weight: normal" class="param-item">约束
+              <label class="param-item">约束
                 <el-input v-model="item.constraint" class="param-item-input" size="mini" placeholder="参数约束" />
               </label>
-              <label><el-button type="danger" size="mini" @click="deleteParam(key)">删除</el-button></label>
             </el-col>
           </el-row>
-
+          <el-button
+            title="添加模板参数"
+            size="mini"
+            type="primary"
+            icon="el-icon-plus"
+            style="margin-bottom: 10px;"
+            @click="handleAddParam"
+          >参数</el-button>
+          <el-form-item label="数据位置">
+            <el-input v-model="temp.position" class="input-item" />
+          </el-form-item>
+          <h4>模板内容</h4>
           <div style="border:1px solid #bfcbd9">
             <template-edit :template="temp" :read-only="false" />
           </div>
@@ -305,7 +319,8 @@ export default {
         support: [],
         updateDate: new Date(),
         function: null,
-        params: [{ name: '', remark: '', constraint: '' }],
+        position: null,
+        params: [{ name: null, remark: null, constraint: null, role: 'left' }],
         templateData: '<-- 开始编辑你的模板内容!-->'
       },
       dialogFormVisible: false,
@@ -331,6 +346,11 @@ export default {
   methods: {
     parseTime(time, format) {
       return parseTime(time, format)
+    },
+    changeRole(key, role) {
+      // console.log(key, role)
+      this.temp.params[key].role = role
+      this.$forceUpdate()
     },
     // 删除参数属性
     deleteParam(key) {
@@ -542,11 +562,18 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+  .el-dropdown-link {
+    cursor: pointer;
+    color: #409EFF;
+  }
+  .el-icon-arrow-down {
+    font-size: 12px;
+  }
 .form-content {
   margin: 0 auto;
 }
 .input-item {
-  width: 50%;
+  width: 90%;
 }
 .code-block {
   border: 1px solid rgb(191, 203, 217);
@@ -555,12 +582,21 @@ export default {
 .show-param-item {
   padding: 5px;
 }
-
+.param-content {
+  padding: 10px;
+}
 .param-item {
+  font-weight: normal;
   display: inline-block;
   margin: 10px;
 }
-
+.param-item-delete {
+  color: red;
+  margin-left: 20px;
+}
+.param-item-delete:hover {
+  cursor: pointer;
+}
 .param-item-input {
   display: inline-block;
   width: 200px;
