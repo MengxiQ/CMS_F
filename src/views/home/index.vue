@@ -10,11 +10,11 @@
 <script>
 import { mapGetters } from 'vuex'
 import PanelGroup from '@/views/home/compements/PanelGroup'
-import Effects from '@/views/home/compements/effects';
+import Effects from '@/views/home/compements/effects'
 
 export default {
   name: 'Dashboard',
-  components: {Effects, PanelGroup },
+  components: { Effects, PanelGroup },
   computed: {
     ...mapGetters([
       'name'

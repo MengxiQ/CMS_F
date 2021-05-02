@@ -72,8 +72,19 @@
         <template slot-scope="{row,$index}">
           <el-button-group>
             <el-button type="" size="mini" @click="handleUpdate(row)">编辑</el-button>
-            <el-button size="mini" type="danger" @click="handleDelete(row,$index)">删除
-            </el-button>
+<!--            <el-button size="mini" type="danger" @click="handleDelete(row,$index)">删除-->
+<!--            </el-button>-->
+            <el-popconfirm
+              title="确定删除吗？"
+              @onConfirm="handleDelete(row,$index)"
+            >
+              <el-button
+                slot="reference"
+                size="mini"
+                type="danger"
+              >删除
+              </el-button>
+            </el-popconfirm>
           </el-button-group>
         </template>
       </el-table-column>

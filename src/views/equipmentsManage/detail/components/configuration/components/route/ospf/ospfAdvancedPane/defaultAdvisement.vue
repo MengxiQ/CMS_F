@@ -2,6 +2,7 @@
   <div>
     <el-divider content-position="left">
       缺省路由发布
+      <el-link title="添加" type="primary" style="margin-left: 10px" class="el-icon-edit" @click="handleCreate"></el-link>
       <el-link title="刷新" type="success" style="margin-left: 10px" size="mini" icon="el-icon-refresh" @click="getList"></el-link></el-divider>
     <el-table :data="list" v-loading="loadingInit">
       <el-table-column label="开启" prop="defRoutEnableFlag">
@@ -55,14 +56,16 @@ export default {
       }
       getOspfDefaultAdvise(query).then(res => {
         this.params = res.params
-        if (res.data) {
-          const list = res.data.ospfv2.ospfv2comm.ospfSites.ospfSite.ProcessTopologys.ProcessTopology.defaultRouteMTs.defaultRouteMT
-          this.list = this.isArray(list) ? list : Array(list)
+        const data = res.data
+        console.log(data)
+        if (data) {
+          // const list = res.data.ospfv2.ospfv2comm.ospfSites.ospfSite.ProcessTopologys.ProcessTopology.defaultRouteMTs.defaultRouteMT
+          this.list = this.isArray(data) ? data : Array(data)
         }
-        if (res.data === null) {
-          // 没有开启缺省路由发布
-          this.list = [{ processId: this.processId, defRoutEnableFlag: 'false' }]
-        }
+        // if (data === null) {
+        //   // 没有开启缺省路由发布
+        //   this.list = [{ processId: this.processId, defRoutEnableFlag: 'false' }]
+        // }
         this.loadingInit = false
       }).catch(error => this.getListError(error))
     },

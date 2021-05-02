@@ -220,7 +220,8 @@ export default {
       }
       getCommonInterfaces(query).then(res => {
         // console.log(res)
-        this.list = res.data.ifm.interfaces.interface
+        // this.list = res.data.ifm.interfaces.interface
+        this.list = res.data
         this.params = res.params
         this.dataSource = query.source
         this.loadingInit = false

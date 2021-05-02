@@ -57,13 +57,15 @@ export default {
         }
       }
       getOspfAdvanceImport(query).then(res => {
-        console.log(res)
         this.params = res.params
+        const data = res.data
+        // 判断数据是否为空
         if (res.data) {
-          const list = (res.data.ospfv2.ospfv2comm.ospfSites.ospfSite.ProcessTopologys.ProcessTopology.importRouteMTs || {}).importRouteMT
-          if (list !== undefined) {
-            this.list = this.isArray(list) ? list : Array(list)
-          } else this.list = []
+          this.list = this.isArray(data) ? data : Array(data)
+          // const list = (res.data.ospfv2.ospfv2comm.ospfSites.ospfSite.ProcessTopologys.ProcessTopology.importRouteMTs || {}).importRouteMT
+          // if (list !== undefined) {
+          //   this.list = this.isArray(list) ? list : Array(list)
+          // } else this.list = []
         }
         this.loadingInit = false
       }).catch(error => this.getListError(error))

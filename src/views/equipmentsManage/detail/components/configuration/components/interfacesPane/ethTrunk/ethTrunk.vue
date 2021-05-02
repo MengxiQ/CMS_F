@@ -68,7 +68,11 @@ export default {
         source: this.$store.getters.source
       }
       getEthTrunkInterfaces(query).then(res => {
-        this.list = ((((res.data || {}).ifmtrunk || {}).TrunkIfs || {}).TrunkIf) || []
+        // this.list = ((((res.data || {}).ifmtrunk || {}).TrunkIfs || {}).TrunkIf) || []
+        const data = res.data
+        if (data !== null) {
+          this.list = data
+        }
         this.getListSuccess(res, query)
       }).catch(error => this.getListError(error))
     },

@@ -208,7 +208,8 @@ export default {
       this.loadingInit = true
       getEthernetInterfaces(query).then(res => {
         // console.log(res)
-        this.list = res.data.ethernet.ethernetIfs.ethernetIf
+        // this.list = res.data.ethernet.ethernetIfs.ethernetIf
+        this.list = res.data
         this.getListSuccess(res, query)
       }).catch(error => this.getListError(error))
     }

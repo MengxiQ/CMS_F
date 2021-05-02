@@ -65,11 +65,12 @@ export default {
       getOspfAdvance(query).then(res => {
         // console.log(res)
         if (res.data) {
-          if (this.isArray(res.data.ospfv2.ospfv2comm.ospfSites.ospfSite)) {
-            this.list = res.data.ospfv2.ospfv2comm.ospfSites.ospfSite
-          } else {
-            this.list = Array(res.data.ospfv2.ospfv2comm.ospfSites.ospfSite)
-          }
+          this.list = res.data
+          // if (this.isArray(res.data.ospfv2.ospfv2comm.ospfSites.ospfSite)) {
+          //   this.list = res.data.ospfv2.ospfv2comm.ospfSites.ospfSite
+          // } else {
+          //   this.list = Array(res.data.ospfv2.ospfv2comm.ospfSites.ospfSite)
+          // }
         }
         this.getListSuccess(res, query)
       }).catch(error => this.getListError(error))

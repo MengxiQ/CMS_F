@@ -78,8 +78,8 @@ export default {
         source: this.$store.getters.source
       }
       getBgpBase(query).then(res => {
-        this.list = res.data.bgp.bgpcomm.bgpSite
-        this.bgpVrfs = res.data.bgp.bgpcomm.bgpVrfs
+        this.list = res.data.bgpcomm.bgpSite
+        this.bgpVrfs = res.data.bgpcomm.bgpVrfs
         this.loadingInit = false
       }).catch(error => this.getListError(error))
     },

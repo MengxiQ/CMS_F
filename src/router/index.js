@@ -368,6 +368,20 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/test',
+    component: Layout,
+    alwaysShow: true,
+    meta: { title: '测试页', icon: 'el-icon-s-operation' },
+    children: [
+      {
+        path: 'a',
+        name: 'a',
+        component: () => import('@/views/test/test'),
+        meta: { title: '测试a', icon: 'el-icon-s-custom' }
+      }
+    ]
+  },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true },
   {

@@ -133,6 +133,7 @@ export default {
         source: this.$store.getters.source
       }
       getOspfProcess(query).then(res => {
+        this.params = res.params
         if (res.data !== null) {
           // if (isArray(res.data.ospfv2.ospfv2comm.ospfSites.ospfSite)) {
           //   this.list = res.data.ospfv2.ospfv2comm.ospfSites.ospfSite
@@ -141,7 +142,6 @@ export default {
           // }
           const data = res.data ? res.data : []
           this.list = isArray(data) ? data : Array(data)
-          this.params = res.params
           // this.activeName = this.list[0].processId
           // 设置打开的ospf进程
           this.activeName = this.$route.query.processId

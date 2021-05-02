@@ -35,8 +35,8 @@
           name="password"
           tabindex="2"
           auto-complete="on"
-          @keyup.enter.native="handleLogin"
           show-password
+          @keyup.enter.native="handleLogin"
         />
         <span class="show-pwd" @click="showPwd">
           <i :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
@@ -72,6 +72,7 @@ export default {
     //   }
     // }
     return {
+      error: {},
       loginForm: {
         username: '',
         password: ''
@@ -113,8 +114,28 @@ export default {
         this.$router.push({ path: this.redirect || '/' })
         this.loading = false
       }).catch(error => {
-        console.log(error)
-        this.$message({ type: 'error', message: '无法使用提供的凭证登录。' })
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log(error.response.data)
+          console.log(error.response.status)
+          console.log(error.response.headers)
+          // 账号密码错误
+          this.$message({ type: 'error', message: '账号密码错误' })
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          console.log(error.request)
+          if (error.request.readyState === 4) {
+            this.$message({ type: 'error', message: '服务端错误' })
+          }
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log('Error', error.message)
+        }
+        // console.log(error.config)
+        // this.$message({ type: 'error', message: '无法使用提供的凭证登录。' })
         this.loading = false
       })
       // } else {

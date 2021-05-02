@@ -72,7 +72,8 @@ export default {
       setTimeout(_ => {
         getSystemInfo(this.ip).then(res => {
         // console.log(res)
-          this.list = res.data.system.systemInfo
+        //   this.list = res.data.system.systemInfo
+          this.list = res.data
           this.loadingInit = false
         }).catch(error => this.getListError(error))
       }, 500)

@@ -10,9 +10,10 @@
       :data="list"
       style="border:1px rgb(235,238,245) solid"
     >
-      <el-table-column label="ipAddress" prop="ipAddress" />
-      <el-table-column label="wildcardMask" prop="wildcardMask" />
-      <el-table-column label="description" prop="description" />
+<!--      <el-table-column label="ipAddress" prop="ipAddress" />-->
+<!--      <el-table-column label="wildcardMask" prop="wildcardMask" />-->
+<!--      <el-table-column label="description" prop="description" />-->
+      <config-table :params="params"></config-table>
       <el-table-column label="操作" prop="" width="150px" align="center">
         <template slot-scope="scope">
           <el-button-group>
@@ -38,10 +39,12 @@
 import { getOspfAreaNetwork, createOspfAreaNetwork, deleteOspfAreaNetwork } from '@/api/detail/route/ospf/ospfAreaNetwork'
 import { baseMinxin } from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/baseMixin'
 import Edit from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/edit'
+import { isArray } from '@/utils/isType'
+import ConfigTable from '@/views/equipmentsManage/detail/components/configuration/components/Mixin/config-table'
 
 export default {
   name: 'OspfAreaNetworks',
-  components: { Edit },
+  components: { ConfigTable, Edit },
   mixins: [baseMinxin],
   props: {
     processId: {
@@ -98,11 +101,16 @@ export default {
         }
       }
       getOspfAreaNetwork(query).then(res => {
+        // this.params = res.params
+        // const list = (((((((((res || {}).data || {}).ospfv2 || {}).ospfv2comm || {}).ospfSites || {}).ospfSite || {}).areas || {}).area || {}).networks || {}).network
+        // if (list !== undefined) {
+        //   this.list = this.isArray(list) ? list : Array(list)
+        // } else this.list = []
+        // this.loadingInit = false
+        const data = res.data ? res.data : []
+        this.list = isArray(data) ? data : Array(data)
         this.params = res.params
-        const list = (((((((((res || {}).data || {}).ospfv2 || {}).ospfv2comm || {}).ospfSites || {}).ospfSite || {}).areas || {}).area || {}).networks || {}).network
-        if (list !== undefined) {
-          this.list = this.isArray(list) ? list : Array(list)
-        } else this.list = []
+        this.dataSource = query.source
         this.loadingInit = false
       }).catch(error => this.getListError(error))
     }
